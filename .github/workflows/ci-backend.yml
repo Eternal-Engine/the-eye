@@ -1,0 +1,25 @@
+name: '🧬 CI - Backend'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+  pull_request:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+
+jobs:
+  ci-build-backend:
+    name: 'Build - Backend'
+    uses: ./.github/workflows/_build-backend.yml
+  ci-lint-backend:
+    name: 'Code-Quality - Backend'
+    needs: ci-build-backend
+    uses: ./.github/workflows/_lint-backend.yml
+  ci-test-backend:
+    name: 'Test - Backend'
+    needs: ci-lint-backend
+    uses: ./.github/workflows/_test-backend.yml
