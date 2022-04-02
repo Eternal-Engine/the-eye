@@ -6,7 +6,7 @@ authors = ["Eternal-Engine <ninovationlab@gmail.com>"]
 readme = "BACKEND.md"
 
 [tool.poetry.dependencies]
-fastapi = {extras = ["all"], version = "^0.75.0"}
+fastapi = {version = "^0.75.1"}
 python = "^3.10"
 pydantic = {extras = ["email", "dotenv"], version = "^1.9.0"}
 asyncpg = "^0.25.0"
@@ -20,6 +20,7 @@ trio = "^0.20.0"
 SQLAlchemy = "^1.4.32"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["brypt"], version = "^1.7.4"}
+orjson = "^3.6.7"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.4"
@@ -124,9 +125,3 @@ max-line-length = 90
 exclude = ["tests/*.py"]
 extend-ignore = "E203,"
 max-complexity = 10
-
-name = "app"
-version = "0.1.0"
-description = ""
-authors = ["Artificial-Ninoligence <ninovationlab@gmail.com>"]
-readme = "README.md"
