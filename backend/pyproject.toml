@@ -1,0 +1,132 @@
+[tool.poetry]
+name = "iWitness Backend"
+version = "0.1.0"
+description = "Python backend project with FastAPI"
+authors = ["Eternal-Engine <ninovationlab@gmail.com>"]
+readme = "BACKEND.md"
+
+[tool.poetry.dependencies]
+fastapi = {extras = ["all"], version = "^0.75.0"}
+python = "^3.10"
+pydantic = {extras = ["email", "dotenv"], version = "^1.9.0"}
+asyncpg = "^0.25.0"
+psycopg2-binary = "^2.9.3"
+aiosql = "^3.4.1"
+alembic = "^1.7.7"
+python-slugify = "^6.1.1"
+loguru = "^0.6.0"
+httpx = "^0.22.0"
+trio = "^0.20.0"
+SQLAlchemy = "^1.4.32"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["brypt"], version = "^1.7.4"}
+
+[tool.poetry.dev-dependencies]
+bandit = "^1.7.4"
+black = "^22.1.0"
+colorama = "^0.4.4"
+flake8 = "^3.9.2"
+isort = "^5.10.1"
+mypy = "^0.941"
+pre-commit = "^2.17.0"
+pycodestyle = "^2.7.0"
+pylint = "^2.12.2"
+pyproject-flake8 = "0.0.1a2"
+pytest = "^7.1.1"
+pytest-asyncio = "^0.18.2"
+pytest-cov = "^3.0.0"
+pytest-xdist = "^2.5.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 90
+include = '\.pyi?$'
+exclude = '''
+  /(
+      \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+
+    # The following are specific to Black, you probably don't want those.
+    | blib2to3
+    | tests/data
+  )/
+  '''
+
+[tool.isort]
+combine_as_imports = true
+ensure_newline_before_comments = true
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 90
+multi_line_output = 3
+profile = "black"
+src_paths = ["app", "tests"]
+skip = [
+  ".gitignore",
+  ".dockerignore",
+  ".env",
+  "coverage/*",
+  ".html",
+  ".xml",
+  ".github/",
+  ".rst",
+  ".md"
+  ]
+use_parentheses = true
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+filterwarnings = "error"
+addopts = '''
+  --strict-markers
+  --tb=short
+  --cov=app
+  --cov=tests
+  --cov-branch
+  --cov-report=term-missing
+  --cov-report=html:coverage/cov_html
+  --cov-report=xml:coverage/cov.xml
+  --no-cov-on-fail
+  --cov-fail-under=100
+  --numprocesses=auto
+  --asyncio-mode=auto
+'''
+
+[tool.pylint.master]
+max-line-length = 90
+ignore-paths = ["./tests"]
+
+[tool.pylint.messages_control]
+disable = ["C0103", "C0114", "C0116", "C0115", "C0330", "C0326", "E0401", "R0903"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+strict_optional = false
+warn_no_return = true
+warn_return_any = true
+pretty = true
+color_output = true
+error_summary = true
+
+[tool.flake8]
+max-line-length = 90
+exclude = ["tests/*.py"]
+extend-ignore = "E203,"
+max-complexity = 10
+
+name = "app"
+version = "0.1.0"
+description = ""
+authors = ["Artificial-Ninoligence <ninovationlab@gmail.com>"]
+readme = "README.md"
