@@ -1,3 +1,4 @@
+# fmt: off
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
