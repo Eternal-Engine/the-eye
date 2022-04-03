@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     debug = True
     docs_url = "/docs"
     openapi_prefix = ""
-    openapi_url = "openapi.json"
+    openapi_url = "/openapi.json"
     redoc_url = "/redoc"
 
     @property
