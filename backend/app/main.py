@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 
+# from app import models
 from app.core.config import get_settings
+
+# from app.db import Base, engine
+
+# Base.metadata.create_all(bind=engine)
 
 settings = get_settings()
 app = FastAPI(**settings.fastapi_kwargs)
