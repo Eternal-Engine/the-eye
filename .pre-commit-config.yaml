@@ -38,6 +38,8 @@ repos:
     -   id: flake8
         entry: pflake8
         additional_dependencies: [pyproject-flake8]
+        args:
+        - --ignore=E1,E23,E501,W503
 -   repo: https://github.com/PyCQA/pylint
     rev: v2.13.4
     hooks:
