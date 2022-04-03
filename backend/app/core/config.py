@@ -11,4 +11,7 @@ class Settings(BaseSettings):
 
 
 def get_settings():
-    pass
+
+    conf = Settings
+
+    return conf()
