@@ -123,5 +123,5 @@ error_summary = true
 [tool.flake8]
 max-line-length = 119
 exclude = ["tests/*"]
-extend-ignore = "E203,E501"
+extend-ignore = "E1,E23,E203,E501,W503"
 max-complexity = 10
