@@ -12,6 +12,7 @@ def test_settings_construction():
     assert settings().__str__() == "Application Settings"
     assert settings().ENV == "dev"
     assert settings().TESTING == 1
+    assert settings().database_url == "sqlite:///iW_dev.sqlite3"
 
 
 def test_get_settings_function_to_get_application_settings():
