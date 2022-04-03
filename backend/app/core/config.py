@@ -8,3 +8,7 @@ class Settings(BaseSettings):
 
     def __str__(self):
         return "Application Settings"
+
+
+def get_settings():
+    pass
