@@ -103,6 +103,9 @@ addopts = '''
   --asyncio-mode=auto
 '''
 
+[tool.coverage.run]
+omit = ["app/db/database.py"]
+
 [tool.pylint.master]
 max-line-length = 119
 ignore-paths = ["./tests/"]
