@@ -1,3 +1,4 @@
+# fmt: off
 from enum import Enum
 
 from app.core.settings.app_base_settings import AppBaseSettings, EnvTypes
