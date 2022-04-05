@@ -1,3 +1,4 @@
+# fmt: off
 import unittest
 
 from pydantic import PostgresDsn

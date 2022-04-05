@@ -1,3 +1,4 @@
+# fmt: off
 import unittest
 
 from app.core.settings.app_base_settings import AppBaseSettings, EnvTypes
