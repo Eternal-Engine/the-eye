@@ -10,7 +10,7 @@ class AppSettings(AppBaseSettings):
     title: str = "iWitness - Backend Production Environment Settings"
     description: str = "A backend project with FastAPI for iWitness web application."
     version: str = "0.0.0"
-    debug: bool = SecretStr("DEBUG")
+    debug: bool = SecretStr("DEBUG")  # type: ignore
 
     database_url: PostgresDsn
     secret_key: SecretStr
