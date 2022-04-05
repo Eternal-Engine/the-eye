@@ -1,11 +1,11 @@
 ci:
     autofix_commit_msg: |
-        Pre-commit autofix 
+        fix: Pre-commit autofix 
 
         Pre-commit CI got your back!
     autofix_prs: true
     autoupdate_branch: "trunk"
-    autoupdate_commit_msg: "Pre-commit weekly update"
+    autoupdate_commit_msg: "ci(pre-commit): Pre-commit weekly update"
     autoupdate_schedule: weekly
     skip: []
     submodules: false
