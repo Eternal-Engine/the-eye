@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 
 from app.core.config import get_settings
+from app.core.settings.app_base_settings import EnvTypes
 from app.db.database import Base, engine
 
-settings = get_settings()
+settings = get_settings(app_env=EnvTypes.DEV)
 app = FastAPI(**settings.fastapi_kwargs)
 
 

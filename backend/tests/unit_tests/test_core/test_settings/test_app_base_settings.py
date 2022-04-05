@@ -12,9 +12,9 @@ def test_create_env_types():
     assert env_types.PROD.value == "prod"
     assert env_types.DEV.value == "dev"
     assert env_types.TEST.value == "test"
-    assert str(env_types.PROD) == "Prod environment type"
-    assert str(env_types.DEV) == "Dev environment type"
-    assert str(env_types.TEST) == "Test environment type"
+    assert str(env_types.PROD) == "prod"
+    assert str(env_types.DEV) == "dev"
+    assert str(env_types.TEST) == "test"
 
 
 def test_get_env_type_name_and_value_by_describe_function():

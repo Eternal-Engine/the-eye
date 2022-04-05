@@ -16,7 +16,7 @@ class EnvTypes(Enum):
         return f"{self.name}: {self.value}"
 
     def __str__(self):
-        return f"{self.value.capitalize()} environment type"
+        return self.value
 
 
 class AppBaseSettings(BaseSettings):
