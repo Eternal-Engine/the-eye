@@ -9,7 +9,7 @@ class AppSettings(AppBaseSettings):
     title: str = "iWitness - Backend Production Environment Settings"
     description: str = "A backend project with FastAPI for iWitness web application."
     version: str = "0.0.0"
-    debug: bool = os.getenv("DEBUG")  # type: ignore
+    debug: bool = False
 
     database_url: str = os.getenv("DATABASE_URL")
     secret_key: str = os.getenv("SECRET_KEY")
