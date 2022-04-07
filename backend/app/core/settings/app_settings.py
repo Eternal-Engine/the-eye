@@ -1,8 +1,7 @@
+import os
 from typing import Any, Dict, List
 
-from pydantic import PostgresDsn, SecretStr
-
-from app.core.settings.app_base_settings import AppBaseSettings
+from backend.app.core.settings.app_base_settings import AppBaseSettings
 
 
 class AppSettings(AppBaseSettings):
@@ -10,10 +9,10 @@ class AppSettings(AppBaseSettings):
     title: str = "iWitness - Backend Production Environment Settings"
     description: str = "A backend project with FastAPI for iWitness web application."
     version: str = "0.0.0"
-    debug: bool = SecretStr("DEBUG")  # type: ignore
+    debug: bool = os.getenv("DEBUG")  # type: ignore
 
-    database_url: PostgresDsn
-    secret_key: SecretStr
+    database_url: str = os.getenv("DATABASE_URL")
+    secret_key: str = os.getenv("SECRET_KEY")
 
     docs_url: str = "/docs"
     openapi_prefix: str = ""
@@ -25,7 +24,7 @@ class AppSettings(AppBaseSettings):
     allowed_hosts: List[str] = ["*"]
 
     class Config:
-        env_file: str = "env/prod_env/prod.env"
+        env_file = "env/.env.production"
         validate_assignment: bool = True
 
     @property
@@ -40,7 +39,6 @@ class AppSettings(AppBaseSettings):
             "redoc_url": self.redoc_url,
             "openapi_prefix": self.openapi_prefix,
             "api_prefix": self.api_prefix,
-            "database_url": self.database_url,
             "app_env": self.app_env,
         }
 
