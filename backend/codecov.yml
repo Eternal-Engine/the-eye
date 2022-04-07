@@ -1,9 +1,0 @@
-coverage:
-  range: 85..100
-  round: down
-  precision: 2
-  status:
-    project:
-      default:
-        target: 80% # the required coverage value
-        threshold: 1%
