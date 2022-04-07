@@ -211,3 +211,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: backend/
+          flags: backend
