@@ -1,11 +1,11 @@
 ci:
     autofix_commit_msg: |
-        fix: Pre-commit autofix 
+        [pre-commit.ci] auto fixes from pre-commit.com hooks
 
-        Pre-commit CI got your back!
+        for more information, see https://pre-commit.ci
     autofix_prs: true
-    autoupdate_branch: "trunk"
-    autoupdate_commit_msg: "ci(pre-commit): Pre-commit weekly update"
+    autoupdate_branch: ''
+    autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
     autoupdate_schedule: weekly
     skip: []
     submodules: false
@@ -32,8 +32,8 @@ repos:
         name: isort (python)
         args:
         - --settings-path=backend/pyproject.toml
--   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.2
+-   repo: https://github.com/PyCQA/flake8
+    rev: 4.0.1
     hooks:
     -   id: flake8
         entry: pflake8
