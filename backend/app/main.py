@@ -19,5 +19,4 @@ async def get_app_settings():
 
     return {
         "environment": settings.app_env,
-        "database_url": settings.database_url,
     }
