@@ -1,5 +1,5 @@
 # fmt: off
-from backend import app
+import app
 
 
 def test_app_version():

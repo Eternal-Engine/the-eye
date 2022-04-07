@@ -1,8 +1,8 @@
 # fmt: off
 import unittest
 
-from backend.app.core.settings.app_base_settings import AppBaseSettings, EnvTypes
-from backend.app.core.settings.app_settings import AppSettings
+from app.core.settings.app_base_settings import AppBaseSettings, EnvTypes
+from app.core.settings.app_settings import AppSettings
 
 
 class TestAppSettings(unittest.TestCase):

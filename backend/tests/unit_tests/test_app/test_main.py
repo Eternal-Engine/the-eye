@@ -1,8 +1,9 @@
 # fmt: off
 import pytest
-from backend.app.main import app, settings
 from fastapi import FastAPI
 from httpx import AsyncClient
+
+from app.main import app, settings
 
 
 def test_initalize_fastapi_app_in_app():

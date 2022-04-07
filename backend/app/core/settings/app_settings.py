@@ -1,7 +1,7 @@
 import os
 from typing import Any, Dict, List
 
-from backend.app.core.settings.app_base_settings import AppBaseSettings
+from app.core.settings.app_base_settings import AppBaseSettings
 
 
 class AppSettings(AppBaseSettings):

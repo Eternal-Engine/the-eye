@@ -1,11 +1,11 @@
 # fmt: off
 import unittest
 
-from backend.app.core.settings.app_base_settings import EnvTypes
-from backend.app.core.settings.app_dev_settings import AppDevSettings
-from backend.app.core.settings.app_prod_settings import AppProdSettings
-from backend.app.core.settings.app_settings import AppSettings
-from backend.app.core.settings.app_test_settings import AppTestSettings
+from app.core.settings.app_base_settings import EnvTypes
+from app.core.settings.app_dev_settings import AppDevSettings
+from app.core.settings.app_prod_settings import AppProdSettings
+from app.core.settings.app_settings import AppSettings
+from app.core.settings.app_test_settings import AppTestSettings
 
 
 class TestAllAppSettingsChildClasses(unittest.TestCase):

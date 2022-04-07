@@ -1,7 +1,8 @@
-from backend.app.core.config import get_settings, log
-from backend.app.core.settings.app_base_settings import EnvTypes
-from backend.app.db.database import init_db
 from fastapi import FastAPI
+
+from app.core.config import get_settings, log
+from app.core.settings.app_base_settings import EnvTypes
+from app.db.database import init_db
 
 settings = get_settings(app_env=EnvTypes.DEV)
 app = FastAPI(**settings.fastapi_kwargs)
