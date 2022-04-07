@@ -1,4 +1,4 @@
-name: 'CI/CD - Backend 🧬'
+name: 'CI - Backend 🧬'
 
 concurrency:
   group: ci-tests-${{ github.ref }}-1

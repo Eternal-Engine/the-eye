@@ -4,7 +4,6 @@ on: workflow_call
 
 jobs:
   test:
-      needs: build
       environment:
         name: development
       strategy:
