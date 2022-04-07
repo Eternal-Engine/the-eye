@@ -1,9 +1,9 @@
 # fmt: off
-from app.core.config import environments, get_settings
-from app.core.settings.app_base_settings import EnvTypes
-from app.core.settings.app_dev_settings import AppDevSettings
-from app.core.settings.app_prod_settings import AppProdSettings
-from app.core.settings.app_test_settings import AppTestSettings
+from backend.app.core.config import environments, get_settings
+from backend.app.core.settings.app_base_settings import EnvTypes
+from backend.app.core.settings.app_dev_settings import AppDevSettings
+from backend.app.core.settings.app_prod_settings import AppProdSettings
+from backend.app.core.settings.app_test_settings import AppTestSettings
 
 
 def test_call_default_settings_from_function_get_settings():
