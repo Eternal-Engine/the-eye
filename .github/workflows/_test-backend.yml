@@ -29,6 +29,7 @@ jobs:
       env:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
         DEBUG: ${{ secrets.DEBUG }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       runs-on: ${{ matrix.os }}
       steps:
         - name: Check repository
@@ -43,10 +44,10 @@ jobs:
           uses: abatilo/actions-poetry@v2.1.3
           with:
             poetry-version: ${{ matrix.poetry-version }}
-        - name: Check Poetry version
+        - name: Display Poetry version
           run: |
             poetry --version
-        - name: Cache
+        - name: Upload cached Poetry dependencies
           id: cached-poetry-dependencies
           uses: actions/cache@v3.0.1
           with:
@@ -60,7 +61,7 @@ jobs:
           run: poetry install --no-interaction --no-root
         - name: Install test dependencies
           run: |
-            poetry add pytest pytest-cov pytest-xdist pytest-asyncio
+            poetry add pytest pytest-asyncio pytest-cov pytest-xdist
         - name: Test with Pytest-Cov
           run: |
             poetry run pytest --cov --cov-report xml .
