@@ -56,7 +56,7 @@ jobs:
           run: poetry install --no-interaction --no-root
         - name: Install linter dependencies
           run: |
-            poetry add black isort mypy pycodestyle pylint pyproject-flake8
+            poetry add black isort mypy pycodestyle pylint pyproject-flake8="0.0.1a2"
         - name: Lint with Black
           uses: psf/black@stable
         - name: Lint with Isort

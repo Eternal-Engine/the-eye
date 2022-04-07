@@ -28,8 +28,8 @@ jobs:
           working-directory: backend/
       env:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        DEBUG: ${{ secrets.DEBUG }}
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       runs-on: ${{ matrix.os }}
       steps:
         - name: Check repository
