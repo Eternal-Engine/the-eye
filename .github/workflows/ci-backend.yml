@@ -27,3 +27,5 @@ jobs:
     name: 'Test 🔬'
     needs: ci-build-backend
     uses: ./.github/workflows/_test-backend.yml
+    with:
+      ENVIRONMENT: development

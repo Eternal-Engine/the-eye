@@ -4,6 +4,7 @@ on: workflow_call
 
 jobs:
   build:
+    name: '🏗'
     strategy:
       matrix:
         os: 
