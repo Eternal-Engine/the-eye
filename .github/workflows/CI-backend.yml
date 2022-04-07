@@ -1,4 +1,4 @@
-name: 'CI - Backend 🧬'
+name: 'CICD - Backend 🧬'
 
 concurrency:
   group: ci-tests-${{ github.ref }}-1
@@ -71,6 +71,7 @@ jobs:
 
   code-quality:
     name: 'Code-Quality 💎'
+    needs: build
     strategy:
       matrix:
         os: 
@@ -123,7 +124,7 @@ jobs:
         run: poetry install --no-interaction --no-root
       - name: Install linter dependencies
         run: |
-          poetry add black isort mypy pycodestyle pylint "pyproject-flake8=0.0.1a2"
+          poetry add "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
       - name: Lint with Black
         uses: psf/black@stable
       - name: Lint with Isort
@@ -144,6 +145,7 @@ jobs:
 
   test:
     name: 'Test 🔬'
+    needs: build
     environment: development
     strategy:
       matrix:
