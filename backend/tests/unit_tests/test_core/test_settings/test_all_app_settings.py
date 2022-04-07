@@ -72,5 +72,5 @@ class TestAllAppSettingsChildClasses(unittest.TestCase):
             )
         )
         self.assertEqual(self.expected, self.app_test_settings.dict(exclude={"secret_key", "database_url"}))
-        self.assertEqual("env/env.test", self.app_test_settings.Config.env_file)
+        self.assertEqual("env/.env.test", self.app_test_settings.Config.env_file)
         self.assertEqual(True, self.app_test_settings.Config.validate_assignment)
