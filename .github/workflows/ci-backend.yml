@@ -1,4 +1,8 @@
-name: '🧬 CI - Backend'
+name: 'CI/CD - Backend 🧬'
+
+concurrency:
+  group: ci-tests-${{ github.ref }}-1
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -13,13 +17,13 @@ on:
 
 jobs:
   ci-build-backend:
-    name: 'Build - Backend'
+    name: 'Build 🏗'
     uses: ./.github/workflows/_build-backend.yml
   ci-lint-backend:
-    name: 'Code-Quality - Backend'
+    name: 'Code Quality 💎'
     needs: ci-build-backend
     uses: ./.github/workflows/_lint-backend.yml
   ci-test-backend:
-    name: 'Test - Backend'
-    needs: ci-lint-backend
+    name: 'Test 🔬'
+    needs: ci-build-backend
     uses: ./.github/workflows/_test-backend.yml
