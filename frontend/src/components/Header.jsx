@@ -11,7 +11,6 @@ function Header({text, bgColor, textColor}) {
 
   return (
     <header style={headerStyles}>
-    
         <div className='container1'>
         <h1>iWitness</h1>
             <div className="time-member-holder">
