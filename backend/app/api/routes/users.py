@@ -21,3 +21,10 @@ async def create_user(payload: user_schemas.UserInCreate):
     }
 
     return response_object
+
+
+@router.get("/id/{id}", response_model=user_schemas.UserInResponse)
+async def read_note(id: int):
+    db_user = await user_crud.get_user_by_id(id)
+
+    return db_user
