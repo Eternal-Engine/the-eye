@@ -1,3 +1,4 @@
+# fmt: off
 import orjson
 import pytest
 

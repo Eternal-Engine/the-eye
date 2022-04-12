@@ -1,3 +1,4 @@
+# fmt: off
 import databases
 import pytest
 import sqlalchemy
