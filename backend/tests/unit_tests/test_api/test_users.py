@@ -1,4 +1,5 @@
 import orjson
+import pytest
 
 from app.api.crud import users as user_crud
 
@@ -170,3 +171,58 @@ def test_get_user_by_incorrect_id_data_type(async_client, monkeypatch):
 
     assert response.status_code == 422
     assert response.json()["detail"] == expected_detail
+
+
+async def test_update_user(async_client, monkeypatch):
+    expected_updated_data = {
+        "id": 1,
+        "username": "maxmusterman",
+        "email": "max.musterman@gmail.com",
+        "is_publisher": False,
+        "is_premium_account": False,
+        "is_verified": False,
+        "is_active": True,
+        "created_at": None,
+        "updated_at": None,
+        "last_logged_in_at": None,
+        "username_updated_at": None,
+        "email_updated_at": None,
+        "password_updated_at": None,
+    }
+
+    async def mock_get_user_by_id(id):
+        return True
+
+    monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
+
+    async def mock_update_user(id, payload):
+        return 1
+
+    monkeypatch.setattr(user_crud, "update_user", mock_update_user)
+
+    response = async_client.put("/users/id/1/", data=orjson.dumps(expected_updated_data))
+
+    assert response.status_code == 200
+    assert response.json() == expected_updated_data
+
+
+@pytest.mark.parametrize(
+    "id, payload, status_code",
+    [
+        [1, {}, 404],
+        [1, {"email": "max.musterman@example.com"}, 404],
+        [999, {"username": "foo", "email": "max.musterman@example.com"}, 404],
+    ],
+)
+async def test_update_user_invalid(async_client, monkeypatch, id, payload, status_code):
+    async def mock_get_user_by_id(id):
+        return None
+
+    monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
+
+    response = async_client.put(
+        f"/users/id/{id}/",
+        data=orjson.dumps(payload),
+    )
+
+    assert response.status_code == status_code
