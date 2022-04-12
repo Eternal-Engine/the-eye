@@ -12,18 +12,37 @@ button{
   font-size: large;
 }
 
-.link-holder {
-  display: flex;
-  justify-content: space-around;
-  width: 9%;
-  
-} 
 
-.link-holder a {
-  text-decoration: none;
-  color: #ff6a95;
-  align-self: center;
-  font-size: large;
+.navbar{
+  width: 55%;
+  display: flex;
+  justify-content: space-between;
+  background-color: green;
+}
+.navlinks{
+  width: 40%;
+}
+
+.navlinks .link .login {
+  margin-left: 70px;
+}
+
+.navlinks .link .signup {
+  margin-right: 65px;
+}
+
+
+.navlinks-holder{
+  width: 55%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+}
+
+
+.navlinks{
+  display: flex;
+  justify-content: space-between;
 }
 
 body {

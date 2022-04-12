@@ -1,9 +1,16 @@
-//component renders our Navbar
-
+import {useNavigate, useLocation} from 'react-router-dom'
+import { FiLogIn } from 'react-icons/fi'
+import { SiGnuprivacyguard } from 'react-icons/si'
+import {BsFillPersonCheckFill} from 'react-icons/bs'
 function Header({text, bgColor, textColor}) {
+  
+  //Initializing navigation hooks from react-dom
+  const navigate = useNavigate()
+  const location = useLocation()
+
   const headerStyles = {
     backgroundColor: bgColor,
-    color: textColor,
+    color: textColor, 
     
   }
 
@@ -12,17 +19,21 @@ function Header({text, bgColor, textColor}) {
   return (
     <header style={headerStyles}>
         <div className='container1'>
-        <h1>iWitness</h1>
-            <div className="time-member-holder">
-                <p>Date: 22/04/2022</p>
-                <p>Members: 2,345,675</p>
-            </div>
-            <div className="link-holder">
-              
-              <a href="#">Signup</a>
-              <a href="#">Login</a>
-            </div>
+          <h1>iWitness</h1>
+
             
+            <nav className='navlinks-holder'>
+            <p><BsFillPersonCheckFill fill='#ff6a95' width='25px' height='30px'/>Members: 2,345,782</p>    
+              <ul className='navlinks'>
+                <li className='link' onClick={()=> navigate('/log-in')}>
+                    <p className='login'><FiLogIn fill='#ff6a95' width='25px' height='30px'/>Login</p>
+                </li>
+                <li className='link' onClick={()=> navigate('/sign-up')}>
+                    <p className='signup'><SiGnuprivacyguard fill='#ff6a95' width='25px' height='30px'/>Signup</p>
+                </li>
+              </ul>
+            </nav>
+           
         </div>
     </header>
   )
