@@ -44,7 +44,9 @@ async def test_create_user(async_client, monkeypatch):
 
 
 async def test_invalid_create_user(async_client):
+
     response = async_client.post("/users/create/", data=orjson.dumps({}))
+
     assert response.status_code == 422
     assert response.json() == {
         "detail": [
@@ -69,13 +71,60 @@ async def test_invalid_create_user(async_client):
     test_request_payload = {
         "username": "johndoe",
     }
+
     response = async_client.post("/users/create/", data=orjson.dumps(test_request_payload))
     assert response.status_code == 422
     assert response.json()["detail"][0]["msg"] == "field required"
 
 
+def test_get_all_users(async_client, monkeypatch):
+
+    expected_data = [
+        {
+            "id": 1,
+            "username": "johndoe",
+            "email": "john.doe@example.com",
+            "is_publisher": False,
+            "is_premium_account": False,
+            "is_verified": False,
+            "is_active": True,
+            "created_at": "2022-04-12T17:16:25.194495",
+            "updated_at": "2022-04-12T17:16:25.194495",
+            "last_logged_in_at": "2022-04-12T17:16:25.194495",
+            "username_updated_at": "2022-04-12T17:16:25.194495",
+            "email_updated_at": "2022-04-12T17:16:25.194495",
+            "password_updated_at": "2022-04-12T17:16:25.194495",
+        },
+        {
+            "id": 2,
+            "username": "maximusterfrau",
+            "email": "maxi.musterfrau@example.com",
+            "is_publisher": False,
+            "is_premium_account": False,
+            "is_verified": False,
+            "is_active": True,
+            "created_at": "2022-04-12T17:16:25.194495",
+            "updated_at": "2022-04-12T17:16:25.194495",
+            "last_logged_in_at": "2022-05-12T19:20:30.194495",
+            "username_updated_at": "2022-05-12T19:20:30.194495",
+            "email_updated_at": "2022-05-12T19:20:30.194495",
+            "password_updated_at": "2022-05-12T19:20:30.194495",
+        },
+    ]
+
+    async def mock_get_all_users():
+        return expected_data
+
+    monkeypatch.setattr(user_crud, "get_all_users", mock_get_all_users)
+
+    response = async_client.get("/users/")
+
+    assert response.status_code == 200
+    assert response.json() == expected_data
+
+
 def test_get_user_by_id(async_client, monkeypatch):
-    test_data = {
+    expected_data = {
         "id": 1,
         "username": "johndoe",
         "email": "john.doe@example.com",
@@ -92,14 +141,14 @@ def test_get_user_by_id(async_client, monkeypatch):
     }
 
     async def mock_get_user_by_id(id):
-        return test_data
+        return expected_data
 
     monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
 
     response = async_client.get("/users/id/1")
 
     assert response.status_code == 302
-    assert response.json() == test_data
+    assert response.json() == expected_data
 
 
 def test_get_user_by_incorrect_id_data_type(async_client, monkeypatch):
