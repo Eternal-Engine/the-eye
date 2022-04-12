@@ -127,6 +127,9 @@ jobs:
           poetry add "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
       - name: Lint with Black
         uses: psf/black@stable
+        with:
+          options: "--exclude=tests/"
+          src: "./backend/app/"
       - name: Lint with Isort
         run: |
           poetry run isort . --check-only --profile black
