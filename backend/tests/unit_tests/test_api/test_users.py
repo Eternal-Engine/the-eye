@@ -214,7 +214,7 @@ async def test_update_user(async_client, monkeypatch):
         [999, {"username": "foo", "email": "max.musterman@example.com"}, 404],
     ],
 )
-async def test_update_user_invalid(async_client, monkeypatch, id, payload, status_code):
+async def test_update_user_invalid_input(async_client, monkeypatch, id, payload, status_code):
     async def mock_get_user_by_id(id):
         return None
 
@@ -226,3 +226,55 @@ async def test_update_user_invalid(async_client, monkeypatch, id, payload, statu
     )
 
     assert response.status_code == status_code
+
+
+async def test_remove_user(async_client, monkeypatch):
+    expected_data = {
+        "id": 1,
+        "username": "maxmusterman",
+        "email": "max.musterman@gmail.com",
+        "is_publisher": False,
+        "is_premium_account": False,
+        "is_verified": False,
+        "is_active": True,
+        "created_at": None,
+        "updated_at": None,
+        "last_logged_in_at": None,
+        "username_updated_at": None,
+        "email_updated_at": None,
+        "password_updated_at": None,
+    }
+
+    async def mock_get_user_by_id(id):
+        return expected_data
+
+    monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
+
+    async def mock_delete_user(id):
+        return id
+
+    monkeypatch.setattr(user_crud, "delete_user", mock_delete_user)
+
+    response = async_client.delete("/users/id/1/")
+
+    assert response.status_code == 202
+    assert response.json() == expected_data
+
+
+async def test_remove_user_by_incorrect_id_data_type(async_client, monkeypatch):
+    expected_data = [
+        {
+            "loc": ["path", "id"],
+            "msg": "value is not a valid integer",
+            "type": "type_error.integer",
+        },
+    ]
+
+    async def mock_get_user_by_id(id):
+        return None
+
+    monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
+
+    response = async_client.delete("/users/id/66G/")
+    assert response.status_code == 422
+    assert response.json()["detail"] == expected_data
