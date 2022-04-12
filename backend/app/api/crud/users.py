@@ -49,3 +49,10 @@ async def update_user(id: int, payload: user_schemas.UserInUpdate):
     )
 
     return await database.execute(query=query)
+
+
+async def delete_user(id: int):
+
+    query = db_users.delete().where(id == db_users.c.id)
+
+    return await database.execute(query=query)
