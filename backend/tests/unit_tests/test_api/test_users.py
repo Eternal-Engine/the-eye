@@ -72,3 +72,52 @@ async def test_invalid_create_user(async_client):
     response = async_client.post("/users/create/", data=orjson.dumps(test_request_payload))
     assert response.status_code == 422
     assert response.json()["detail"][0]["msg"] == "field required"
+
+
+def test_get_user_by_id(async_client, monkeypatch):
+    test_data = {
+        "id": 1,
+        "username": "johndoe",
+        "email": "john.doe@example.com",
+        "is_publisher": False,
+        "is_premium_account": False,
+        "is_verified": False,
+        "is_active": True,
+        "created_at": "2022-04-12T17:16:25.194495",
+        "updated_at": "2022-04-12T17:16:25.194495",
+        "last_logged_in_at": "2022-04-12T17:16:25.194495",
+        "username_updated_at": "2022-04-12T17:16:25.194495",
+        "email_updated_at": "2022-04-12T17:16:25.194495",
+        "password_updated_at": "2022-04-12T17:16:25.194495",
+    }
+
+    async def mock_get_user_by_id(id):
+        return test_data
+
+    monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
+
+    response = async_client.get("/users/id/1")
+
+    assert response.status_code == 200
+    assert response.json() == test_data
+
+
+def test_get_user_by_incorrect_id_data_type(async_client, monkeypatch):
+
+    expected_detail = [
+        {
+            "loc": ["path", "id"],
+            "msg": "value is not a valid integer",
+            "type": "type_error.integer",
+        },
+    ]
+
+    async def mock_get_user_by_id(id):
+        return None
+
+    monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
+
+    response = async_client.get("/users/id/1sr")
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == expected_detail
