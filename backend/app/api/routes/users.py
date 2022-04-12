@@ -3,10 +3,10 @@ from fastapi import APIRouter, status
 from app.api.crud import users as user_crud
 from app.models.schemas import users as user_schemas
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["User"])
 
 
-@router.post("/users/create/", response_model=user_schemas.UserInResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/create/", response_model=user_schemas.UserInResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(payload: user_schemas.UserInCreate):
     new_user = await user_crud.create_user(payload)
 
