@@ -30,3 +30,22 @@ async def get_user_by_id(id: int):
     query = db_users.select().where(id == db_users.c.id)
 
     return await database.fetch_one(query=query)
+
+
+async def update_user(id: int, payload: user_schemas.UserInUpdate):
+
+    query = (
+        db_users.update()
+        .where(id == db_users.c.id)
+        .values(
+            username=payload.username,
+            email=payload.email,
+            is_publisher=payload.is_publisher,
+            is_premium_account=payload.is_premium_account,
+            is_verified=payload.is_verified,
+            is_active=payload.is_active,
+        )
+        .returning(db_users.c.id)
+    )
+
+    return await database.execute(query=query)

@@ -27,7 +27,7 @@ class UserInUpdate(UserAsBase):
     username: Optional[str]
     email: Optional[EmailStr]
     password: Optional[str]
-    updated_at: datetime
+    updated_at: Optional[datetime]
     username_updated_at: Optional[datetime]
     email_updated_at: Optional[datetime]
     password_updated_at: Optional[datetime]
