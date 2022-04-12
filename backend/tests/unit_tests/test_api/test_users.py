@@ -98,7 +98,7 @@ def test_get_user_by_id(async_client, monkeypatch):
 
     response = async_client.get("/users/id/1")
 
-    assert response.status_code == 200
+    assert response.status_code == 302
     assert response.json() == test_data
 
 
