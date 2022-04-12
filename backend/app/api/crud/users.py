@@ -18,6 +18,13 @@ async def create_user(payload: user_schemas.UserInCreate):
     return await database.execute(query=query)
 
 
+async def get_all_users():
+
+    query = db_users.select()
+
+    return await database.fetch_all(query=query)
+
+
 async def get_user_by_id(id: int):
 
     query = db_users.select().where(id == db_users.c.id)
