@@ -1,4 +1,5 @@
 # fmt: off
+# type: ignore
 import databases
 import pytest
 import sqlalchemy
