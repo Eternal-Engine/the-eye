@@ -25,18 +25,18 @@ async def get_all_users():
     return await database.fetch_all(query=query)
 
 
-async def get_user_by_id(id: int):
+async def get_user_by_id(user_id: int):
 
-    query = db_users.select().where(id == db_users.c.id)
+    query = db_users.select().where(user_id == db_users.c.id)
 
     return await database.fetch_one(query=query)
 
 
-async def update_user(id: int, payload: user_schemas.UserInUpdate):
+async def update_user(user_id: int, payload: user_schemas.UserInUpdate):
 
     query = (
         db_users.update()
-        .where(id == db_users.c.id)
+        .where(user_id == db_users.c.id)
         .values(
             username=payload.username,
             email=payload.email,
@@ -51,8 +51,8 @@ async def update_user(id: int, payload: user_schemas.UserInUpdate):
     return await database.execute(query=query)
 
 
-async def delete_user(id: int):
+async def delete_user(user_id: int):
 
-    query = db_users.delete().where(id == db_users.c.id)
+    query = db_users.delete().where(user_id == db_users.c.id)
 
     return await database.execute(query=query)
