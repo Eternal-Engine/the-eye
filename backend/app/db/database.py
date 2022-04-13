@@ -10,6 +10,6 @@ DATABASE_URL = settings.database_url
 # Databases query builder
 database = databases.Database(DATABASE_URL)
 
-# SQLAlchemy native for database transaction
+# Database engine declaration for database transaction
 engine = sqlalchemy.create_engine(DATABASE_URL)
 metadata = sqlalchemy.MetaData()
