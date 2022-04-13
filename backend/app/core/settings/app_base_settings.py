@@ -5,8 +5,8 @@ from pydantic import BaseSettings
 
 class EnvTypes(Enum):
 
-    PROD: str = "prod"
-    DEV: str = "dev"
+    PROD: str = "production"
+    DEV: str = "development"
     TEST: str = "test"
 
     def describe(self):
