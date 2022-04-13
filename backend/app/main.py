@@ -10,10 +10,15 @@ from app.db.database import engine, metadata
 
 
 def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -> FastAPI:
+    """
+    A function to initialize FastAPI instance with a customized application settings, database connection,
+    and API endpoints for the backend application.
+    """
 
     # metadata.drop_all(engine)
     metadata.create_all(engine)
 
+    # FastAPI instance initialized with AppSettings attributes
     application = FastAPI(**settings.fastapi_kwargs)
     application.add_middleware(
         CORSMiddleware,
@@ -23,12 +28,11 @@ def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -
         allow_headers=["*"],
     )
 
-    # Event (database) handler
+    # Connect and disconnect database event handlers
     application.add_event_handler("startup", create_start_app_handler())
-
     application.add_event_handler("shutdown", create_stop_app_handler())
 
-    # Add all routes
+    # Append all routes to endpoints
     application.include_router(api_router, prefix=settings.api_prefix)
 
     return application
