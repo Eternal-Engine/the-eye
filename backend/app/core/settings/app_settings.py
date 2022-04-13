@@ -6,6 +6,10 @@ from app.core.settings.app_base_settings import AppBaseSettings
 
 
 class AppSettings(AppBaseSettings):
+    """
+    The parent class for all 3 types of aplication settings
+    to set up the FastAPI instance with a customized configuration.
+    """
 
     title: str = "iWitness - Backend Production Environment Settings"
     description: str = "A backend project with FastAPI for iWitness web application."
