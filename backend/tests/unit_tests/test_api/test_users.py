@@ -5,7 +5,7 @@ import pytest
 from app.api.crud import users as user_crud
 
 
-async def test_create_user(async_client, monkeypatch):
+async def test_create_users(async_client, monkeypatch):
     test_request_payload = {
         "username": "johndoe",
         "email": "john.doe@example.com",
@@ -37,7 +37,7 @@ async def test_create_user(async_client, monkeypatch):
     monkeypatch.setattr(user_crud, "create_user", mock_create_user)
 
     response = async_client.post(
-        "/users/create/",
+        "/api/users/create/",
         data=orjson.dumps(test_request_payload),
     )
 
@@ -47,7 +47,7 @@ async def test_create_user(async_client, monkeypatch):
 
 async def test_invalid_create_user(async_client):
 
-    response = async_client.post("/users/create/", data=orjson.dumps({}))
+    response = async_client.post("/api/users/create/", data=orjson.dumps({}))
 
     assert response.status_code == 422
     assert response.json() == {
@@ -74,12 +74,12 @@ async def test_invalid_create_user(async_client):
         "username": "johndoe",
     }
 
-    response = async_client.post("/users/create/", data=orjson.dumps(test_request_payload))
+    response = async_client.post("/api/users/create/", data=orjson.dumps(test_request_payload))
     assert response.status_code == 422
     assert response.json()["detail"][0]["msg"] == "field required"
 
 
-def test_get_all_users(async_client, monkeypatch):
+async def test_async_retrieve_all_users(async_client, monkeypatch):
 
     expected_data = [
         {
@@ -119,13 +119,13 @@ def test_get_all_users(async_client, monkeypatch):
 
     monkeypatch.setattr(user_crud, "get_all_users", mock_get_all_users)
 
-    response = async_client.get("/users/")
+    response = async_client.get("/api/users/")
 
     assert response.status_code == 200
     assert response.json() == expected_data
 
 
-def test_get_user_by_id(async_client, monkeypatch):
+async def test_async_retrieve_user_by_id(async_client, monkeypatch):
     expected_data = {
         "id": 1,
         "username": "johndoe",
@@ -147,17 +147,17 @@ def test_get_user_by_id(async_client, monkeypatch):
 
     monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
 
-    response = async_client.get("/users/id/1")
+    response = async_client.get("/api/users/id/1")
 
-    assert response.status_code == 302
+    assert response.status_code == 200
     assert response.json() == expected_data
 
 
-def test_get_user_by_incorrect_id_data_type(async_client, monkeypatch):
+async def test_retrieve_user_by_incorrect_id_data_type(async_client, monkeypatch):
 
     expected_detail = [
         {
-            "loc": ["path", "id"],
+            "loc": ["path", "user_id"],
             "msg": "value is not a valid integer",
             "type": "type_error.integer",
         },
@@ -168,13 +168,13 @@ def test_get_user_by_incorrect_id_data_type(async_client, monkeypatch):
 
     monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
 
-    response = async_client.get("/users/id/1sr")
+    response = async_client.get("/api/users/id/1sr")
 
     assert response.status_code == 422
     assert response.json()["detail"] == expected_detail
 
 
-async def test_update_user(async_client, monkeypatch):
+async def test_async_update_user(async_client, monkeypatch):
     expected_updated_data = {
         "id": 1,
         "username": "maxmusterman",
@@ -201,7 +201,7 @@ async def test_update_user(async_client, monkeypatch):
 
     monkeypatch.setattr(user_crud, "update_user", mock_update_user)
 
-    response = async_client.put("/users/id/1/", data=orjson.dumps(expected_updated_data))
+    response = async_client.put("/api/users/id/1/", data=orjson.dumps(expected_updated_data))
 
     assert response.status_code == 200
     assert response.json() == expected_updated_data
@@ -215,7 +215,7 @@ async def test_update_user(async_client, monkeypatch):
         [999, {"username": "foo", "email": "max.musterman@example.com"}, 404],
     ],
 )
-async def test_update_user_invalid_input(async_client, monkeypatch, id, payload, status_code):
+async def test_async_update_user_with_invalid_input(async_client, monkeypatch, id, payload, status_code):
     async def mock_get_user_by_id(id):
         return None
 
@@ -229,7 +229,7 @@ async def test_update_user_invalid_input(async_client, monkeypatch, id, payload,
     assert response.status_code == status_code
 
 
-async def test_remove_user(async_client, monkeypatch):
+async def test_async_remove_user(async_client, monkeypatch):
     expected_data = {
         "id": 1,
         "username": "maxmusterman",
@@ -256,16 +256,16 @@ async def test_remove_user(async_client, monkeypatch):
 
     monkeypatch.setattr(user_crud, "delete_user", mock_delete_user)
 
-    response = async_client.delete("/users/id/1/")
+    response = async_client.delete("/api/users/id/1/")
 
     assert response.status_code == 202
     assert response.json() == expected_data
 
 
-async def test_remove_user_by_incorrect_id_data_type(async_client, monkeypatch):
+async def test_async_remove_user_by_incorrect_id_data_type(async_client, monkeypatch):
     expected_data = [
         {
-            "loc": ["path", "id"],
+            "loc": ["path", "user_id"],
             "msg": "value is not a valid integer",
             "type": "type_error.integer",
         },
@@ -276,6 +276,6 @@ async def test_remove_user_by_incorrect_id_data_type(async_client, monkeypatch):
 
     monkeypatch.setattr(user_crud, "get_user_by_id", mock_get_user_by_id)
 
-    response = async_client.delete("/users/id/66G/")
+    response = async_client.delete("/api/users/id/66G/")
     assert response.status_code == 422
     assert response.json()["detail"] == expected_data
