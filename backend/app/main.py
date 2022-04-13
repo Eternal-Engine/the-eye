@@ -1,27 +1,37 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes.app_settings import router as app_settings_routes
-from app.api.routes.users import router as user_routes
-from app.core.config import get_settings, log
+from app.api.endpoints import router as api_router
+from app.core.config import get_settings
+from app.core.events import create_start_app_handler, create_stop_app_handler
 from app.core.settings.app_base_settings import EnvTypes
-from app.db.database import database, engine, metadata
-
-# metadata.drop_all(engine)
-metadata.create_all(engine)
-
-settings = get_settings(app_env=EnvTypes.DEV)
-app = FastAPI(**settings.fastapi_kwargs)
-app.include_router(user_routes)
-app.include_router(app_settings_routes)
+from app.core.settings.app_settings import AppSettings
+from app.db.database import engine, metadata
 
 
-@app.on_event("startup")
-async def startup():
-    await database.connect()
-    log.info("Database is successfully CONNECTED...")
+def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -> FastAPI:
+
+    # metadata.drop_all(engine)
+    metadata.create_all(engine)
+
+    application = FastAPI(**settings.fastapi_kwargs)
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.allowed_hosts,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    # Event (database) handler
+    application.add_event_handler("startup", create_start_app_handler())
+
+    application.add_event_handler("shutdown", create_stop_app_handler())
+
+    # Add all routes
+    application.include_router(api_router, prefix=settings.api_prefix)
+
+    return application
 
 
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
-    log.info("Database is DISCONNECTED...")
+app = initialize_application()
