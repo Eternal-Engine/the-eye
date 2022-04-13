@@ -4,15 +4,24 @@ from app.db.events import shutdown_app_db_connection, startup_app_db_connection
 
 
 def create_start_app_handler() -> Callable:
-    async def start_app() -> Any:
+    """
+    A function that handles the general event starter.
+    """
+
+    async def start_app_events() -> Any:
 
         return await startup_app_db_connection()
 
-    return start_app
+    return start_app_events
 
 
 def create_stop_app_handler() -> Callable:
-    async def stop_app() -> Any:
+    """
+    A function that handles the stopage of general events.
+    """
+
+    async def stop_app_events() -> Any:
+
         return await shutdown_app_db_connection()
 
-    return stop_app
+    return stop_app_events
