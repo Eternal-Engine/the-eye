@@ -35,6 +35,9 @@ async def async_client(test_app: FastAPI) -> AsyncClient:
     # Drop all tables from the previous test session
     metadata.drop_all(test_engine)
 
+    # Create all tables from test database for the current test session
+    metadata.create_all(test_engine)
+
     # Initialize the test client for endpoint request
     with TestClient(test_app) as client:
 

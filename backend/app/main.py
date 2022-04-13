@@ -8,15 +8,15 @@ from app.core.settings.app_base_settings import EnvTypes
 from app.core.settings.app_settings import AppSettings
 from app.db.database import engine, metadata
 
+# metadata.drop_all(engine)
+metadata.create_all(engine)
+
 
 def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -> FastAPI:
     """
     A function to initialize FastAPI instance with a customized application settings, database connection,
     and API endpoints for the backend application.
     """
-
-    # metadata.drop_all(engine)
-    metadata.create_all(engine)
 
     # FastAPI instance initialized with AppSettings attributes
     application = FastAPI(**settings.fastapi_kwargs)
