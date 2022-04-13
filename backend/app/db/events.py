@@ -1,20 +1,39 @@
 # type: ignore
 from typing import Any, Coroutine
 
-from app.db.database import database
+from app.core.logging import log
+
+# type: ignore
+from app.db.database import DATABASE_URL, database
 
 
 async def startup_app_db_connection() -> Coroutine[Any, Any, None]:
+    """
+    A function to create a connection to the database.
+    """
 
     try:
+        log.info("Starting connection to database...")
+        log.info(f"Database URL: {DATABASE_URL}")
+
         await database.connect()
-    except ConnectionError:
-        print("Connection to the database cannot be established...")
+
+        log.info("Connection to database is successfully established...")
+
+    except (ConnectionError, ConnectionRefusedError):
+
+        log.info("Fail to connect with the database!!!")
 
 
 async def shutdown_app_db_connection() -> Coroutine[Any, Any, None]:
+    """
+    A function to shutdown the connection to the database.
+    """
 
     try:
         await database.disconnect()
+        log.info("Database is successfully disconnected...")
+
     except ConnectionError:
-        print("Connection to the database cannot be established...")
+
+        log.info("Fail to connect with the database!!!")
