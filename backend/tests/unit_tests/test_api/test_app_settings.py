@@ -1,6 +1,6 @@
 async def test_async_retrieve_app_settings_route(async_client):
 
-    expected = {"environment": "prod"}
+    expected = {"environment": "production"}
 
     response = async_client.get("/api/app_settings/")
 

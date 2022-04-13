@@ -20,7 +20,7 @@ class TestAppSettings(unittest.TestCase):
         )
         self.assertEqual(self.app_base_settings.app_env, self.app_settings.app_env)
         self.assertEqual("Application Settings", self.app_settings.__str__())
-        self.assertEqual("prod", self.app_settings.app_env.value)
+        self.assertEqual("production", self.app_settings.app_env.value)
         self.assertEqual("PROD", self.app_settings.app_env.name)
         self.assertEqual("iWitness - Backend Production Environment Settings", self.app_settings.title),
         self.assertEqual(
