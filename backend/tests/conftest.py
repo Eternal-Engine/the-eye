@@ -1,10 +1,12 @@
 # fmt: off
 # type: ignore
 
+
 import pytest
 from asgi_lifespan import LifespanManager
 from asyncpg.pool import Pool
 from fastapi import FastAPI
+from httpx import AsyncClient
 
 from app.core.config import get_settings
 from app.core.settings.app_base_settings import EnvTypes
@@ -35,3 +37,13 @@ async def initialized_test_app(test_app: FastAPI) -> FastAPI:
 @pytest.fixture(name="pool")
 def pool(initialized_test_app: FastAPI) -> Pool:
     return initialized_test_app.state.pool
+
+
+@pytest.fixture(name="async_client")
+async def async_client(initialized_test_app: FastAPI) -> AsyncClient:
+    async with AsyncClient(
+        app=initialized_test_app,
+        base_url="http://testserver",
+        headers={"Content-Type": "application/json"},
+    ) as client:
+        yield client
