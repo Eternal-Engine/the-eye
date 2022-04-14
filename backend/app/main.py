@@ -6,10 +6,7 @@ from app.core.config import get_settings
 from app.core.events import create_start_app_handler, create_stop_app_handler
 from app.core.settings.app_base_settings import EnvTypes
 from app.core.settings.app_settings import AppSettings
-from app.db.database import engine, metadata
-
-# metadata.drop_all(engine)
-metadata.create_all(engine)
+from app.db.events import create_db_tables
 
 
 def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -> FastAPI:
@@ -39,3 +36,8 @@ def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -
 
 
 app = initialize_application()
+
+
+if __name__ == "__main__":
+    create_db_tables()
+    app()
