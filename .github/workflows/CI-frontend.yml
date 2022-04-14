@@ -1,0 +1,113 @@
+name: 'CI - Frontend 🧬'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+  pull_request:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+
+jobs:
+  build:
+    name: 'Build 🏗'
+    strategy:
+      matrix:
+        os:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+        node-version:
+          - '17.9.0'
+    defaults:
+      run:
+        working-directory: frontend/
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Check repository
+      uses: actions/checkout@v3
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    - name: Display npm version
+      run: npm --version
+    - name: Display Node version
+      run: node --version
+    - name: Install React dependecies 
+      run: npm ci
+    - name: Run the installed dependencies
+      run: npm run build --if-present
+
+  code-quality:
+    needs: build
+    name: 'Code-Quality 💎'
+    strategy:
+      matrix:
+        os:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+        node-version:
+          - '17.9.0'
+    defaults:
+      run:
+        working-directory: frontend/
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Check repository
+      uses: actions/checkout@v3
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    - name: Display npm version
+      run: npm --version
+    - name: Display Node version
+      run: node --version
+    - name: Install React dependecies 
+      run: npm ci
+    - name: Lint frontend with Prettier
+      run: npm run format
+    - name: Lint frontend code with ESLint
+      run: npm run lint
+
+  test:
+    needs: build
+    name: 'Test 🔬'
+    strategy:
+      matrix:
+        os:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+        node-version:
+          - '17.9.0'
+    defaults:
+      run:
+        working-directory: frontend/
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Check repository
+      uses: actions/checkout@v3
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    - name: Display npm version
+      run: npm --version
+    - name: Display Node version
+      run: node --version
+    - name: Install React dependecies 
+      run: npm ci
+    - name: Test React application
+      run: npm test
