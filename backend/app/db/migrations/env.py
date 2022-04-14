@@ -9,7 +9,6 @@ from app.core.config import get_settings
 # access to the values within the .ini file in use.
 config = context.config
 
-
 SETTINGS = get_settings()
 DATABASE_URL = SETTINGS.database_url
 
