@@ -10,14 +10,14 @@ import ForgotPassword from './pages/ForgotPassword';
 function App() {
   return (
     <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/sign-up" element={<Signup />} />
-          <Route path="/log-in" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-        </Routes>
-      </Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/sign-up" element={<Signup />} />
+        <Route path="/log-in" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+      </Routes>
+    </Router>
   );
 }
 

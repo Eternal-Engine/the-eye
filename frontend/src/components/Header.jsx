@@ -3,7 +3,7 @@ import { FiLogIn } from 'react-icons/fi';
 import { SiGnuprivacyguard } from 'react-icons/si';
 import { BsFillPersonCheckFill } from 'react-icons/bs';
 
-function Header({bgColor, textColor }) {
+function Header({ bgColor, textColor }) {
   //Initializing navigation hooks from react-dom
   const navigate = useNavigate();
   //const location = useLocation();
