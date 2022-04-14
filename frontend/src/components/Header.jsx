@@ -14,6 +14,12 @@ function Header({text, bgColor, textColor}) {
     
   }
 
+  const pathMatchRoute = (route) => {
+    if(route == location.pathname){
+      return true
+    }
+  }
+
 
 
   return (
@@ -26,10 +32,10 @@ function Header({text, bgColor, textColor}) {
             <p><BsFillPersonCheckFill fill='#ff6a95' width='25px' height='30px'/>Members: 2,345,782</p>    
               <ul className='navlinks'>
                 <li className='link' onClick={()=> navigate('/log-in')}>
-                    <p className='login'><FiLogIn fill='#ff6a95' width='25px' height='30px'/>Login</p>
+                    <p className='login'><FiLogIn fill={pathMatchRoute('/log-in') ? '#8f8f8f' : '#ff6a95' } width='25px' height='30px'/>Login</p>
                 </li>
                 <li className='link' onClick={()=> navigate('/sign-up')}>
-                    <p className='signup'><SiGnuprivacyguard fill='#ff6a95' width='25px' height='30px'/>Signup</p>
+                    <p className='signup'><SiGnuprivacyguard fill={pathMatchRoute('/sign-up') ? '#8f8f8f' : '#ff6a95' } width='25px' height='30px'/>Signup</p>
                 </li>
               </ul>
             </nav>
