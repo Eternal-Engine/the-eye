@@ -30,6 +30,9 @@ class AppSettings(AppBaseSettings):
     logging_level: int = logging.INFO
     loggers: Tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
 
+    max_connection_count: int = 10
+    min_connection_count: int = 10
+
     class Config:
         env_file = "env/.env.production"
         validate_assignment: bool = True
