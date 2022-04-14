@@ -1,9 +1,9 @@
-function Read(){
-    return(
-        <div>
-            <h1>Read News page</h1>
-        </div>
-    )
+function Read() {
+  return (
+    <div>
+      <h1>Read News page</h1>
+    </div>
+  );
 }
 
-export default Read
+export default Read;
