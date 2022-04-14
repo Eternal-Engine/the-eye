@@ -110,4 +110,4 @@ jobs:
     - name: Install React dependecies 
       run: npm ci
     - name: Test React application
-      run: npm test
+      run: npm test --passWithNoTests
