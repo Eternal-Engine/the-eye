@@ -15,6 +15,8 @@ def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -
     and API endpoints for the backend application.
     """
 
+    create_db_tables()
+
     # FastAPI instance initialized with AppSettings attributes
     application = FastAPI(**settings.fastapi_kwargs)
     application.add_middleware(
@@ -36,8 +38,3 @@ def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -
 
 
 app = initialize_application()
-
-
-if __name__ == "__main__":
-    create_db_tables()
-    app()
