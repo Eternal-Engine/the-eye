@@ -17,7 +17,6 @@ TEST_DATABASE_URL = settings.database_url
 # Databases query builder
 test_database = databases.Database(TEST_DATABASE_URL, force_rollback=True)
 
-test_engine = sqlalchemy.create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False}, echo=True)
 metadata = sqlalchemy.MetaData()
 
 
@@ -28,15 +27,25 @@ def test_app() -> FastAPI:
     return initialize_application(settings=settings)
 
 
-@pytest.fixture(name="async_client")
-@pytest.mark.anyio  # Using asynchronous backend from AsyncIO
-async def async_client(test_app: FastAPI) -> AsyncClient:
+def create_and_drop_test_database():
 
-    # Drop all tables from the previous test session
+    # Create test database and DB tables
+    test_engine = sqlalchemy.create_engine(
+        TEST_DATABASE_URL, connect_args={"check_same_thread": False}, future=True, echo=True
+    )
+    metadata.create_all(test_engine)
+
+    # Run the test suite
+    yield
+
+    # Delete all DB tables
     metadata.drop_all(test_engine)
 
-    # Create all tables from test database for the current test session
-    metadata.create_all(test_engine)
+
+@pytest.fixture(name="async_client")
+async def async_client(test_app: FastAPI) -> AsyncClient:
+
+    create_and_drop_test_database()
 
     # Initialize the test client for endpoint request
     with TestClient(test_app) as client:
