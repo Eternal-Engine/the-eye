@@ -1,7 +1,8 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FiLogIn } from 'react-icons/fi';
 import { SiGnuprivacyguard } from 'react-icons/si';
 import { BsFillPersonCheckFill } from 'react-icons/bs';
+
 function Header({bgColor, textColor }) {
   //Initializing navigation hooks from react-dom
   const navigate = useNavigate();
