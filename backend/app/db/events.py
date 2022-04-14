@@ -4,7 +4,16 @@ from typing import Any, Coroutine
 from app.core.logging import log
 
 # type: ignore
-from app.db.database import DATABASE_URL, database
+from app.db.database import DATABASE_URL, database, engine, metadata
+
+
+def create_db_tables():
+    """
+    A function to create all DB tables.
+    """
+
+    # metadata.drop_all(engine)
+    metadata.create_all(engine)
 
 
 async def startup_app_db_connection() -> Coroutine[Any, Any, None]:
