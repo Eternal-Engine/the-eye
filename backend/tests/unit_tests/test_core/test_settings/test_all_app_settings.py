@@ -28,7 +28,9 @@ class TestAllAppSettingsChildClasses(unittest.TestCase):
             "jwt_token_prefix": "Token",
             "allowed_hosts": ["*"],
             "logging_level": 20,
-            "loggers": ("uvicorn.asgi", "uvicorn.access")
+            "loggers": ("uvicorn.asgi", "uvicorn.access"),
+            "max_connection_count": 10,
+            "min_connection_count": 10,
         }
 
     def test_create_app_prod_settings(self):
