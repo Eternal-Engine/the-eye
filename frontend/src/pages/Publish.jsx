@@ -1,9 +1,9 @@
-function Publish(){
-    return(
-        <div>
-            <h1>Publish</h1>
-        </div>
-    )
+function Publish() {
+  return (
+    <div>
+      <h1>Publish</h1>
+    </div>
+  );
 }
 
-export default Publish
+export default Publish;

@@ -8,7 +8,7 @@ from app.models.schemas import users as user_schemas
 router = APIRouter(prefix="/users", tags=["User"])
 
 
-@router.post("/create/", response_model=user_schemas.UserInResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/create", response_model=user_schemas.UserInResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(payload: user_schemas.UserInCreate):
     new_user_id = await user_crud.create_user(payload)
 
@@ -42,7 +42,7 @@ async def retrieve_user_by_id(user_id: int):
     return db_user
 
 
-@router.put("/id/{user_id}/", response_model=user_schemas.UserInResponse, status_code=status.HTTP_200_OK)
+@router.put("/id/{user_id}", response_model=user_schemas.UserInResponse, status_code=status.HTTP_200_OK)
 async def update_user(user_id: int, payload: user_schemas.UserInUpdate):
     db_user = await user_crud.get_user_by_id(user_id)
 
@@ -64,7 +64,7 @@ async def update_user(user_id: int, payload: user_schemas.UserInUpdate):
     return updated_db_user
 
 
-@router.delete("/id/{user_id}/", response_model=user_schemas.UserInResponse, status_code=status.HTTP_202_ACCEPTED)
+@router.delete("/id/{user_id}", response_model=user_schemas.UserInResponse, status_code=status.HTTP_202_ACCEPTED)
 async def remove_user(user_id: int):
     db_user = await user_crud.get_user_by_id(user_id)
 

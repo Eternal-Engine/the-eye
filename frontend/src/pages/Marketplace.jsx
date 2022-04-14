@@ -1,9 +1,9 @@
-function Marketplace(){
-    return(
-        <div>
-            <h1>Marketplace</h1>
-        </div>
-    )
+function Marketplace() {
+  return (
+    <div>
+      <h1>Marketplace</h1>
+    </div>
+  );
 }
 
-export default Marketplace
+export default Marketplace;

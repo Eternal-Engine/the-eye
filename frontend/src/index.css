@@ -1,4 +1,4 @@
-/* Global stylesheet. other options exist */ 
+/* Global stylesheet. other options exist */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -8,18 +8,17 @@
   padding: 0;
 }
 
-button{
+button {
   font-size: large;
 }
 
-
-.navbar{
+.navbar {
   width: 55%;
   display: flex;
   justify-content: space-between;
   background-color: green;
 }
-.navlinks{
+.navlinks {
   width: 40%;
 }
 
@@ -31,16 +30,14 @@ button{
   margin-right: 65px;
 }
 
-
-.navlinks-holder{
+.navlinks-holder {
   width: 55%;
   display: flex;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
 }
 
-
-.navlinks{
+.navlinks {
   display: flex;
   justify-content: space-between;
 }
@@ -64,12 +61,12 @@ ul {
 }
 
 .container1 {
-    max-width: 100%;
-    padding: 0 20px;
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-  }
+  max-width: 100%;
+  padding: 0 20px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
 
 header {
   height: 70px;
@@ -121,7 +118,6 @@ input:focus {
 
 
 .time-member-holder {
-  
   width: 30%;
   margin-right: 28%;
   display: flex;

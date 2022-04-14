@@ -1,12 +1,12 @@
-import {useNavigate, useLocation} from 'react-router-dom'
-import { FiLogIn } from 'react-icons/fi'
-import { SiGnuprivacyguard } from 'react-icons/si'
-import {BsFillPersonCheckFill} from 'react-icons/bs'
-function Header({text, bgColor, textColor}) {
-  
+import { useNavigate } from 'react-router-dom';
+import { FiLogIn } from 'react-icons/fi';
+import { SiGnuprivacyguard } from 'react-icons/si';
+import { BsFillPersonCheckFill } from 'react-icons/bs';
+
+function Header({ bgColor, textColor }) {
   //Initializing navigation hooks from react-dom
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const headerStyles = {
     backgroundColor: bgColor,
@@ -20,14 +20,10 @@ function Header({text, bgColor, textColor}) {
     }
   }
 
-
-
   return (
     <header style={headerStyles}>
-        <div className='container1'>
-          <h1>iWitness</h1>
-
-            
+      <div className="container1">
+        <h1>iWitness</h1>
             <nav className='navlinks-holder'>
             <p><BsFillPersonCheckFill fill='#ff6a95' width='25px' height='30px'/>Members: 2,345,782</p>    
               <ul className='navlinks'>
@@ -42,13 +38,13 @@ function Header({text, bgColor, textColor}) {
            
         </div>
     </header>
-  )
+  );
 }
 
 Header.defaultProps = {
   text: 'iWitness',
   bgColor: 'rgba(0,0,0,0.4)',
   textColor: '#fff',
-}
+};
 
-export default Header
+export default Header;

@@ -7,7 +7,7 @@ router = APIRouter(
 )
 
 
-@router.get("/app_settings/", status_code=status.HTTP_200_OK)
+@router.get("/app_settings", status_code=status.HTTP_200_OK)
 async def get_app_settings():
     settings = get_settings()
 
