@@ -34,4 +34,4 @@ def test_iW_base_model_construction():
     assert issubclass(base_model.Config, pydantic_base_config)
     assert base_model.Config.allow_population_by_field_name is True
     assert base_model.Config.json_encoders == expected_json_encoders
-    assert base_model.Config.alias_generator == "convert_field_to_camel_case"
+    assert base_model.Config.alias_generator == convert_field_to_camel_case
