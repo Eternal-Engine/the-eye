@@ -1,5 +1,7 @@
 # type: ignore
 from app.models import base_models
+from app.models.mixins.date_time import DateTimeModelMixin
+from app.models.mixins.identifier import IDModelMixin
 
 
 class User(base_models.IWBaseModel):
@@ -11,5 +13,6 @@ class User(base_models.IWBaseModel):
     is_active: bool = True
 
 
-class UserInDB:
-    pass
+class UserInDB(IDModelMixin, DateTimeModelMixin, User):
+    salt: str = ""
+    hashed_password: str = ""
