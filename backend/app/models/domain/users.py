@@ -1,5 +1,4 @@
 # type: ignore
-
 from app.models import base_models
 from app.models.mixins.date_time import DateTimeModelMixin
 from app.models.mixins.identifier import IDModelMixin
@@ -25,5 +24,7 @@ class UserInDB(IDModelMixin, DateTimeModelMixin, User):
 
         return security.verify_password(self.salt + password, self.hashed_password)
 
-    def change_password():
-        pass
+    def change_password(self, new_password: str) -> None:
+
+        self.salt = security.generate_layer_1_password_hash()
+        self.hashed_password = security.get_password_hash(layer_1=self.salt, password=new_password)
