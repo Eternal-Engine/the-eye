@@ -1,6 +1,6 @@
 import pydantic
 
-from app.models.mixin_models.id_mixin_models import IDModelMixin
+from app.models.mixins.identifier import IDModelMixin
 
 
 def test_datetime_model_mixin_construction():

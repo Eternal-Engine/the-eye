@@ -2,7 +2,7 @@ import datetime
 
 import pydantic
 
-from app.models.mixin_models.datetime_mixin_models import DateTimeModelMixin
+from app.models.mixins.date_time import DateTimeModelMixin
 
 
 def test_datetime_model_mixin_construction():
