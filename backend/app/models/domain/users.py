@@ -5,6 +5,7 @@ from app.models.mixins.identifier import IDModelMixin
 
 
 class User(base_models.IWBaseModel):
+
     username: str
     email: str
     is_premium_account: bool = False
@@ -14,5 +15,6 @@ class User(base_models.IWBaseModel):
 
 
 class UserInDB(IDModelMixin, DateTimeModelMixin, User):
+
     salt: str = ""
     hashed_password: str = ""
