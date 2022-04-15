@@ -36,7 +36,7 @@ async def test_create_users(async_client, monkeypatch):
 
     monkeypatch.setattr(user_crud, "create_user", mock_create_user)
 
-    response = async_client.post(
+    response = await async_client.post(
         "/api/users/create",
         data=orjson.dumps(test_request_payload),
     )
@@ -47,7 +47,7 @@ async def test_create_users(async_client, monkeypatch):
 
 async def test_invalid_create_user(async_client):
 
-    response = async_client.post("/api/users/create", data=orjson.dumps({}))
+    response = await async_client.post("/api/users/create", data=orjson.dumps({}))
 
     assert response.status_code == 422
     assert response.json() == {
@@ -74,7 +74,7 @@ async def test_invalid_create_user(async_client):
         "username": "johndoe",
     }
 
-    response = async_client.post("/api/users/create", data=orjson.dumps(test_request_payload))
+    response = await async_client.post("/api/users/create", data=orjson.dumps(test_request_payload))
     assert response.status_code == 422
     assert response.json()["detail"][0]["msg"] == "field required"
 
@@ -119,7 +119,7 @@ async def test_async_retrieve_all_users(async_client, monkeypatch):
 
     monkeypatch.setattr(user_crud, "get_all_users", mock_get_all_users)
 
-    response = async_client.get("/api/users")
+    response = await async_client.get("/api/users")
 
     assert response.status_code == 200
     assert response.json() == expected_data

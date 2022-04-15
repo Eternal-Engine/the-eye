@@ -1,48 +1,35 @@
-# type: ignore
-from typing import Any, Coroutine
+import asyncpg
+from fastapi import FastAPI
+from loguru import logger
 
-from app.core.logging import log
+from app.core.config import get_settings
+from app.core.settings.app_base_settings import EnvTypes
+from app.core.settings.app_settings import AppSettings
 
-# type: ignore
-from app.db.database import DATABASE_URL, database, engine, metadata
 
-
-def create_db_tables():
+async def initialize_db_connection(app: FastAPI, settings: AppSettings = get_settings(app_env=EnvTypes.DEV)) -> None:
     """
-    A function to create all DB tables.
-    """
-
-    # metadata.drop_all(engine)
-    metadata.create_all(engine)
-
-
-async def startup_app_db_connection() -> Coroutine[Any, Any, None]:
-    """
-    A function to create a connection to the database.
+    A function to initialize database connection with AsyncPG for PostgreSQL.
     """
 
-    try:
-        log.info("Starting connection to database...")
-        log.info(f"Database URL: {DATABASE_URL}")
+    logger.info("Connecting to PostgreSQL database...")
 
-        await database.connect()
+    app.state.pool = await asyncpg.create_pool(
+        str(settings.database_url),
+        min_size=settings.min_connection_count,
+        max_size=settings.max_connection_count,
+    )
 
-        log.info("Connection to database is successfully established...")
-
-    except (ConnectionError, ConnectionRefusedError):
-
-        log.info("Fail to connect with the database!!!")
+    logger.info("Connection established...")
 
 
-async def shutdown_app_db_connection() -> Coroutine[Any, Any, None]:
+async def close_db_connection(app: FastAPI) -> None:
     """
-    A function to shutdown the connection to the database.
+    A function to shut down database connection.
     """
 
-    try:
-        await database.disconnect()
-        log.info("Database is successfully disconnected...")
+    logger.info("Closing connection to database...")
 
-    except ConnectionError:
+    await app.state.pool.close()
 
-        log.info("Fail to connect with the database!!!")
+    logger.info("Connection closed...")
