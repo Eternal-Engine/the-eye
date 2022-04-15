@@ -2,10 +2,12 @@ import asyncpg
 from fastapi import FastAPI
 from loguru import logger
 
+from app.core.config import get_settings
+from app.core.settings.app_base_settings import EnvTypes
 from app.core.settings.app_settings import AppSettings
 
 
-async def initialize_db_connection(app: FastAPI, settings: AppSettings) -> None:
+async def initialize_db_connection(app: FastAPI, settings: AppSettings = get_settings(app_env=EnvTypes.DEV)) -> None:
     """
     A function to initialize database connection with AsyncPG for PostgreSQL.
     """
