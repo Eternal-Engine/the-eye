@@ -9,3 +9,7 @@ class User(base_models.IWBaseModel):
     is_publisher: bool = False
     is_verified: bool = False
     is_active: bool = True
+
+
+class UserInDB:
+    pass
