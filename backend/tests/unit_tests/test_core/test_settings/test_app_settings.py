@@ -24,7 +24,7 @@ class TestAppSettings(unittest.TestCase):
         self.assertEqual("PROD", self.app_settings.app_env.name)
         self.assertEqual("iWitness - Backend Production Environment Settings", self.app_settings.title),
         self.assertEqual(
-            "A backend project with FastAPI for iWitness web application.",
+            "A backend application powered by FastAPI, AsyncPG, and PostgresQL.",
             self.app_settings.description,
         ),
         self.assertEqual("0.0.0", self.app_settings.version),
@@ -41,7 +41,7 @@ class TestAppSettings(unittest.TestCase):
 
         expected = {
             "title": "iWitness - Backend Production Environment Settings",
-            "description": "A backend project with FastAPI for iWitness web application.",
+            "description": "A backend application powered by FastAPI, AsyncPG, and PostgresQL.",
             "version": "0.0.0",
             "debug": False,
             "docs_url": "/docs",

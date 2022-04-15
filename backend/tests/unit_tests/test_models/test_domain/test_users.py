@@ -1,5 +1,4 @@
-from app.models import base_models
-from app.models.domain import users as users_domain
+from app.models.domain import base as base_model, users as users_domain
 from app.models.mixins.date_time import DateTimeModelMixin
 from app.models.mixins.identifier import IDModelMixin
 
@@ -14,10 +13,10 @@ def test_user_domain_model_construction():
         "is_verified": False,
         "is_active": True,
     }
-    base_model = base_models.IWBaseModel
+    model = base_model.IWBaseModel
     domain_user = users_domain.User(username="johndoe", email="john.doe@test.com")
 
-    assert issubclass(type(domain_user), base_model)
+    assert issubclass(type(domain_user), model)
     assert domain_user.dict() == expected_attributes
 
 

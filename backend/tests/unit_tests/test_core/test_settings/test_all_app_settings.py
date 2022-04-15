@@ -17,7 +17,7 @@ class TestAllAppSettingsChildClasses(unittest.TestCase):
         self.expected = {
             "app_env": EnvTypes.PROD,
             "title": "iWitness - Backend Production Environment Settings",
-            "description": "A backend project with FastAPI for iWitness web application.",
+            "description": "A backend application powered by FastAPI, AsyncPG, and PostgresQL.",
             "version": "0.0.0",
             "debug": False,
             "docs_url": "/docs",
