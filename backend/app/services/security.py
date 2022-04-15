@@ -13,3 +13,7 @@ def generate_layer_1_password_hash(layer_1: str) -> Any:
 def get_password_hash(layer_1: str, password: str) -> Any:
 
     return pwd_context_layer_2.hash(secret=layer_1 + password)
+
+
+def verify_password():
+    pass
