@@ -12,7 +12,7 @@ class AppSettings(AppBaseSettings):
     """
 
     title: str = "iWitness - Backend Production Environment Settings"
-    description: str = "A backend project with FastAPI for iWitness web application."
+    description: str = "A backend application powered by FastAPI, AsyncPG, and PostgresQL."
     version: str = "0.0.0"
     debug: bool = False
 

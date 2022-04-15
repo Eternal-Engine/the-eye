@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.endpoints import router as api_router
@@ -8,14 +8,14 @@ from app.core.settings.app_base_settings import EnvTypes
 from app.core.settings.app_settings import AppSettings
 
 
-def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -> FastAPI:
+def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -> fastapi.FastAPI:
     """
     A function to initialize FastAPI instance with a customized application settings, database connection,
     and API endpoints for the backend application.
     """
 
     # FastAPI instance initialized with AppSettings attributes
-    application = FastAPI(**settings.fastapi_kwargs)
+    application = fastapi.FastAPI(**settings.fastapi_kwargs)
     application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allowed_hosts,

@@ -1,5 +1,5 @@
 import asyncpg
-from fastapi import FastAPI
+import fastapi
 from loguru import logger
 
 from app.core.config import get_settings
@@ -7,7 +7,9 @@ from app.core.settings.app_base_settings import EnvTypes
 from app.core.settings.app_settings import AppSettings
 
 
-async def initialize_db_connection(app: FastAPI, settings: AppSettings = get_settings(app_env=EnvTypes.DEV)) -> None:
+async def initialize_db_connection(
+    app: fastapi.FastAPI, settings: AppSettings = get_settings(app_env=EnvTypes.DEV)
+) -> None:
     """
     A function to initialize database connection with AsyncPG for PostgreSQL.
     """
@@ -23,7 +25,7 @@ async def initialize_db_connection(app: FastAPI, settings: AppSettings = get_set
     logger.info("Connection established...")
 
 
-async def close_db_connection(app: FastAPI) -> None:
+async def close_db_connection(app: fastapi.FastAPI) -> None:
     """
     A function to shut down database connection.
     """

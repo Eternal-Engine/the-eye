@@ -1,11 +1,11 @@
 # type: ignore
-from app.models import base_models
+from app.models.domain import base as base_model
 from app.models.mixins.date_time import DateTimeModelMixin
 from app.models.mixins.identifier import IDModelMixin
 from app.services import security
 
 
-class User(base_models.IWBaseModel):
+class User(base_model.IWBaseModel):
 
     username: str
     email: str

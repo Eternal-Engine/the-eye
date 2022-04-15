@@ -1,9 +1,9 @@
-from enum import Enum
+import enum
 
-from pydantic import BaseSettings
+import pydantic
 
 
-class EnvTypes(Enum):
+class EnvTypes(enum.Enum):
     """
     The class that stores the 3 types of environment: production, development, test.
     """
@@ -22,7 +22,7 @@ class EnvTypes(Enum):
         return self.value
 
 
-class AppBaseSettings(BaseSettings):
+class AppBaseSettings(pydantic.BaseSettings):
     """
     A class that is utilized as a container for setting up
     the environment for the application settings.

@@ -1,6 +1,6 @@
 from typing import Any, Coroutine
 
-from fastapi import FastAPI
+import fastapi
 from loguru import logger
 
 from app.core.settings.app_settings import AppSettings
@@ -8,7 +8,7 @@ from app.db.events import close_db_connection, initialize_db_connection
 
 
 def create_start_app_event_handler(
-    app: FastAPI,
+    app: fastapi.FastAPI,
     settings: AppSettings,
 ) -> Any:  # type: ignore
     """
@@ -22,7 +22,7 @@ def create_start_app_event_handler(
     return start_app_event
 
 
-def create_stop_app_event_handler(app: FastAPI) -> Any:  # type: ignore
+def create_stop_app_event_handler(app: fastapi.FastAPI) -> Any:  # type: ignore
     """
     A function that shut down all events for the application instance.
     """
