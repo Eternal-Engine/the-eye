@@ -1,5 +1,5 @@
 # type: ignore
-# fmot: off
+# fmt: off
 import datetime
 
 import pydantic
