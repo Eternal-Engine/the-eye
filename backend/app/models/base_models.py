@@ -10,3 +10,7 @@ def convert_datetime_into_string(date_time: datetime.datetime) -> str:
 def convert_field_to_camel_case(string: str) -> str:
 
     return "".join(word.capitalize() or "_" for word in string.split("_"))
+
+
+class IWBaseModel:
+    pass
