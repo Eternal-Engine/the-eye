@@ -20,19 +20,19 @@ function Header({ bgColor, textColor }) {
 
         <nav className="navlinks-holder">
           <p>
-            <BsFillPersonCheckFill fill="#ff6a95" width="25px" height="30px" />
+            <BsFillPersonCheckFill fill="#00cc66" width="25px" height="30px" />
             Members: 2,345,782
           </p>
           <ul className="navlinks">
             <li className="link" onClick={() => navigate('/log-in')}>
               <p className="login">
-                <FiLogIn fill="#ff6a95" width="25px" height="30px" />
+                <FiLogIn fill="#00cc66" width="25px" height="30px" />
                 Login
               </p>
             </li>
             <li className="link" onClick={() => navigate('/sign-up')}>
               <p className="signup">
-                <SiGnuprivacyguard fill="#ff6a95" width="25px" height="30px" />
+                <SiGnuprivacyguard fill="#00cc66" width="25px" height="30px" />
                 Signup
               </p>
             </li>
