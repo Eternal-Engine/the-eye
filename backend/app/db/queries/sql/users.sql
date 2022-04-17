@@ -53,7 +53,7 @@ UPDATE
     users
 SET username        = :new_username,
     email           = :new_email,
-    hashed_password = :new_password,
+    hashed_password = :new_password
 WHERE id = :id
 RETURNING
     updated_at;
@@ -64,7 +64,7 @@ UPDATE
     users
 SET username        = :new_username,
     email           = :new_email,
-    hashed_password = :new_password,
+    hashed_password = :new_password
 WHERE username = :username
 RETURNING
     updated_at;

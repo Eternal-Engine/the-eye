@@ -1,3 +1,5 @@
+from typing import Optional
+
 from app.db.errors import EntityDoesNotExist
 from app.db.queries.queries import queries
 from app.db.repositories import base as base_repo
@@ -68,3 +70,61 @@ class UsersRepository(base_repo.BaseRepository):
             return users_domain.UserInDB(**user_row)
 
         raise EntityDoesNotExist("User with email {user_email} does not exist!")
+
+    async def update_user_by_id(  # noqa: WPS211
+        self,
+        *,
+        user: users_domain.User,
+        username: Optional[str] = None,
+        email: Optional[str] = None,
+        password: Optional[str] = None,
+    ) -> users_domain.UserInDB:
+
+        user_in_db = await self.get_user_by_id(user_id=user.id)
+
+        user_in_db.username = username or user_in_db.username
+        user_in_db.email = email or user_in_db.email
+
+        if password:
+            user_in_db.change_password(password)
+
+        async with self.connection.transaction():
+            user_in_db.updated_at = await queries.update_user_by_id(
+                self.connection,
+                id=user.id,
+                username=user.username,
+                new_username=user_in_db.username,
+                new_email=user_in_db.email,
+                new_salt=user_in_db.salt,
+                new_password=user_in_db.hashed_password,
+            )
+
+        return user_in_db
+
+    async def update_user_by_username(
+        self,
+        *,
+        user: users_domain.User,
+        username: Optional[str] = None,
+        email: Optional[str] = None,
+        password: Optional[str] = None,
+    ) -> users_domain.UserInDB:
+
+        user_in_db = await self.get_user_by_username(username=user.username)
+        user_in_db.username = username or user_in_db.username
+        user_in_db.email = email or user_in_db.email
+
+        if password:
+            user_in_db.change_password(password)
+
+        async with self.connection.transaction():
+            user_in_db.updated_at = await queries.update_user_by_username(
+                self.connection,
+                username=user.username,
+                new_username=user_in_db.username,
+                new_email=user_in_db.email,
+                new_salt=user_in_db.salt,
+                new_password=user_in_db.hashed_password,
+            )
+
+        return user_in_db
