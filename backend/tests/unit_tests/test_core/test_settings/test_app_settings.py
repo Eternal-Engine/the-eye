@@ -1,8 +1,8 @@
 # fmt: off
 import unittest
 
-from app.core.settings.app_base_settings import AppBaseSettings, EnvTypes
-from app.core.settings.app_settings import AppSettings
+from app.core.settings.app import AppSettings
+from app.core.settings.base import AppBaseSettings, EnvTypes
 
 
 class TestAppSettings(unittest.TestCase):
@@ -34,7 +34,6 @@ class TestAppSettings(unittest.TestCase):
         self.assertEqual("", self.app_settings.openapi_prefix),
         self.assertEqual("/openapi.json", self.app_settings.openapi_url),
         self.assertEqual("/redoc", self.app_settings.redoc_url)
-        self.assertEqual("env/.env.production", self.app_settings.Config.env_file)
         self.assertEqual(True, self.app_settings.Config.validate_assignment)
 
     def test_retrieve_app_settings_attributes_for_fastapi_setup(self):
