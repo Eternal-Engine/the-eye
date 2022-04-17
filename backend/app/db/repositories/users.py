@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import Any, Optional
 
 from app.db.errors import EntityDoesNotExist
@@ -49,7 +51,7 @@ class UsersRepository(base_repo.BaseRepository):
 
             return users_domain.UserInDB(**user_row)
 
-        raise EntityDoesNotExist("User with id {user_id} does not exist!")
+        raise EntityDoesNotExist(f"User with id {user_id} does not exist!")
 
     async def get_user_by_username(self, *, username: str) -> users_domain.UserInDB:
 
@@ -59,7 +61,7 @@ class UsersRepository(base_repo.BaseRepository):
 
             return users_domain.UserInDB(**user_row)
 
-        raise EntityDoesNotExist("User with username {username} does not exist!")
+        raise EntityDoesNotExist(f"User with username {username} does not exist!")
 
     async def get_user_by_email(self, *, user_email: str) -> users_domain.UserInDB:
 
@@ -69,7 +71,7 @@ class UsersRepository(base_repo.BaseRepository):
 
             return users_domain.UserInDB(**user_row)
 
-        raise EntityDoesNotExist("User with email {user_email} does not exist!")
+        raise EntityDoesNotExist(f"User with email {user_email} does not exist!")
 
     async def revise_user_by_id(
         self,
@@ -82,24 +84,27 @@ class UsersRepository(base_repo.BaseRepository):
 
         user_in_db = await self.get_user_by_id(user_id=user.id)
 
-        user_in_db.username = username or user_in_db.username
-        user_in_db.email = email or user_in_db.email
+        if user_in_db:
+            user_in_db.username = username or user_in_db.username
+            user_in_db.email = email or user_in_db.email
 
-        if password:
-            user_in_db.change_password(password)
+            if password:
+                user_in_db.change_password(password)
 
-        async with self.connection.transaction():
-            user_in_db.updated_at = await queries.update_user_by_id(
-                self.connection,
-                id=user.id,
-                username=user.username,
-                new_username=user_in_db.username,
-                new_email=user_in_db.email,
-                new_salt=user_in_db.salt,
-                new_password=user_in_db.hashed_password,
-            )
+            async with self.connection.transaction():
+                user_in_db.updated_at = await queries.update_user_by_id(
+                    self.connection,
+                    id=user.id,
+                    username=user.username,
+                    new_username=user_in_db.username,
+                    new_email=user_in_db.email,
+                    new_salt=user_in_db.salt,
+                    new_password=user_in_db.hashed_password,
+                )
 
-        return user_in_db
+            return user_in_db
+
+        raise EntityDoesNotExist("User with that ID does not exist!")
 
     async def revise_user_by_username(
         self,
@@ -111,53 +116,64 @@ class UsersRepository(base_repo.BaseRepository):
     ) -> users_domain.UserInDB:
 
         user_in_db = await self.get_user_by_username(username=user.username)
-        user_in_db.username = username or user_in_db.username
-        user_in_db.email = email or user_in_db.email
 
-        if password:
-            user_in_db.change_password(password)
+        if user_in_db:
+            user_in_db.username = username or user_in_db.username
+            user_in_db.email = email or user_in_db.email
 
-        async with self.connection.transaction():
-            user_in_db.updated_at = await queries.update_user_by_username(
-                self.connection,
-                username=user.username,
-                new_username=user_in_db.username,
-                new_email=user_in_db.email,
-                new_salt=user_in_db.salt,
-                new_password=user_in_db.hashed_password,
-            )
+            if password:
+                user_in_db.change_password(password)
 
-        return user_in_db
+            async with self.connection.transaction():
+                user_in_db.updated_at = await queries.update_user_by_username(
+                    self.connection,
+                    username=user.username,
+                    new_username=user_in_db.username,
+                    new_email=user_in_db.email,
+                    new_salt=user_in_db.salt,
+                    new_password=user_in_db.hashed_password,
+                )
+
+            return user_in_db
+
+        raise EntityDoesNotExist("User with that username does not exist!")
 
     async def remove_user_by_id(
         self,
         *,
-        user: users_domain.User,
+        user_id: int,
     ) -> Any:
 
-        user_in_db = await self.get_user_by_id(user_id=user.id)
+        user_in_db = await self.get_user_by_id(user_id=user_id)
 
-        async with self.connection.transaction():
-            user_in_db = await queries.delete_user_by_id(self.connection, id=user.id)
-        if not user_in_db:
+        if user_in_db:
+            async with self.connection.transaction():
+                user_in_db = await queries.delete_user_by_id(self.connection, id=user_id)
+            if not user_in_db:
 
-            return "User is successfully deleted from database!"
+                return "User is successfully deleted from database!"
 
-        return user_in_db
+            return user_in_db
+
+        raise EntityDoesNotExist(f"User with username {user_id} does not exist!")
 
     async def remove_user_by_username(
         self,
         *,
-        user: users_domain.User,
+        username: str,
     ) -> Any:
 
-        user_in_db = await self.get_user_by_username(username=user.username)
+        user_in_db = await self.get_user_by_username(username=username)
 
-        async with self.connection.transaction():
-            user_in_db = await queries.delete_user_by_username(self.connection, username=user.username)
+        if user_in_db:
 
-        if not user_in_db:
+            async with self.connection.transaction():
+                user_in_db = await queries.delete_user_by_username(self.connection, username=username)
 
-            return "User is successfully deleted from database!"
+            if not user_in_db:
 
-        return user_in_db
+                return "User is successfully deleted from database!"
+
+            return user_in_db
+
+        raise EntityDoesNotExist(f"User with username {username} does not exist!")
