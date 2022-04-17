@@ -33,23 +33,32 @@ def test_app() -> fastapi.FastAPI:
 
 @pytest.fixture(name="initialized_test_app")
 async def initialized_test_app(test_app: fastapi.FastAPI) -> fastapi.FastAPI:
+
     async with asgi_lifespan.LifespanManager(test_app):
+
         test_app.state.pool = await FakeAsyncPGPool.create_pool(test_app.state.pool)
         yield test_app
 
+        async with test_app.state.pool.acquire() as con:
 
-@pytest.fixture(name="pool")
-def pool(initialized_test_app: fastapi.FastAPI) -> asyncpg_pool.Pool:
+            await con.execute("DROP TABLE IF EXISTS users")
+
+
+@pytest.fixture(name="test_pool")
+def test_pool(initialized_test_app: fastapi.FastAPI) -> asyncpg_pool.Pool:
+
     return initialized_test_app.state.pool
 
 
 @pytest.fixture(name="async_client")
 async def async_client(initialized_test_app: fastapi.FastAPI) -> httpx.AsyncClient:
+
     async with httpx.AsyncClient(
         app=initialized_test_app,
         base_url="http://testserver",
         headers={"Content-Type": "application/json"},
     ) as client:
+
         yield client
 
 
