@@ -71,7 +71,7 @@ class UsersRepository(base_repo.BaseRepository):
 
         raise EntityDoesNotExist("User with email {user_email} does not exist!")
 
-    async def update_user_by_id(  # noqa: WPS211
+    async def update_user_by_id(
         self,
         *,
         user: users_domain.User,
