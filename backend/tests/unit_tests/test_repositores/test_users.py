@@ -39,10 +39,13 @@ async def test_read_all_users(test_pool):
         )
 
     async with test_pool.acquire() as conn:
-        all_users = await users_repo.UsersRepository(conn).read_users()
+        all_users_in_db = await users_repo.UsersRepository(conn).read_users()
 
-    for user in all_users:
-        assert user.dict(exclude={"salt", "hashed_password"}) == expected_data
+    for user_in_db in all_users_in_db:
+        assert user_in_db.dict(exclude={"salt", "hashed_password"}) == expected_data
+        assert user_in_db.dict(exclude={"salt", "hashed_password"}) == user.dict(
+            exclude={"id", "salt", "hashed_password"}
+        )
 
 
 async def test_read_user_by_id(test_pool, test_user):
@@ -54,9 +57,9 @@ async def test_read_user_by_id(test_pool, test_user):
     }
 
     async with test_pool.acquire() as conn:
-        user_row = await users_repo.UsersRepository(conn).get_user_by_id(user_id=test_user.id)
+        user_in_db = await users_repo.UsersRepository(conn).get_user_by_id(user_id=test_user.id)
 
-    assert user_row.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
+    assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
 
 async def test_read_user_by_username(test_pool, test_user):
@@ -68,9 +71,9 @@ async def test_read_user_by_username(test_pool, test_user):
     }
 
     async with test_pool.acquire() as conn:
-        user_row = await users_repo.UsersRepository(conn).get_user_by_username(username=test_user.username)
+        user_in_db = await users_repo.UsersRepository(conn).get_user_by_username(username=test_user.username)
 
-    assert user_row.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
+    assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
 
 async def test_read_user_by_email(test_pool, test_user):
@@ -82,12 +85,49 @@ async def test_read_user_by_email(test_pool, test_user):
     }
 
     async with test_pool.acquire() as conn:
-        user_row = await users_repo.UsersRepository(conn).get_user_by_email(user_email=test_user.email)
+        user_in_db = await users_repo.UsersRepository(conn).get_user_by_email(user_email=test_user.email)
 
-    assert user_row.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
+    assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
 
-# async def test_update_user_by_id(test_pool):
+async def test_update_user_by_id(test_pool, test_user):
+
+    expected_data = {
+        "id_": 1,
+        "username": "updated-testuser",
+        "email": "updated-test.user@test.com",
+    }
+    current_user = test_user
+
+    async with test_pool.acquire() as conn:
+        updated_user = await users_repo.UsersRepository(conn).update_user_by_id(
+            user=current_user,
+            username="updated-testuser",
+            email="updated-test.user@test.com",
+            password="updated-password",
+        )
+
+    assert updated_user.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
+
+
+async def test_update_user_by_username(test_pool, test_user):
+
+    expected_data = {
+        "id_": 1,
+        "username": "updated-testuser",
+        "email": "updated-test.user@test.com",
+    }
+    current_user = test_user
+
+    async with test_pool.acquire() as conn:
+        updated_user = await users_repo.UsersRepository(conn).update_user_by_username(
+            user=current_user,
+            username="updated-testuser",
+            email="updated-test.user@test.com",
+            password="updated-password",
+        )
+
+    assert updated_user.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
 
 # async def test_update_user_by_username(test_pool):
