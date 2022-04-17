@@ -1,3 +1,4 @@
+from app.db.errors import EntityDoesNotExist
 from app.db.queries.queries import queries
 from app.db.repositories import base as base_repo
 from app.models.domain import users as users_domain
@@ -37,3 +38,33 @@ class UsersRepository(base_repo.BaseRepository):
                 list_of_all_user_rows.append(users_domain.UserInDB(**user_row))  # type: ignore
 
             return list_of_all_user_rows
+
+    async def get_user_by_id(self, *, user_id: int) -> users_domain.UserInDB:
+
+        user_row = await queries.read_user_by_id(self.connection, id=user_id)
+
+        if user_row:
+
+            return users_domain.UserInDB(**user_row)
+
+        raise EntityDoesNotExist("User with id {user_id} does not exist!")
+
+    async def get_user_by_username(self, *, username: str) -> users_domain.UserInDB:
+
+        user_row = await queries.read_user_by_username(self.connection, username=username)
+
+        if user_row:
+
+            return users_domain.UserInDB(**user_row)
+
+        raise EntityDoesNotExist("User with username {username} does not exist!")
+
+    async def get_user_by_email(self, *, user_email: str) -> users_domain.UserInDB:
+
+        user_row = await queries.read_user_by_email(self.connection, email=user_email)
+
+        if user_row:
+
+            return users_domain.UserInDB(**user_row)
+
+        raise EntityDoesNotExist("User with email {user_email} does not exist!")
