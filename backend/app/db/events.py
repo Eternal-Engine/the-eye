@@ -5,6 +5,7 @@ import loguru
 from app.core.config import get_settings
 from app.core.settings.app import AppSettings
 from app.core.settings.base import EnvTypes
+from app.db.queries import database
 
 
 async def initialize_db_connection(
@@ -23,19 +24,7 @@ async def initialize_db_connection(
     )
 
     async with app.state.pool.acquire() as con:
-        await con.execute(
-            """
-            CREATE TABLE IF NOT EXISTS users (
-                    id SERIAL PRIMARY KEY,
-                    username VARCHAR(50),
-                    email VARCHAR(50),
-                    salt VARCHAR,
-                    hashed_password VARCHAR,
-                    created_at TIMESTAMP,
-                    updated_at TIMESTAMP
-                )
-            """
-        )
+        await con.execute(database.create_db_tables)
 
     loguru.logger.info("Connection established...")
 
