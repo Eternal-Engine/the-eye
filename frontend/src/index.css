@@ -227,6 +227,7 @@ header {
   font-weight: 300;
   text-align: right;
   text-decoration: none;
+  padding-left: 300px;
 }
 
 .signInBar,
