@@ -1,23 +1,23 @@
 # fmt: off
 import unittest
 
-from app.core.settings.app_base_settings import EnvTypes
-from app.core.settings.app_dev_settings import AppDevSettings
-from app.core.settings.app_prod_settings import AppProdSettings
-from app.core.settings.app_settings import AppSettings
-from app.core.settings.app_test_settings import AppTestSettings
+from app.core.settings.app import AppSettings
+from app.core.settings.base import EnvTypes
+from app.core.settings.development import AppDevSettings
+from app.core.settings.production import AppProdSettings
+from app.core.settings.staging import AppStagingSettings
 
 
-class TestAllAppSettingsChildClasses(unittest.TestCase):
+class TestProdDevStagingSettings(unittest.TestCase):
     def setUp(self):
         self.app_settings = AppSettings()
         self.app_prod_settings = AppProdSettings()
         self.app_dev_settings = AppDevSettings()
-        self.app_test_settings = AppTestSettings()
+        self.app_test_settings = AppStagingSettings()
         self.expected = {
             "app_env": EnvTypes.PROD,
             "title": "iWitness - Backend Production Environment Settings",
-            "description": "A backend project with FastAPI for iWitness web application.",
+            "description": "A backend application powered by FastAPI, AsyncPG, and PostgresQL.",
             "version": "0.0.0",
             "debug": False,
             "docs_url": "/docs",
@@ -42,7 +42,6 @@ class TestAllAppSettingsChildClasses(unittest.TestCase):
             )
         )
         self.assertEqual(self.expected, self.app_prod_settings.dict(exclude={"secret_key", "database_url"}))
-        self.assertEqual("env/.env.production", self.app_prod_settings.Config.env_file)
         self.assertEqual(True, self.app_prod_settings.Config.validate_assignment)
 
     def test_create_app_dev_settings(self):
@@ -59,7 +58,6 @@ class TestAllAppSettingsChildClasses(unittest.TestCase):
             )
         )
         self.assertEqual(self.expected, self.app_dev_settings.dict(exclude={"secret_key", "database_url"}))
-        self.assertEqual("env/.env.development", self.app_dev_settings.Config.env_file)
         self.assertEqual(True, self.app_dev_settings.Config.validate_assignment)
 
     def test_create_app_test_settings(self):
@@ -76,5 +74,4 @@ class TestAllAppSettingsChildClasses(unittest.TestCase):
             )
         )
         self.assertEqual(self.expected, self.app_test_settings.dict(exclude={"secret_key", "database_url"}))
-        self.assertEqual("env/.env.test", self.app_test_settings.Config.env_file)
         self.assertEqual(True, self.app_test_settings.Config.validate_assignment)

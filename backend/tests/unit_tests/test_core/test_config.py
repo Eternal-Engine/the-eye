@@ -1,9 +1,9 @@
 # fmt: off
 from app.core.config import environments, get_settings
-from app.core.settings.app_base_settings import EnvTypes
-from app.core.settings.app_dev_settings import AppDevSettings
-from app.core.settings.app_prod_settings import AppProdSettings
-from app.core.settings.app_test_settings import AppTestSettings
+from app.core.settings.base import EnvTypes
+from app.core.settings.development import AppDevSettings
+from app.core.settings.production import AppProdSettings
+from app.core.settings.staging import AppStagingSettings
 
 
 def test_call_default_settings_from_function_get_settings():
@@ -20,7 +20,7 @@ def test_create_app_environments():
     expected = {
         EnvTypes.PROD: AppProdSettings,
         EnvTypes.DEV: AppDevSettings,
-        EnvTypes.TEST: AppTestSettings,
+        EnvTypes.TEST: AppStagingSettings,
     }
 
     assert isinstance(app_env, dict)
@@ -38,6 +38,6 @@ def test_call_dev_app_settings_from_function_get_settings():
 def test_call_test_app_settings_from_function_get_settings():
 
     test_settings = get_settings(EnvTypes.TEST)
-    app_test_settings = AppTestSettings()
+    app_test_settings = AppStagingSettings()
 
     assert test_settings == app_test_settings

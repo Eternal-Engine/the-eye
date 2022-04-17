@@ -1,8 +1,9 @@
 import logging
-import os
 from typing import Any, Dict, List, Tuple
 
-from app.core.settings.app_base_settings import AppBaseSettings
+import decouple
+
+from app.core.settings.base import AppBaseSettings
 
 
 class AppSettings(AppBaseSettings):
@@ -12,12 +13,12 @@ class AppSettings(AppBaseSettings):
     """
 
     title: str = "iWitness - Backend Production Environment Settings"
-    description: str = "A backend project with FastAPI for iWitness web application."
+    description: str = "A backend application powered by FastAPI, AsyncPG, and PostgresQL."
     version: str = "0.0.0"
-    debug: bool = False
+    debug: bool = decouple.config("PROD_DEBUG", cast=bool)
 
-    database_url: str = os.getenv("DATABASE_URL")
-    secret_key: str = os.getenv("SECRET_KEY")
+    database_url: str = decouple.config("PROD_DATABASE_URL", cast=str)
+    secret_key: str = decouple.config("PROD_SECRET_KEY", cast=str)
 
     docs_url: str = "/docs"
     openapi_prefix: str = ""
@@ -34,7 +35,6 @@ class AppSettings(AppBaseSettings):
     min_connection_count: int = 10
 
     class Config:
-        env_file = "env/.env.production"
         validate_assignment: bool = True
 
     @property

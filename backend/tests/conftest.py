@@ -1,49 +1,70 @@
 # fmt: off
 # type: ignore
 
-
+import asgi_lifespan
+import fastapi
+import httpx
 import pytest
-from asgi_lifespan import LifespanManager
-from asyncpg.pool import Pool
-from fastapi import FastAPI
-from httpx import AsyncClient
+from asyncpg import pool as asyncpg_pool
 
 from app.core.config import get_settings
-from app.core.settings.app_base_settings import EnvTypes
+from app.core.settings.base import EnvTypes
+from app.db.queries import database
+from app.db.repositories import users as users_repo
+from app.models.domain import users as users_domain
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
 
-# Set up the `app_env` to use the TEST environment settings
-settings = get_settings(app_env=EnvTypes.TEST)
+# Set up the "app_env" to use the TEST environment settings
+test_settings = get_settings(app_env=EnvTypes.TEST)
 
 
 @pytest.fixture(name="test_app")
-def test_app() -> FastAPI:
+def test_app() -> fastapi.FastAPI:
     """
     A fixture that re-initializes the FastAPI instance for test application.
     """
 
     from app.main import initialize_application  # local import for testing purpose
 
-    return initialize_application(settings=settings)
+    return initialize_application(settings=test_settings)
 
 
 @pytest.fixture(name="initialized_test_app")
-async def initialized_test_app(test_app: FastAPI) -> FastAPI:
-    async with LifespanManager(test_app):
+async def initialized_test_app(test_app: fastapi.FastAPI) -> fastapi.FastAPI:
+
+    async with asgi_lifespan.LifespanManager(test_app):
+
         test_app.state.pool = await FakeAsyncPGPool.create_pool(test_app.state.pool)
         yield test_app
 
 
-@pytest.fixture(name="pool")
-def pool(initialized_test_app: FastAPI) -> Pool:
+@pytest.fixture(scope="function", name="test_pool")
+async def test_pool(initialized_test_app: fastapi.FastAPI) -> asyncpg_pool.Pool:
+
+    async with initialized_test_app.state.pool.acquire() as conn:
+        await conn.execute(database.drop_db_tables)
+
+    async with initialized_test_app.state.pool.acquire() as conn:
+        await conn.execute(database.create_db_tables)
+
     return initialized_test_app.state.pool
 
 
 @pytest.fixture(name="async_client")
-async def async_client(initialized_test_app: FastAPI) -> AsyncClient:
-    async with AsyncClient(
+async def async_client(initialized_test_app: fastapi.FastAPI) -> httpx.AsyncClient:
+
+    async with httpx.AsyncClient(
         app=initialized_test_app,
         base_url="http://testserver",
         headers={"Content-Type": "application/json"},
     ) as client:
+
         yield client
+
+
+@pytest.fixture(name="test_user")
+async def test_user(test_pool: asyncpg_pool.Pool) -> users_domain.UserInDB:
+    async with test_pool.acquire() as conn:
+        return await users_repo.UsersRepository(conn).create_new_user(
+            username="usertest", email="user.test@test.com", password="password-test",
+        )

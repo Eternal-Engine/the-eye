@@ -1,54 +1,30 @@
-from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+import pydantic
+
+from app.models.domain import users as users_domain
+from app.models.schemas import base as base_schema
 
 
-class UserAsBase(BaseModel):
+class UserInLogin(base_schema.IWBaseSchema):  # type: ignore
+    email: pydantic.EmailStr
+    password: str
+
+
+class UserInCreate(UserInLogin):
     username: str
-    email: EmailStr
-    is_publisher: bool = False
-    is_premium_account: bool = False
-    is_verified: bool = False
-    is_active: bool = True
 
 
-class UserInCreate(UserAsBase):
-    password: str
+class UserInUpdate(pydantic.BaseModel):
+    username: Optional[str] = None
+    email: Optional[pydantic.EmailStr] = None
+    password: Optional[str] = None
 
 
-class UserInLogin(BaseModel):
-    email: EmailStr
-    password: str
-    last_logged_in_at: datetime
+class UserWithToken(users_domain.User):  # type: ignore
+    token: str
 
 
-class UserInUpdate(UserAsBase):
-    username: Optional[str]
-    email: Optional[EmailStr]
-    password: Optional[str]
-    updated_at: Optional[datetime]
-    username_updated_at: Optional[datetime]
-    email_updated_at: Optional[datetime]
-    password_updated_at: Optional[datetime]
-    is_publisher: Optional[bool]
-    is_premium_account: Optional[bool]
-    is_verified: Optional[bool]
-    is_active: Optional[bool]
-
-
-class UserInResponse(UserAsBase):
-    id: int
-    created_at: datetime | None
-    updated_at: datetime | None
-    last_logged_in_at: datetime | None
-    username_updated_at: datetime | None
-    email_updated_at: datetime | None
-    password_updated_at: datetime | None
-    is_publisher: bool
-    is_premium_account: bool
-    is_verified: bool
-    is_active: bool
-
-    class Config:
-        orm_mode = True
+class UserInResponse(base_schema.IWBaseSchema):  # type: ignore
+    username: str
+    email: str

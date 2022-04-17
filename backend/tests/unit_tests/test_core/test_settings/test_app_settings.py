@@ -1,8 +1,8 @@
 # fmt: off
 import unittest
 
-from app.core.settings.app_base_settings import AppBaseSettings, EnvTypes
-from app.core.settings.app_settings import AppSettings
+from app.core.settings.app import AppSettings
+from app.core.settings.base import AppBaseSettings, EnvTypes
 
 
 class TestAppSettings(unittest.TestCase):
@@ -24,7 +24,7 @@ class TestAppSettings(unittest.TestCase):
         self.assertEqual("PROD", self.app_settings.app_env.name)
         self.assertEqual("iWitness - Backend Production Environment Settings", self.app_settings.title),
         self.assertEqual(
-            "A backend project with FastAPI for iWitness web application.",
+            "A backend application powered by FastAPI, AsyncPG, and PostgresQL.",
             self.app_settings.description,
         ),
         self.assertEqual("0.0.0", self.app_settings.version),
@@ -34,14 +34,13 @@ class TestAppSettings(unittest.TestCase):
         self.assertEqual("", self.app_settings.openapi_prefix),
         self.assertEqual("/openapi.json", self.app_settings.openapi_url),
         self.assertEqual("/redoc", self.app_settings.redoc_url)
-        self.assertEqual("env/.env.production", self.app_settings.Config.env_file)
         self.assertEqual(True, self.app_settings.Config.validate_assignment)
 
     def test_retrieve_app_settings_attributes_for_fastapi_setup(self):
 
         expected = {
             "title": "iWitness - Backend Production Environment Settings",
-            "description": "A backend project with FastAPI for iWitness web application.",
+            "description": "A backend application powered by FastAPI, AsyncPG, and PostgresQL.",
             "version": "0.0.0",
             "debug": False,
             "docs_url": "/docs",
