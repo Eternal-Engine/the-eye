@@ -43,15 +43,15 @@ class UsersRepository(base_repo.BaseRepository):
 
             return list_of_all_user_rows
 
-    async def get_user_by_id(self, *, user_id: int) -> users_domain.UserInDB:
+    async def get_user_by_id(self, *, id: int) -> users_domain.UserInDB:
 
-        user_row = await queries.read_user_by_id(self.connection, id=user_id)
+        user_row = await queries.read_user_by_id(self.connection, id=id)
 
         if user_row:
 
             return users_domain.UserInDB(**user_row)
 
-        raise EntityDoesNotExist(f"User with id {user_id} does not exist!")
+        raise EntityDoesNotExist(f"User with id {id} does not exist!")
 
     async def get_user_by_username(self, *, username: str) -> users_domain.UserInDB:
 
@@ -63,15 +63,15 @@ class UsersRepository(base_repo.BaseRepository):
 
         raise EntityDoesNotExist(f"User with username {username} does not exist!")
 
-    async def get_user_by_email(self, *, user_email: str) -> users_domain.UserInDB:
+    async def get_user_by_email(self, *, email: str) -> users_domain.UserInDB:
 
-        user_row = await queries.read_user_by_email(self.connection, email=user_email)
+        user_row = await queries.read_user_by_email(self.connection, email=email)
 
         if user_row:
 
             return users_domain.UserInDB(**user_row)
 
-        raise EntityDoesNotExist(f"User with email {user_email} does not exist!")
+        raise EntityDoesNotExist(f"User with email {email} does not exist!")
 
     async def revise_user_by_id(
         self,
@@ -82,7 +82,7 @@ class UsersRepository(base_repo.BaseRepository):
         password: Optional[str] = None,
     ) -> users_domain.UserInDB:
 
-        user_in_db = await self.get_user_by_id(user_id=user.id)
+        user_in_db = await self.get_user_by_id(id=user.id)
 
         if user_in_db:
             user_in_db.username = username or user_in_db.username
@@ -141,21 +141,21 @@ class UsersRepository(base_repo.BaseRepository):
     async def remove_user_by_id(
         self,
         *,
-        user_id: int,
+        id: int,
     ) -> Any:
 
-        user_in_db = await self.get_user_by_id(user_id=user_id)
+        user_in_db = await self.get_user_by_id(id=id)
 
         if user_in_db:
             async with self.connection.transaction():
-                user_in_db = await queries.delete_user_by_id(self.connection, id=user_id)
+                user_in_db = await queries.delete_user_by_id(self.connection, id=id)
             if not user_in_db:
 
                 return "User is successfully deleted from database!"
 
             return user_in_db
 
-        raise EntityDoesNotExist(f"User with username {user_id} does not exist!")
+        raise EntityDoesNotExist(f"User with username {id} does not exist!")
 
     async def remove_user_by_username(
         self,

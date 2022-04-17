@@ -57,7 +57,7 @@ async def test_read_user_by_id(test_pool, test_user):
     }
 
     async with test_pool.acquire() as conn:
-        user_in_db = await users_repo.UsersRepository(conn).get_user_by_id(user_id=test_user.id)
+        user_in_db = await users_repo.UsersRepository(conn).get_user_by_id(id=test_user.id)
 
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
@@ -85,7 +85,7 @@ async def test_read_user_by_email(test_pool, test_user):
     }
 
     async with test_pool.acquire() as conn:
-        user_in_db = await users_repo.UsersRepository(conn).get_user_by_email(user_email=test_user.email)
+        user_in_db = await users_repo.UsersRepository(conn).get_user_by_email(email=test_user.email)
 
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
@@ -135,7 +135,7 @@ async def test_delete_user_by_id(test_pool, test_user):
     current_user = test_user
 
     async with test_pool.acquire() as conn:
-        deleted_user = await users_repo.UsersRepository(conn).remove_user_by_id(user_id=current_user.id)
+        deleted_user = await users_repo.UsersRepository(conn).remove_user_by_id(id=current_user.id)
 
     assert deleted_user != current_user
     assert deleted_user == "User is successfully deleted from database!"
