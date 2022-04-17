@@ -2,16 +2,16 @@ from functools import lru_cache
 from typing import Dict, Type
 
 from app.core.logging import log
-from app.core.settings.app_base_settings import AppBaseSettings, EnvTypes
-from app.core.settings.app_dev_settings import AppDevSettings
-from app.core.settings.app_prod_settings import AppProdSettings
-from app.core.settings.app_settings import AppSettings
-from app.core.settings.app_test_settings import AppTestSettings
+from app.core.settings.app import AppSettings
+from app.core.settings.base import AppBaseSettings, EnvTypes
+from app.core.settings.development import AppDevSettings
+from app.core.settings.production import AppProdSettings
+from app.core.settings.staging import AppStagingSettings
 
 environments: Dict[EnvTypes, Type[AppSettings]] = {
     EnvTypes.PROD: AppProdSettings,
     EnvTypes.DEV: AppDevSettings,
-    EnvTypes.TEST: AppTestSettings,
+    EnvTypes.TEST: AppStagingSettings,
 }
 
 

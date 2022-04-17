@@ -3,7 +3,7 @@ from typing import Any, Coroutine
 import fastapi
 from loguru import logger
 
-from app.core.settings.app_settings import AppSettings
+from app.core.settings.app import AppSettings
 from app.db.events import close_db_connection, initialize_db_connection
 
 
