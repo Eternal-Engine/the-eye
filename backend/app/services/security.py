@@ -1,15 +1,20 @@
 # type: ignore
-import pydantic
+
 from passlib.context import CryptContext
 
-pwd_context_layer_1 = CryptContext(schemes=["bcrypt"], deprecated="auto")
-pwd_context_layer_2 = CryptContext(schemes=["argon2"], deprecated="auto")
+from app.services.config import SecurtiySettings
+
+settings = SecurtiySettings()
+
+pwd_context_layer_1 = CryptContext(schemes=[settings.ALGORITHM_LAYER_1], deprecated="auto")
+pwd_context_layer_2 = CryptContext(schemes=[settings.ALGORITHM_LAYER_2], deprecated="auto")
 
 
-def generate_layer_1_password_hash(layer_1: str = pydantic.SecretStr("SECRET_KEY").get_secret_value()) -> str:
+def generate_layer_1_password_hash(layer_1: str = settings.SECRET_KEY_LAYER_1) -> str:
     """
     A function to generate a hash from Bcrypt to append to the user password.
     """
+
     return pwd_context_layer_1.hash(secret=layer_1)
 
 
