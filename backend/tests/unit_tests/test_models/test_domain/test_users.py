@@ -32,7 +32,7 @@ def test_user_model_for_storing_data_in_database_construction():
         # "is_verified": False,
         # "is_active": True,
         "created_at": None,
-        "id_": 0,
+        "id_": 1,
         "updated_at": None,
     }
     user_in_db = users_domain.UserInDB(
