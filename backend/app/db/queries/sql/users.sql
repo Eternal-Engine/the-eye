@@ -1,4 +1,4 @@
--- name: create-new-user<!
+-- name: create-user<!
 INSERT INTO users (username, email, hashed_password)
 VALUES (:username, :email, :hashed_password)
 RETURNING
@@ -70,13 +70,13 @@ RETURNING
     updated_at;
 
 
--- name: delete-user-by-id<!
+-- name: delete-user-by-id
 DELETE
 FROM users
 WHERE id = :id;
 
 
--- name: delete-user-by-username<!
+-- name: delete-user-by-username
 DELETE
 FROM users
 WHERE username = :username;

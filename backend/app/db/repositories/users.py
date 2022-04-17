@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 
 from app.db.errors import EntityDoesNotExist
 from app.db.queries.queries import queries
@@ -7,7 +7,7 @@ from app.models.domain import users as users_domain
 
 
 class UsersRepository(base_repo.BaseRepository):
-    async def create_user(
+    async def create_new_user(
         self,
         *,
         username: str,
@@ -20,7 +20,7 @@ class UsersRepository(base_repo.BaseRepository):
 
         async with self.connection.transaction():
 
-            user_row = await queries.create_new_user(
+            user_row = await queries.create_user(
                 self.connection,
                 username=db_user.username,
                 email=db_user.email,
@@ -30,7 +30,7 @@ class UsersRepository(base_repo.BaseRepository):
 
         return db_user.copy(update=dict(user_row))
 
-    async def read_users(self) -> users_domain.UserInDB:  # type: ignore
+    async def get_users(self) -> users_domain.UserInDB:  # type: ignore
         async with self.connection.transaction():
             user_rows = await queries.read_users(self.connection)
             list_of_all_user_rows = []
@@ -71,7 +71,7 @@ class UsersRepository(base_repo.BaseRepository):
 
         raise EntityDoesNotExist("User with email {user_email} does not exist!")
 
-    async def update_user_by_id(
+    async def revise_user_by_id(
         self,
         *,
         user: users_domain.User,
@@ -101,7 +101,7 @@ class UsersRepository(base_repo.BaseRepository):
 
         return user_in_db
 
-    async def update_user_by_username(
+    async def revise_user_by_username(
         self,
         *,
         user: users_domain.User,
@@ -126,5 +126,38 @@ class UsersRepository(base_repo.BaseRepository):
                 new_salt=user_in_db.salt,
                 new_password=user_in_db.hashed_password,
             )
+
+        return user_in_db
+
+    async def remove_user_by_id(
+        self,
+        *,
+        user: users_domain.User,
+    ) -> Any:
+
+        user_in_db = await self.get_user_by_id(user_id=user.id)
+
+        async with self.connection.transaction():
+            user_in_db = await queries.delete_user_by_id(self.connection, id=user.id)
+        if not user_in_db:
+
+            return "User is successfully deleted from database!"
+
+        return user_in_db
+
+    async def remove_user_by_username(
+        self,
+        *,
+        user: users_domain.User,
+    ) -> Any:
+
+        user_in_db = await self.get_user_by_username(username=user.username)
+
+        async with self.connection.transaction():
+            user_in_db = await queries.delete_user_by_username(self.connection, username=user.username)
+
+        if not user_in_db:
+
+            return "User is successfully deleted from database!"
 
         return user_in_db
