@@ -24,4 +24,3 @@ class UserInDB(IDModelMixin, DateTimeModelMixin, User):
 
         self.salt = security.generate_layer_1_password_hash()
         self.hashed_password = security.get_password_hash(layer_1=self.salt, password=new_password)
-        # self.hashed_password = security.get_password_hash(password=new_password)
