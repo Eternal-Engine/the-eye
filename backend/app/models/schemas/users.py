@@ -26,4 +26,6 @@ class UserWithToken(users_domain.User):  # type: ignore
 
 
 class UserInResponse(base_schema.IWBaseSchema):  # type: ignore
+    # username: str
+    # email: str
     user: UserWithToken

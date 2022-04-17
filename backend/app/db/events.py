@@ -1,10 +1,10 @@
 import asyncpg
 import fastapi
-from loguru import logger
+import loguru
 
 from app.core.config import get_settings
-from app.core.settings.app_base_settings import EnvTypes
-from app.core.settings.app_settings import AppSettings
+from app.core.settings.app import AppSettings
+from app.core.settings.base import EnvTypes
 
 
 async def initialize_db_connection(
@@ -14,15 +14,30 @@ async def initialize_db_connection(
     A function to initialize database connection with AsyncPG for PostgreSQL.
     """
 
-    logger.info("Connecting to PostgreSQL database...")
+    loguru.logger.info("Connecting to PostgreSQL database...")
 
     app.state.pool = await asyncpg.create_pool(
-        str(settings.database_url),
+        dsn=str(settings.database_url),
         min_size=settings.min_connection_count,
         max_size=settings.max_connection_count,
     )
 
-    logger.info("Connection established...")
+    async with app.state.pool.acquire() as con:
+        await con.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(50),
+                    email VARCHAR(50),
+                    salt VARCHAR,
+                    hashed_password VARCHAR,
+                    created_at TIMESTAMP,
+                    updated_at TIMESTAMP
+                )
+            """
+        )
+
+    loguru.logger.info("Connection established...")
 
 
 async def close_db_connection(app: fastapi.FastAPI) -> None:
@@ -30,8 +45,8 @@ async def close_db_connection(app: fastapi.FastAPI) -> None:
     A function to shut down database connection.
     """
 
-    logger.info("Closing connection to database...")
+    loguru.logger.info("Closing connection to database...")
 
     await app.state.pool.close()
 
-    logger.info("Connection closed...")
+    loguru.logger.info("Connection closed...")

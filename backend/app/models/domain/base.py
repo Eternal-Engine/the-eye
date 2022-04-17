@@ -12,7 +12,10 @@ def convert_datetime_into_string(date_time: datetime.datetime) -> str:
 
 def convert_field_to_camel_case(string: str) -> str:
 
-    return "".join(word.capitalize() or "_" for word in string.split("_"))
+    return "".join(
+        word if index == 0 else word.capitalize()
+        for index, word in enumerate(string.split("_"))
+    )
 
 
 class IWBaseModel(pydantic.BaseModel):
