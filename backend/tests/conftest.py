@@ -10,6 +10,8 @@ from asyncpg import pool as asyncpg_pool
 from app.core.config import get_settings
 from app.core.settings.base import EnvTypes
 from app.db.queries import database
+from app.db.repositories import users as users_repo
+from app.models.domain import users as users_domain
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
 
 # Set up the "app_env" to use the TEST environment settings
@@ -60,19 +62,9 @@ async def async_client(initialized_test_app: fastapi.FastAPI) -> httpx.AsyncClie
         yield client
 
 
-# @pytest.fixture
-# async def test_user(pool: asyncpg_pool.Pool) -> users_domain.UserInDB:
-#     async with pool.acquire() as conn:
-#         return await users_repo.UsersRepository(conn).create_user(
-#             email="user_test@test.com", password="password-test", username="usertest",
-#         )
-
-# @pytest.fixture(name="auth_jwt_prefix")
-# def auth_jwt_prefix() -> str:
-
-#     return settings.jwt_token_prefix
-
-
-# @pytest.fixture(name="token")
-# def token(test_user: users_domain.UserInDB) -> str:
-#     return jwt_services.create_access_token(test_user, jwt_services.SECRET_KEY_JWT)
+@pytest.fixture(name="test_user")
+async def test_user(test_pool: asyncpg_pool.Pool) -> users_domain.UserInDB:
+    async with test_pool.acquire() as conn:
+        return await users_repo.UsersRepository(conn).create_user(
+            username="usertest", email="user.test@test.com", password="password-test",
+        )
