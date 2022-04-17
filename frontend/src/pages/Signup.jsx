@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
+import visibilityIcon from '../assets/svg/visibilityIcon.svg';
 
 function Signup() {
+
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     email: '',
   });
 
-  const { email } = formData;
+  const { email, firstname, lastname, username, password } = formData;
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -35,6 +39,51 @@ function Signup() {
           value={email}
           onChange={onChange}
         />
+
+        <input
+          type="text"
+          className="firstnameInput"
+          placeholder="Firstname"
+          id="firstname"
+          value={firstname}
+          onChange={onChange}
+        />
+
+        <input
+          type="text"
+          className="lastnameInput"
+          placeholder="Lastname"
+          id="lastname"
+          value={lastname}
+          onChange={onChange}
+        />
+
+        <input
+          type="text"
+          className="usernameInput"
+          placeholder="Username"
+          id="username"
+          value={username}
+          onChange={onChange}
+        />
+
+        <div className="passwordInputDiv">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            className="passwordInput"
+            placeholder="Password"
+            id="password"
+            value={password}
+            onChange={onChange}
+          />
+
+          <img
+            src={visibilityIcon}
+            alt="show password"
+            className="showPassword"
+            onClick={() => setShowPassword((prevState) => !prevState)}
+          />
+        </div>
 
         <div className="signUpBar">
           <p className="signUpText">Sign Up</p>
