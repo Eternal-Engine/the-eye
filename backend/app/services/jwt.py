@@ -1,7 +1,8 @@
 import datetime
 from typing import Any, Dict
 
-from jose import jwt as jose_jwt
+import pydantic
+from jose import JWTError as jose_jwterror, jwt as jose_jwt
 
 from app.models.domain import users as users_domain
 from app.models.schemas import jwt as jwt_schemas
@@ -37,3 +38,15 @@ def generate_access_token(user: users_domain.User, secret_key: str = settings.SE
         secret_key=secret_key,
         expires_delta=datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
+
+
+def retrieve_username_from_token(token: str, secret_key: str) -> str:
+
+    try:
+        return jwt_schemas.JWTUser(**jose_jwt.decode(token, secret_key, algorithms=[settings.ALGORITHM_JWT])).username
+
+    except jose_jwterror as token_decode_error:
+        raise ValueError("Unable to decode JW-Token") from token_decode_error
+
+    except pydantic.ValidationError as validation_error:
+        raise ValueError("Invalid payload in token") from validation_error
