@@ -18,7 +18,7 @@ class UserInDB(IDModelMixin, DateTimeModelMixin, User):
 
     def check_password(self, password: str) -> bool:
 
-        return security.verify_password(self.salt + password, self.hashed_password)
+        return security.verify_password(plain_password=self.salt + password, hashed_password=self.hashed_password)
 
     def change_password(self, new_password: str) -> None:
 
