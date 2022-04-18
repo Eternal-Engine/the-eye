@@ -1,3 +1,4 @@
+from app.db.errors import EntityDoesNotExist
 from app.db.repositories import users as users_repo
 from app.models.schemas import users as users_schemas
 
@@ -60,6 +61,20 @@ async def test_read_user_by_id(test_pool, test_user):
         user_in_db = await users_repo.UsersRepository(conn).get_user_by_id(id=test_user.id)
 
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
+
+
+async def test_read_user_by_invalid_id_raised_exception(test_pool):
+
+    fake_id = 999
+
+    def my_exception():
+        EntityDoesNotExist(f"User with id {fake_id} does not exist!")
+
+    async with test_pool.acquire() as conn:
+        user_in_db = await users_repo.UsersRepository(conn).get_user_by_id(id=fake_id)
+
+    assert user_in_db == my_exception()
+    assert user_in_db is None
 
 
 async def test_read_user_by_username(test_pool, test_user):
