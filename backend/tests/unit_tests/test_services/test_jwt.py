@@ -29,3 +29,11 @@ async def test_generate_access_token(test_user):
 
     assert parsed_payload["username"] == "usertest"
     assert parsed_payload["sub"] == "access"
+
+
+def test_retrieve_access_token_from_user(test_user):
+
+    token = jwt_services.generate_access_token(user=test_user, secret_key="fake-secret")
+    username = jwt_services.retrieve_username_from_token(token, "fake-secret")
+
+    assert username == test_user.username
