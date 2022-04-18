@@ -63,7 +63,7 @@ async def _retrieve_current_user(
     users_repo: users_repo.UsersRepository = fastapi.Depends(get_repository(users_repo.UsersRepository)),
     token: str = fastapi.Depends(_get_auth_header_retriever()),
     settings: AppSettings = fastapi.Depends(get_settings),
-) -> users_domain.User:
+) -> users_domain.User:  # type: ignore
 
     settings.secret_key = SECURITY_SETTINGS.SECRET_KEY_JWT
 
@@ -89,7 +89,7 @@ async def _retrieve_optional_current_user(
     repo: users_repo.UsersRepository = fastapi.Depends(get_repository(users_repo.UsersRepository)),
     token: str = fastapi.Depends(_get_auth_header_retriever(required=False)),
     settings: AppSettings = fastapi.Depends(get_settings),
-) -> Optional[users_domain.User]:
+) -> Optional[users_domain.User]:  # type: ignore
 
     if token:
         return await _retrieve_current_user(repo, token, settings)
