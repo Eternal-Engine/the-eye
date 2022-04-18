@@ -17,3 +17,6 @@ class SecuritySettings:
 
     def __str__(self):
         return "Security Settings for Services"
+
+
+SECURITY_SETTINGS = SecuritySettings()
