@@ -1,9 +1,9 @@
 from passlib.context import CryptContext
 
 from app.services import security
-from app.services.config import SecurtiySettings
+from app.services.config import SecuritySettings
 
-settings = SecurtiySettings()
+settings = SecuritySettings()
 
 
 def test_generate_layer_1_pwd_security():

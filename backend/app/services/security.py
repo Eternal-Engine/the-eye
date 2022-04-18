@@ -2,9 +2,9 @@
 
 from passlib.context import CryptContext
 
-from app.services.config import SecurtiySettings
+from app.services.config import SecuritySettings
 
-settings = SecurtiySettings()
+settings = SecuritySettings()
 
 pwd_context_layer_1 = CryptContext(schemes=[settings.ALGORITHM_LAYER_1], deprecated="auto")
 pwd_context_layer_2 = CryptContext(schemes=[settings.ALGORITHM_LAYER_2], deprecated="auto")

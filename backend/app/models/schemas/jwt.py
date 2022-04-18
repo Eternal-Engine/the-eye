@@ -5,8 +5,8 @@ import pydantic
 
 class JWToken(pydantic.BaseModel):
 
-    expiration_date: datetime.datetime
-    subject: str
+    exp: datetime.datetime
+    sub: str
 
 
 class JWTUser(pydantic.BaseModel):
