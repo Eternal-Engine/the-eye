@@ -26,7 +26,7 @@ class AppSettings(AppBaseSettings):
     redoc_url: str = "/redoc"
     api_prefix: str = "/api"
 
-    jwt_token_prefix: str = "Token"
+    jwt_token_prefix: str = decouple.config("JWT_TOKEN_PREFIX", cast=str)
     allowed_hosts: List[str] = ["*"]
     logging_level: int = logging.INFO
     loggers: Tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
