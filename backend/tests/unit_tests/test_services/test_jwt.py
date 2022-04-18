@@ -1,4 +1,3 @@
-# type: ignore
 import datetime
 
 from jose import jwt as jose_jwt
