@@ -25,7 +25,6 @@ class TestProdDevStagingSettings(unittest.TestCase):
             "openapi_url": "/openapi.json",
             "api_prefix": "/api",
             "openapi_prefix": "",
-            "jwt_token_prefix": "Token",
             "allowed_hosts": ["*"],
             "logging_level": 20,
             "loggers": ("uvicorn.asgi", "uvicorn.access"),
@@ -41,7 +40,9 @@ class TestProdDevStagingSettings(unittest.TestCase):
                 type(self.app_settings),
             )
         )
-        self.assertEqual(self.expected, self.app_prod_settings.dict(exclude={"secret_key", "database_url"}))
+        self.assertEqual(self.expected, self.app_prod_settings.dict(
+            exclude={"secret_key", "database_url", "jwt_token_prefix"})
+        )
         self.assertEqual(True, self.app_prod_settings.Config.validate_assignment)
 
     def test_create_app_dev_settings(self):
@@ -57,7 +58,9 @@ class TestProdDevStagingSettings(unittest.TestCase):
                 type(self.app_settings),
             )
         )
-        self.assertEqual(self.expected, self.app_dev_settings.dict(exclude={"secret_key", "database_url"}))
+        self.assertEqual(self.expected, self.app_dev_settings.dict(
+            exclude={"secret_key", "database_url", "jwt_token_prefix"})
+        )
         self.assertEqual(True, self.app_dev_settings.Config.validate_assignment)
 
     def test_create_app_test_settings(self):
@@ -73,5 +76,7 @@ class TestProdDevStagingSettings(unittest.TestCase):
                 type(self.app_settings),
             )
         )
-        self.assertEqual(self.expected, self.app_test_settings.dict(exclude={"secret_key", "database_url"}))
+        self.assertEqual(self.expected, self.app_test_settings.dict(
+            exclude={"secret_key", "database_url", "jwt_token_prefix"})
+        )
         self.assertEqual(True, self.app_test_settings.Config.validate_assignment)
