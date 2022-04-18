@@ -4,9 +4,9 @@ from app.db.repositories import users as users_repo
 from app.models.schemas import users as users_schemas
 
 
-async def test_create_users(test_pool):
+async def test_create_user(test_pool):
 
-    expected_data = {"username": "johndoe", "email": "johndoe@test.com"}
+    expected_data = {"user": {"username": "johndoe", "email": "johndoe@test.com", "token": "fake-token"}}
 
     async with test_pool.acquire() as conn:
         user = await users_repo.UsersRepository(conn).create_new_user(
@@ -16,8 +16,11 @@ async def test_create_users(test_pool):
         )
 
     new_user = users_schemas.UserInResponse(
-        username=user.username,
-        email=user.email,
+        user=users_schemas.UserWithToken(
+            username=user.username,
+            email=user.email,
+            token="fake-token",
+        ),
     )
     print("USER CREATED HERE")
 
