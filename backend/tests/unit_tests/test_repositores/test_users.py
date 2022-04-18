@@ -1,4 +1,5 @@
-from app.db.errors import EntityDoesNotExist
+import pytest
+
 from app.db.repositories import users as users_repo
 from app.models.schemas import users as users_schemas
 
@@ -63,18 +64,13 @@ async def test_read_user_by_id(test_pool, test_user):
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
 
-async def test_read_user_by_invalid_id_raised_exception(test_pool):
+async def test_read_user_by_invalid_id_raise_exception(test_pool):
 
-    fake_id = 999
+    invalid_id = 999
 
-    def my_exception():
-        EntityDoesNotExist(f"User with id {fake_id} does not exist!")
-
-    async with test_pool.acquire() as conn:
-        user_in_db = await users_repo.UsersRepository(conn).get_user_by_id(id=fake_id)
-
-    assert user_in_db == my_exception()
-    assert user_in_db is None
+    with pytest.raises(Exception, match=f"User with id {invalid_id} does not exist!"):
+        async with test_pool.acquire() as conn:
+            await users_repo.UsersRepository(conn).get_user_by_id(id=invalid_id)
 
 
 async def test_read_user_by_username(test_pool, test_user):
@@ -91,6 +87,15 @@ async def test_read_user_by_username(test_pool, test_user):
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
 
+async def test_read_user_by_invalid_username_raise_exception(test_pool):
+
+    invalid_username = "invalidusername"
+
+    with pytest.raises(Exception, match=f"User with username {invalid_username} does not exist!"):
+        async with test_pool.acquire() as conn:
+            await users_repo.UsersRepository(conn).get_user_by_username(username=invalid_username)
+
+
 async def test_read_user_by_email(test_pool, test_user):
 
     expected_data = {
@@ -103,6 +108,15 @@ async def test_read_user_by_email(test_pool, test_user):
         user_in_db = await users_repo.UsersRepository(conn).get_user_by_email(email=test_user.email)
 
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
+
+
+async def test_read_user_by_invalid_email_raise_exception(test_pool):
+
+    invalid_email = "invalid.email@test.com"
+
+    with pytest.raises(Exception, match=f"User with email {invalid_email} does not exist!"):
+        async with test_pool.acquire() as conn:
+            await users_repo.UsersRepository(conn).get_user_by_email(email=invalid_email)
 
 
 async def test_update_user_by_id(test_pool, test_user):

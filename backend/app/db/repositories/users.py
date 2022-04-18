@@ -47,15 +47,11 @@ class UsersRepository(base_repo.BaseRepository):
 
         user_row = await queries.read_user_by_id(self.connection, id=id)
 
-        try:
-            if user_row:
+        if user_row:
 
-                return users_domain.UserInDB(**user_row)
+            return users_domain.UserInDB(**user_row)
 
-        except EntityDoesNotExist:
-            print(f"User with id {id} does not exist!")
-
-        return user_row
+        raise EntityDoesNotExist(f"User with id {id} does not exist!")
 
     async def get_user_by_username(self, *, username: str) -> users_domain.UserInDB:
 
