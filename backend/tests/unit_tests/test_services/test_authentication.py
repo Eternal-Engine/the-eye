@@ -1,9 +1,5 @@
 from app.db.repositories import users as users_repo
-from app.services.authentication import (  # type: ignore
-    authenticate_user,
-    check_email_is_taken,
-    check_username_is_taken,
-)
+from app.services.authentication import authenticate_user, check_email_is_taken, check_username_is_taken
 
 
 async def test_email_is_taken(test_pool, test_user):
