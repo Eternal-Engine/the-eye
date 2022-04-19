@@ -11,7 +11,7 @@ async def test_create_user(test_pool: asyncpg_pool.Pool) -> None:
     expected_data = {"user": {"username": "johndoe", "email": "johndoe@test.com", "token": "fake-token"}}
 
     async with test_pool.acquire() as conn:
-        user = await UsersRepository(conn).create_new_user(
+        user = await UsersRepository(conn).create_user(
             username="johndoe",
             email="johndoe@test.com",
             password="password-test",
@@ -39,7 +39,7 @@ async def test_read_all_users(test_pool: asyncpg_pool.Pool) -> None:
     }
 
     async with test_pool.acquire() as conn:
-        user = await UsersRepository(conn).create_new_user(
+        user = await UsersRepository(conn).create_user(
             username="johndoe",
             email="johndoe@test.com",
             password="password-test",
@@ -124,7 +124,7 @@ async def test_read_user_by_invalid_email_raise_exception(test_pool: asyncpg_poo
             await UsersRepository(conn).get_user_by_email(email=invalid_email)
 
 
-async def test_update_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
+async def test_update_user(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
 
     expected_data = {
         "id_": 1,
@@ -134,27 +134,7 @@ async def test_update_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserIn
     current_user = test_user
 
     async with test_pool.acquire() as conn:
-        updated_user = await UsersRepository(conn).revise_user_by_id(
-            user=current_user,
-            username="updated-testuser",
-            email="updated-test.user@test.com",
-            password="updated-password",
-        )
-
-    assert updated_user.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
-
-
-async def test_update_user_by_username(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
-
-    expected_data = {
-        "id_": 1,
-        "username": "updated-testuser",
-        "email": "updated-test.user@test.com",
-    }
-    current_user = test_user
-
-    async with test_pool.acquire() as conn:
-        updated_user = await UsersRepository(conn).revise_user_by_username(
+        updated_user = await UsersRepository(conn).update_user(
             user=current_user,
             username="updated-testuser",
             email="updated-test.user@test.com",
@@ -169,7 +149,7 @@ async def test_delete_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserIn
     current_user = test_user
 
     async with test_pool.acquire() as conn:
-        deleted_user = await UsersRepository(conn).remove_user_by_id(id=current_user.id)
+        deleted_user = await UsersRepository(conn).delete_user(id=current_user.id)
 
     assert deleted_user != current_user
     assert deleted_user == "User is successfully deleted from database!"
@@ -180,7 +160,18 @@ async def test_delete_user_by_username(test_pool: asyncpg_pool.Pool, test_user: 
     current_user = test_user
 
     async with test_pool.acquire() as conn:
-        deleted_user = await UsersRepository(conn).remove_user_by_username(username=current_user.username)
+        deleted_user = await UsersRepository(conn).delete_user(username=current_user.username)
+
+    assert deleted_user != current_user
+    assert deleted_user == "User is successfully deleted from database!"
+
+
+async def test_delete_user_by_email(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
+
+    current_user = test_user
+
+    async with test_pool.acquire() as conn:
+        deleted_user = await UsersRepository(conn).delete_user(email=current_user.email)
 
     assert deleted_user != current_user
     assert deleted_user == "User is successfully deleted from database!"

@@ -1,4 +1,4 @@
--- name: create-user<!
+-- name: create-new-user<!
 INSERT INTO users (username, email, salt, hashed_password)
 VALUES (:username, :email, :salt, :hashed_password)
 RETURNING

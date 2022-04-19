@@ -66,7 +66,7 @@ async def async_client(initialized_test_app: fastapi.FastAPI) -> httpx.AsyncClie
 @pytest.fixture(name="test_user")
 async def test_user(test_pool: asyncpg_pool.Pool) -> UserInDB:
     async with test_pool.acquire() as conn:
-        return await UsersRepository(conn).create_new_user(
+        return await UsersRepository(conn).create_user(
             username="usertest", email="user.test@test.com", password="password-test",
         )
 
