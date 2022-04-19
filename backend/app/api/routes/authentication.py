@@ -1,5 +1,4 @@
 import fastapi
-from starlette import status as starlette_status
 
 from app.api.dependencies.database import get_repository
 from app.core.config import get_settings
@@ -16,7 +15,7 @@ router = fastapi.APIRouter(prefix="/authentication", tags=["Authentication"])
     path="/signup",
     name="auth:signup",
     response_model=users_schemas.UserInResponse,
-    status_code=starlette_status.HTTP_201_CREATED,
+    status_code=fastapi.status.HTTP_201_CREATED,
 )
 async def signup(
     user_create: users_schemas.UserInCreate = fastapi.Body(..., embed=True, alias="user"),
@@ -26,13 +25,13 @@ async def signup(
 
     if await auth_services.check_username_is_taken(users_repo, user_create.username):
         raise fastapi.HTTPException(
-            status_code=starlette_status.HTTP_400_BAD_REQUEST,
+            status_code=fastapi.status.HTTP_400_BAD_REQUEST,
             detail="Username is not available!",
         )
 
     if await auth_services.check_email_is_taken(users_repo, user_create.email):
         raise fastapi.HTTPException(
-            status_code=starlette_status.HTTP_400_BAD_REQUEST,
+            status_code=fastapi.status.HTTP_400_BAD_REQUEST,
             detail="Email is not available!",
         )
 
@@ -64,7 +63,7 @@ async def signin(
 ) -> users_schemas.UserInResponse:
 
     login_error_exc = fastapi.HTTPException(
-        status_code=starlette_status.HTTP_400_BAD_REQUEST,
+        status_code=fastapi.status.HTTP_400_BAD_REQUEST,
         detail="Incorrect login credentials, check your email or password!",
     )
 

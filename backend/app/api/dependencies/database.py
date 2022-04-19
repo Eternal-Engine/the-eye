@@ -2,12 +2,11 @@ from typing import AsyncGenerator, Callable, Type
 
 import fastapi
 from asyncpg import connection as asyncpg_con, pool as asyncpg_pool
-from starlette import requests as starlette_req
 
 from app.db.repositories import base as base_repo
 
 
-def _get_db_pool(request: starlette_req.Request) -> asyncpg_pool.Pool:
+def _get_db_pool(request: fastapi.requests.Request) -> asyncpg_pool.Pool:
     return request.app.state.pool
 
 
