@@ -1,4 +1,5 @@
-# fmt: off
+# type: ignore
+
 import unittest
 
 from app.core.settings.app import AppSettings
@@ -9,7 +10,7 @@ from app.core.settings.staging import AppStagingSettings
 
 
 class TestProdDevStagingSettings(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.app_settings = AppSettings()
         self.app_prod_settings = AppProdSettings()
         self.app_dev_settings = AppDevSettings()
@@ -32,7 +33,7 @@ class TestProdDevStagingSettings(unittest.TestCase):
             "min_connection_count": 10,
         }
 
-    def test_create_app_prod_settings(self):
+    def test_create_app_prod_settings(self) -> None:
 
         self.assertTrue(
             issubclass(
@@ -40,12 +41,12 @@ class TestProdDevStagingSettings(unittest.TestCase):
                 type(self.app_settings),
             )
         )
-        self.assertEqual(self.expected, self.app_prod_settings.dict(
-            exclude={"secret_key", "database_url", "jwt_token_prefix"})
+        self.assertEqual(
+            self.expected, self.app_prod_settings.dict(exclude={"secret_key", "database_url", "jwt_token_prefix"})
         )
         self.assertEqual(True, self.app_prod_settings.Config.validate_assignment)
 
-    def test_create_app_dev_settings(self):
+    def test_create_app_dev_settings(self) -> None:
 
         self.expected["app_env"] = EnvTypes.DEV
         self.app_dev_settings.app_env = self.expected["app_env"]
@@ -58,12 +59,12 @@ class TestProdDevStagingSettings(unittest.TestCase):
                 type(self.app_settings),
             )
         )
-        self.assertEqual(self.expected, self.app_dev_settings.dict(
-            exclude={"secret_key", "database_url", "jwt_token_prefix"})
+        self.assertEqual(
+            self.expected, self.app_dev_settings.dict(exclude={"secret_key", "database_url", "jwt_token_prefix"})
         )
         self.assertEqual(True, self.app_dev_settings.Config.validate_assignment)
 
-    def test_create_app_test_settings(self):
+    def test_create_app_test_settings(self) -> None:
 
         self.expected["app_env"] = EnvTypes.TEST
         self.app_test_settings.app_env = self.expected["app_env"]
@@ -76,7 +77,7 @@ class TestProdDevStagingSettings(unittest.TestCase):
                 type(self.app_settings),
             )
         )
-        self.assertEqual(self.expected, self.app_test_settings.dict(
-            exclude={"secret_key", "database_url", "jwt_token_prefix"})
+        self.assertEqual(
+            self.expected, self.app_test_settings.dict(exclude={"secret_key", "database_url", "jwt_token_prefix"})
         )
         self.assertEqual(True, self.app_test_settings.Config.validate_assignment)

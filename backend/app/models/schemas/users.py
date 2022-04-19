@@ -2,11 +2,11 @@ from typing import Optional
 
 import pydantic
 
-from app.models.domain import users as users_domain
-from app.models.schemas import base as base_schema
+from app.models.domain.users import User
+from app.models.schemas.base import IWBaseSchema  # type: ignore
 
 
-class UserInLogin(base_schema.IWBaseSchema):  # type: ignore
+class UserInLogin(IWBaseSchema):  # type: ignore
     email: pydantic.EmailStr
     password: str
 
@@ -21,9 +21,9 @@ class UserInUpdate(pydantic.BaseModel):
     password: Optional[str] = None
 
 
-class UserWithToken(users_domain.User):  # type: ignore
+class UserWithToken(User):  # type: ignore
     token: str
 
 
-class UserInResponse(base_schema.IWBaseSchema):  # type: ignore
+class UserInResponse(IWBaseSchema):  # type: ignore
     user: UserWithToken

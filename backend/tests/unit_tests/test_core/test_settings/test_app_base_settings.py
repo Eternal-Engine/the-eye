@@ -1,10 +1,10 @@
-# fmt: off
 from enum import Enum
+from typing import Any
 
 from app.core.settings.base import AppBaseSettings, EnvTypes
 
 
-def test_create_env_types():
+def test_create_env_types() -> None:
 
     env_types = EnvTypes
     # Test inheritance for EnvTypes from Enum built-in Python class
@@ -17,7 +17,7 @@ def test_create_env_types():
     assert str(env_types.TEST) == "test"
 
 
-def test_get_env_type_name_and_value_by_describe_function():
+def test_get_env_type_name_and_value_by_describe_function() -> None:
 
     env_types = EnvTypes
 
@@ -27,7 +27,7 @@ def test_get_env_type_name_and_value_by_describe_function():
 
 
 # Test for AppBaseSettings
-def test_create_app_base_settings_with_prod_env_as_default_app_env():
+def test_create_app_base_settings_with_prod_env_as_default_app_env() -> None:
 
     env_types = EnvTypes
     app_base_default_settings = AppBaseSettings()
@@ -37,7 +37,7 @@ def test_create_app_base_settings_with_prod_env_as_default_app_env():
     assert app_base_default_settings.app_env.describe() == "PROD: production"
 
 
-def test_create_app_base_settings_for_dev_env():
+def test_create_app_base_settings_for_dev_env() -> None:
 
     app_base_dev_settings = AppBaseSettings
     app_base_dev_settings.app_env = EnvTypes.DEV
@@ -46,7 +46,7 @@ def test_create_app_base_settings_for_dev_env():
     assert app_base_dev_settings.app_env.describe() == "DEV: development"
 
 
-def test_create_app_base_settings_for_test_env():
+def test_create_app_base_settings_for_test_env() -> Any:
 
     app_base_test_settings = AppBaseSettings
     app_base_test_settings.app_env = EnvTypes.TEST

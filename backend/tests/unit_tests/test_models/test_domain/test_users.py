@@ -1,4 +1,5 @@
-from app.models.domain import base as base_domain, users as users_domain
+from app.models.domain.base import IWBaseModel
+from app.models.domain.users import User, UserInDB
 from app.models.mixins.date_time import DateTimeModelMixin
 from app.models.mixins.identifier import IDModelMixin
 
@@ -13,8 +14,8 @@ def test_user_domain_model_construction():
         # "is_verified": False,
         # "is_active": True,
     }
-    domain_base_model = base_domain.IWBaseModel
-    domain_user = users_domain.User(username="johndoe", email="john.doe@test.com")
+    domain_base_model = IWBaseModel
+    domain_user = User(username="johndoe", email="john.doe@test.com")
 
     assert issubclass(type(domain_user), domain_base_model)
     assert domain_user.dict() == expected_attributes
@@ -35,12 +36,12 @@ def test_user_model_for_storing_data_in_database_construction():
         "id_": 1,
         "updated_at": None,
     }
-    user_in_db = users_domain.UserInDB(
+    user_in_db = UserInDB(
         username="johndoe",
         email="john.doe@test.com",
     )
 
-    domain_user = users_domain.User
+    domain_user = User
     datetime_model_mixin = DateTimeModelMixin
     id_model_mixin = IDModelMixin
 

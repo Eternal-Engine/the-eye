@@ -1,8 +1,8 @@
 from app.db.errors import EntityDoesNotExist
-from app.db.repositories import users as users_repo
+from app.db.repositories.users import UsersRepository
 
 
-async def check_username_is_taken(users_repo: users_repo.UsersRepository, username: str) -> bool:
+async def check_username_is_taken(users_repo: UsersRepository, username: str) -> bool:
     try:
         await users_repo.get_user_by_username(username=username)
     except EntityDoesNotExist:
@@ -11,7 +11,7 @@ async def check_username_is_taken(users_repo: users_repo.UsersRepository, userna
     return True
 
 
-async def check_email_is_taken(users_repo: users_repo.UsersRepository, email: str) -> bool:
+async def check_email_is_taken(users_repo: UsersRepository, email: str) -> bool:
     try:
         await users_repo.get_user_by_email(email=email)
     except EntityDoesNotExist:
@@ -20,7 +20,7 @@ async def check_email_is_taken(users_repo: users_repo.UsersRepository, email: st
     return True
 
 
-async def authenticate_user(users_repo: users_repo.UsersRepository, email: str, password: str):
+async def authenticate_user(users_repo: UsersRepository, email: str, password: str):
 
     try:
         user_in_db = await users_repo.get_user_by_email(email=email)

@@ -3,7 +3,7 @@ from typing import AsyncGenerator, Callable, Type
 import fastapi
 from asyncpg import connection as asyncpg_con, pool as asyncpg_pool
 
-from app.db.repositories import base as base_repo
+from app.db.repositories.base import BaseRepository
 
 
 def _get_db_pool(request: fastapi.requests.Request) -> asyncpg_pool.Pool:
@@ -18,11 +18,11 @@ async def _get_connection_from_pool(
 
 
 def get_repository(
-    repo_type: Type[base_repo.BaseRepository],
-) -> Callable[[asyncpg_con.Connection], base_repo.BaseRepository]:
+    repo_type: Type[BaseRepository],
+) -> Callable[[asyncpg_con.Connection], BaseRepository]:
     def _get_repo(
         conn: asyncpg_con.Connection = fastapi.Depends(_get_connection_from_pool),
-    ) -> base_repo.BaseRepository:
+    ) -> BaseRepository:
         return repo_type(conn)
 
     return _get_repo

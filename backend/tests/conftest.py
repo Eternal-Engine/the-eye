@@ -9,10 +9,10 @@ from asyncpg import pool as asyncpg_pool
 
 from app.core.config import get_settings
 from app.core.settings.base import EnvTypes
-from app.db.queries import database
-from app.db.repositories import users as users_repo
-from app.models.domain import users as users_domain
-from app.services import jwt as jwt_services
+from app.db.queries.database import create_db_tables, drop_db_tables
+from app.db.repositories.users import UsersRepository
+from app.models.domain.users import UserInDB
+from app.services.jwt import generate_access_token
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
 
 # Set up the "app_env" to use the TEST environment settings
@@ -43,10 +43,10 @@ async def initialized_test_app(test_app: fastapi.FastAPI) -> fastapi.FastAPI:
 async def test_pool(initialized_test_app: fastapi.FastAPI) -> asyncpg_pool.Pool:
 
     async with initialized_test_app.state.pool.acquire() as conn:
-        await conn.execute(database.drop_db_tables)
+        await conn.execute(drop_db_tables)
 
     async with initialized_test_app.state.pool.acquire() as conn:
-        await conn.execute(database.create_db_tables)
+        await conn.execute(create_db_tables)
 
     return initialized_test_app.state.pool
 
@@ -64,16 +64,16 @@ async def async_client(initialized_test_app: fastapi.FastAPI) -> httpx.AsyncClie
 
 
 @pytest.fixture(name="test_user")
-async def test_user(test_pool: asyncpg_pool.Pool) -> users_domain.UserInDB:
+async def test_user(test_pool: asyncpg_pool.Pool) -> UserInDB:
     async with test_pool.acquire() as conn:
-        return await users_repo.UsersRepository(conn).create_new_user(
+        return await UsersRepository(conn).create_new_user(
             username="usertest", email="user.test@test.com", password="password-test",
         )
 
 
 @pytest.fixture(name="test_token")
-def test_token(test_user: users_domain.UserInDB) -> str:
-    return jwt_services.generate_access_token(test_user)
+def test_token(test_user: UserInDB) -> str:
+    return generate_access_token(test_user)
 
 
 @pytest.fixture(name="auth_client")

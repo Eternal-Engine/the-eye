@@ -2,18 +2,17 @@
 from types import TracebackType
 from typing import Optional, Type
 
-from asyncpg import Connection
-from asyncpg.pool import Pool
+from asyncpg import Connection as AsyncPGConnection, pool as asyncpg_pool
 
 
 class FakeAsyncPGPool:
-    def __init__(self, pool: Pool) -> None:
+    def __init__(self, pool: asyncpg_pool.Pool) -> None:
         self._pool = pool
         self._conn = None
         self._tx = None
 
     @classmethod
-    async def create_pool(cls, pool: Pool) -> "FakeAsyncPGPool":
+    async def create_pool(cls, pool: asyncpg_pool.Pool) -> "FakeAsyncPGPool":
 
         pool = cls(pool)
         conn = await pool._pool.acquire()
@@ -40,7 +39,7 @@ class FakePoolAcquireContent:
     def __init__(self, pool: FakeAsyncPGPool) -> None:
         self._pool = pool
 
-    async def __aenter__(self) -> Connection:
+    async def __aenter__(self) -> AsyncPGConnection:
         return self._pool._conn
 
     async def __aexit__(

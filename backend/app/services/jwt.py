@@ -5,8 +5,8 @@ from typing import Any, Dict
 import pydantic
 from jose import JWTError as jose_jwterror, jwt as jose_jwt
 
-from app.models.domain import users as users_domain
-from app.models.schemas import jwt as jwt_schemas
+from app.models.domain.users import User
+from app.models.schemas.jwt import JWToken, JWTUser
 from app.services.config import SECURITY_SETTINGS
 
 
@@ -25,18 +25,18 @@ def generate_jwt_token(
     else:
         expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=15)
 
-    to_encode.update(jwt_schemas.JWToken(exp=expire, sub=SECURITY_SETTINGS.JWT_SUBJECT).dict())
+    to_encode.update(JWToken(exp=expire, sub=SECURITY_SETTINGS.JWT_SUBJECT).dict())
 
     return jose_jwt.encode(to_encode, key=secret_key, algorithm=SECURITY_SETTINGS.ALGORITHM_JWT)
 
 
 def generate_access_token(
-    user: users_domain.User,  # type: ignore
+    user: User,
     secret_key: str = SECURITY_SETTINGS.SECRET_KEY_JWT
     ) -> Any:
 
     return generate_jwt_token(
-        jwt_data=jwt_schemas.JWTUser(username=user.username).dict(),
+        jwt_data=JWTUser(username=user.username).dict(),
         secret_key=secret_key,
         expires_delta=datetime.timedelta(minutes=SECURITY_SETTINGS.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
@@ -45,7 +45,7 @@ def generate_access_token(
 def retrieve_username_from_token(token: str, secret_key: str) -> str:
 
     try:
-        return jwt_schemas.JWTUser(
+        return JWTUser(
             **jose_jwt.decode(token, secret_key, algorithms=[SECURITY_SETTINGS.ALGORITHM_JWT])
         ).username
 

@@ -5,12 +5,12 @@ import app
 from app.main import app as my_app
 
 
-def test_app_version():
+def test_app_version() -> None:
 
     assert app.__version__ == "0.1.0"
 
 
-def test_application_is_fastapi_instance():
+def test_application_is_fastapi_instance() -> None:
 
     app = my_app
     fastapi_app = fastapi.FastAPI

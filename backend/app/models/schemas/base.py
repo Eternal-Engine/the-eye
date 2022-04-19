@@ -1,7 +1,7 @@
 # type: ignore
-from app.models.domain import base as base_domain
+from app.models.domain.base import IWBaseModel
 
 
-class IWBaseSchema(base_domain.IWBaseModel):
-    class Config(base_domain.IWBaseModel.Config):
+class IWBaseSchema(IWBaseModel):
+    class Config(IWBaseModel.Config):
         orm_mode = True

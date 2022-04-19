@@ -1,8 +1,6 @@
 import fastapi
 from fastapi import security as fastapi_security
 
-# from starlette import exceptions as starlette_exc, requests as starlette_req
-
 
 class IWAPIKeyHeader(fastapi_security.APIKeyHeader):
     async def __call__(self, request: fastapi.requests.Request):
