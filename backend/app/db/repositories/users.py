@@ -81,7 +81,7 @@ class UsersRepository(BaseRepository):
         password: Optional[str] = None,
     ) -> UserInDB:
 
-        user_in_db = await self.get_user_by_id(id=user.id)
+        user_in_db = await self.get_user_by_id(id=user.id_)
 
         if user_in_db:
             user_in_db.username = username or user_in_db.username
@@ -93,7 +93,7 @@ class UsersRepository(BaseRepository):
             async with self.connection.transaction():
                 user_in_db.updated_at = await queries.update_user_by_id(
                     self.connection,
-                    id=user.id,
+                    id=user.id_,
                     username=user.username,
                     new_username=user_in_db.username,
                     new_email=user_in_db.email,
