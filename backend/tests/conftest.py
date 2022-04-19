@@ -12,6 +12,7 @@ from app.core.settings.base import EnvTypes
 from app.db.queries import database
 from app.db.repositories import users as users_repo
 from app.models.domain import users as users_domain
+from app.services import jwt as jwt_services
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
 
 # Set up the "app_env" to use the TEST environment settings
@@ -68,3 +69,22 @@ async def test_user(test_pool: asyncpg_pool.Pool) -> users_domain.UserInDB:
         return await users_repo.UsersRepository(conn).create_new_user(
             username="usertest", email="user.test@test.com", password="password-test",
         )
+
+
+@pytest.fixture(name="test_token")
+def test_token(test_user: users_domain.UserInDB) -> str:
+    return jwt_services.generate_access_token(test_user)
+
+
+@pytest.fixture(name="auth_client")
+def authorized_async_client(
+    async_client: httpx.AsyncClient,
+    test_token: str,
+    authorization_prefix: str) -> httpx.AsyncClient:
+
+    async_client.headers = {
+        "Authorization": f"{authorization_prefix} {test_token}",
+        **async_client.headers,
+    }
+
+    return async_client

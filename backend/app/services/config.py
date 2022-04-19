@@ -1,7 +1,7 @@
 import decouple
 
 
-class SecurtiySettings:
+class SecuritySettings:
 
     ALGORITHM_LAYER_1 = decouple.config("ALGORITHM_LAYER_1", cast=str)
     ALGORITHM_LAYER_2 = decouple.config("ALGORITHM_LAYER_2", cast=str)
@@ -17,3 +17,6 @@ class SecurtiySettings:
 
     def __str__(self):
         return "Security Settings for Services"
+
+
+SECURITY_SETTINGS = SecuritySettings()

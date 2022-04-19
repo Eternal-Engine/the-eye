@@ -2,15 +2,13 @@
 
 from passlib.context import CryptContext
 
-from app.services.config import SecurtiySettings
+from app.services.config import SECURITY_SETTINGS
 
-settings = SecurtiySettings()
-
-pwd_context_layer_1 = CryptContext(schemes=[settings.ALGORITHM_LAYER_1], deprecated="auto")
-pwd_context_layer_2 = CryptContext(schemes=[settings.ALGORITHM_LAYER_2], deprecated="auto")
+pwd_context_layer_1 = CryptContext(schemes=[SECURITY_SETTINGS.ALGORITHM_LAYER_1], deprecated="auto")
+pwd_context_layer_2 = CryptContext(schemes=[SECURITY_SETTINGS.ALGORITHM_LAYER_2], deprecated="auto")
 
 
-def generate_layer_1_password_hash(layer_1: str = settings.SECRET_KEY_LAYER_1) -> str:
+def generate_layer_1_password_hash(layer_1: str = SECURITY_SETTINGS.SECRET_KEY_LAYER_1) -> str:
     """
     A function to generate a hash from Bcrypt to append to the user password.
     """
