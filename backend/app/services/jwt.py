@@ -36,18 +36,17 @@ def generate_access_token(
     ) -> Any:
 
     return generate_jwt_token(
-        jwt_data=JWTUser(username=user.username).dict(),
+        jwt_data=JWTUser(email=user.email).dict(),
         secret_key=secret_key,
         expires_delta=datetime.timedelta(minutes=SECURITY_SETTINGS.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
 
-def retrieve_username_from_token(token: str, secret_key: str) -> str:
+def retrieve_email_from_token(token: str, secret_key: str) -> str:  # type: ignore
 
     try:
-        return JWTUser(
-            **jose_jwt.decode(token, secret_key, algorithms=[SECURITY_SETTINGS.ALGORITHM_JWT])
-        ).username
+        payload = jose_jwt.decode(token, secret_key, algorithms=[SECURITY_SETTINGS.ALGORITHM_JWT])
+        return JWTUser(email=payload.get("email")).email  # type: ignore
 
     except jose_jwterror as token_decode_error:
         raise ValueError("Unable to decode JW-Token") from token_decode_error
