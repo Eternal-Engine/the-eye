@@ -12,7 +12,7 @@ from app.db.errors import EntityDoesNotExist
 from app.db.repositories.users import UsersRepository
 from app.models.domain.header import IWAPIKeyHeader
 from app.models.domain.users import User
-from app.services.jwt import retrieve_username_from_token
+from app.services.jwt import retrieve_email_from_token
 
 HEADER_KEY = decouple.config("HEADER_KEY", cast=str)
 
@@ -38,6 +38,7 @@ def _retrieve_auth_header(
         raise http403_exc_forbidden() from value_error
 
     if token_prefix != settings.jwt_token_prefix:
+
         raise http403_exc_forbidden()
 
     return token
@@ -62,14 +63,16 @@ async def _retrieve_current_user(
 ) -> User:
 
     try:
-        username = retrieve_username_from_token(token, secret_key=settings.secret_key)
+        email = retrieve_email_from_token(token, secret_key=settings.secret_key)
 
     except ValueError as value_error:
+
         raise http403_exc_forbidden() from value_error
 
     try:
-        return await users_repo.get_user_by_username(username=username)
+        return await users_repo.get_user_by_email(email=email)
     except EntityDoesNotExist as value_error:
+
         raise http403_exc_forbidden() from value_error
 
 
