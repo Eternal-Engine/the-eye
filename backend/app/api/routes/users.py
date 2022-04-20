@@ -90,6 +90,6 @@ async def delete_current_user(
     users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
 ) -> Any:
 
-    user = await users_repo.get_user_by_id(id=current_user.id_)
+    user = await users_repo.get_user_by_id(id=current_user.id_)  # type: ignore
 
-    return await users_repo.delete_user(id=user.id_)
+    return await users_repo.delete_user(id=user.id_)  # type: ignore
