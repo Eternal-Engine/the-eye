@@ -89,3 +89,19 @@ async def test_fail_update_current_user_by_taken_username(
     )
 
     assert response.status_code == fastapi.status.HTTP_400_BAD_REQUEST
+
+
+async def test_delete_user_successfully_return_http202(
+    test_app: fastapi.FastAPI,
+    authorized_async_client: httpx.AsyncClient,
+    test_user: httpx.AsyncClient,
+    test_pool: asyncpg_pool.Pool,
+) -> None:
+
+    async with test_pool.acquire() as conn:
+        current_user = UsersRepository(conn)
+        await current_user.get_user_by_email(email=test_user.email)
+
+    response = await authorized_async_client.delete(test_app.url_path_for("users:delete-current-user"))
+
+    assert response.status_code == fastapi.status.HTTP_202_ACCEPTED

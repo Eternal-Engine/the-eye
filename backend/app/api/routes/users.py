@@ -1,3 +1,5 @@
+from typing import Any
+
 import fastapi
 
 from app.api.dependencies.authorization import retrieve_current_user_auth
@@ -13,7 +15,12 @@ from app.services.jwt import generate_access_token
 router = fastapi.APIRouter(prefix="/users", tags=["User"])
 
 
-@router.get("/user", response_model=UserInResponse, name="users:get-current-user")
+@router.get(
+    path="/user",
+    name="users:get-current-user",
+    response_model=UserInResponse,
+    status_code=fastapi.status.HTTP_200_OK,
+)
 async def retrieve_current_user(
     user: User = fastapi.Depends(retrieve_current_user_auth()),
     settings: AppSettings = fastapi.Depends(get_settings),
@@ -31,7 +38,12 @@ async def retrieve_current_user(
     )
 
 
-@router.put("/update", response_model=UserInResponse, name="users:update-current-user")
+@router.put(
+    path="/update",
+    name="users:update-current-user",
+    response_model=UserInResponse,
+    status_code=fastapi.status.HTTP_200_OK,
+)
 async def update_current_user(
     user_update: UserInUpdate = fastapi.Body(..., embed=True, alias="user"),
     current_user: User = fastapi.Depends(retrieve_current_user_auth()),
@@ -68,11 +80,15 @@ async def update_current_user(
     )
 
 
-@router.delete("/delete", name="users:delete-current-user")
+@router.delete(
+    path="/delete",
+    name="users:delete-current-user",
+    status_code=fastapi.status.HTTP_202_ACCEPTED,
+)
 async def delete_current_user(
     current_user: User = fastapi.Depends(retrieve_current_user_auth()),
     users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
-) -> UserInResponse:
+) -> Any:
 
     user = await users_repo.get_user_by_id(id=current_user.id_)
 
