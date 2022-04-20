@@ -63,6 +63,15 @@ async def async_client(initialized_test_app: fastapi.FastAPI) -> httpx.AsyncClie
         yield client
 
 
+@pytest.fixture(name="authorization_prefix")
+def authorization_prefix() -> str:
+
+    settings = get_settings()
+    jwt_token_prefix = settings.jwt_token_prefix
+
+    return jwt_token_prefix
+
+
 @pytest.fixture(name="test_user")
 async def test_user(test_pool: asyncpg_pool.Pool) -> UserInDB:
     async with test_pool.acquire() as conn:
@@ -76,7 +85,7 @@ def test_token(test_user: UserInDB) -> str:
     return generate_access_token(test_user)
 
 
-@pytest.fixture(name="auth_client")
+@pytest.fixture(name="authorized_async_client")
 def authorized_async_client(
     async_client: httpx.AsyncClient,
     test_token: str,
