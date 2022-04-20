@@ -6,7 +6,7 @@ from app.core.settings.production import AppProdSettings
 from app.core.settings.staging import AppStagingSettings
 
 
-def test_call_default_settings_from_function_get_settings():
+def test_call_default_settings_from_function_get_settings() -> None:
 
     default_settings = get_settings()
     app_prod_settings = AppProdSettings()
@@ -14,7 +14,7 @@ def test_call_default_settings_from_function_get_settings():
     assert default_settings == app_prod_settings
 
 
-def test_create_app_environments():
+def test_create_app_environments() -> None:
 
     app_env = environments
     expected = {
@@ -27,7 +27,7 @@ def test_create_app_environments():
     assert app_env == expected
 
 
-def test_call_dev_app_settings_from_function_get_settings():
+def test_call_dev_app_settings_from_function_get_settings() -> None:
 
     dev_settings = get_settings(EnvTypes.DEV)
     app_dev_settings = AppDevSettings()
@@ -35,7 +35,7 @@ def test_call_dev_app_settings_from_function_get_settings():
     assert dev_settings == app_dev_settings
 
 
-def test_call_test_app_settings_from_function_get_settings():
+def test_call_test_app_settings_from_function_get_settings() -> None:
 
     test_settings = get_settings(EnvTypes.TEST)
     app_test_settings = AppStagingSettings()

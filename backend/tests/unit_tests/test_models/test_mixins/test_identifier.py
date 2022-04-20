@@ -3,7 +3,7 @@ import pydantic
 from app.models.mixins.identifier import IDModelMixin
 
 
-def test_datetime_model_mixin_construction():
+def test_datetime_model_mixin_construction() -> None:
 
     id_mixin = IDModelMixin(id=1)
     pydantic_base_model = pydantic.BaseModel

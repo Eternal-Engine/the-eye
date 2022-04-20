@@ -1,7 +1,7 @@
 from typing import Any, Coroutine
 
 import fastapi
-from loguru import logger
+import loguru
 
 from app.core.settings.app import AppSettings
 from app.db.events import close_db_connection, initialize_db_connection
@@ -27,7 +27,7 @@ def create_stop_app_event_handler(app: fastapi.FastAPI) -> Any:  # type: ignore
     A function that shut down all events for the application instance.
     """
 
-    @logger.catch
+    @loguru.logger.catch
     async def stop_app_event() -> Coroutine[Any, Any, None]:  # type: ignore
 
         await close_db_connection(app)

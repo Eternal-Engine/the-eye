@@ -2,6 +2,7 @@ import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.endpoints import router as api_router
+from app.api.exceptions.events import http422_error_handler, http_error_handler
 from app.core.config import get_settings
 from app.core.events import create_start_app_event_handler, create_stop_app_event_handler
 from app.core.settings.app import AppSettings
@@ -33,6 +34,9 @@ def initialize_application(settings: AppSettings = get_settings(EnvTypes.DEV)) -
         "shutdown",
         create_stop_app_event_handler(application),
     )
+
+    application.add_exception_handler(fastapi.HTTPException, http_error_handler)
+    application.add_exception_handler(fastapi.exceptions.RequestValidationError, http422_error_handler)
 
     # Append all routes to endpoints
     application.include_router(api_router, prefix=settings.api_prefix)

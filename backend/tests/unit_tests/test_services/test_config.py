@@ -1,9 +1,9 @@
-from app.services.config import SecuritySettings
+from app.services.config import SECURITY_SETTINGS
 
 
-def test_security_settings_construction():
+def test_security_settings_construction() -> None:
 
-    settings = SecuritySettings()
+    settings = SECURITY_SETTINGS
 
     assert isinstance(settings.ACCESS_TOKEN_EXPIRE_MINUTES, int)
     assert isinstance(settings.ALGORITHM_JWT, str)

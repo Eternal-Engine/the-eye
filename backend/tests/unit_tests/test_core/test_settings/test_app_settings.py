@@ -1,4 +1,5 @@
 # fmt: off
+# type: ignore
 import unittest
 
 from app.core.settings.app import AppSettings
@@ -6,11 +7,11 @@ from app.core.settings.base import AppBaseSettings, EnvTypes
 
 
 class TestAppSettings(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.app_base_settings = AppBaseSettings()
         self.app_settings = AppSettings()
 
-    def test_create_app_settings(self):
+    def test_create_app_settings(self) -> None:
 
         self.assertTrue(
             issubclass(
@@ -36,7 +37,7 @@ class TestAppSettings(unittest.TestCase):
         self.assertEqual("/redoc", self.app_settings.redoc_url)
         self.assertEqual(True, self.app_settings.Config.validate_assignment)
 
-    def test_retrieve_app_settings_attributes_for_fastapi_setup(self):
+    def test_retrieve_app_settings_attributes_for_fastapi_setup(self) -> None:
 
         expected = {
             "title": "iWitness - Backend Production Environment Settings",

@@ -1,5 +1,3 @@
-# type: ignore
-
 from passlib.context import CryptContext
 
 from app.services.config import SECURITY_SETTINGS
@@ -13,7 +11,7 @@ def generate_layer_1_password_hash(layer_1: str = SECURITY_SETTINGS.SECRET_KEY_L
     A function to generate a hash from Bcrypt to append to the user password.
     """
 
-    return pwd_context_layer_1.hash(secret=layer_1)
+    return pwd_context_layer_1.hash(secret=layer_1)  # type: ignore
 
 
 def get_password_hash(layer_1: str, password: str) -> str:
@@ -22,7 +20,7 @@ def get_password_hash(layer_1: str, password: str) -> str:
     hash it for the second time using Argon2 algorithm.
     """
 
-    return pwd_context_layer_2.hash(secret=layer_1 + password)
+    return pwd_context_layer_2.hash(secret=layer_1 + password)  # type: ignore
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -30,4 +28,4 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     A function that decodes users' password and verifies whether it is the correct password.
     """
 
-    return pwd_context_layer_2.verify(secret=plain_password, hash=hashed_password)
+    return pwd_context_layer_2.verify(secret=plain_password, hash=hashed_password)  # type: ignore
