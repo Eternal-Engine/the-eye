@@ -1,7 +1,7 @@
 import fastapi
 
 from app.api.dependencies.database import get_repository
-from app.api.errors.http_exc_400 import http400_exc_bad_request
+from app.api.exceptions.http_exc_400 import http400_exc_bad_request
 from app.core.config import get_settings
 from app.core.settings.app import AppSettings
 from app.db.errors import EntityDoesNotExist
