@@ -8,21 +8,30 @@ from app.models.domain.users import UserInDB
 from app.models.schemas.users import UserInResponse
 
 
-async def test_retrieve_current_user(
-    test_app: fastapi.FastAPI,
+async def test_retrieve_current_user_successful(
     authorized_async_client: httpx.AsyncClient,
     test_user: UserInDB,
 ) -> None:
 
-    response = await authorized_async_client.get(test_app.url_path_for("users:get-current-user"))
+    response = await authorized_async_client.get(url="api/user?id=1")
     assert response.status_code == fastapi.status.HTTP_200_OK
 
     user_profile = UserInResponse(**response.json())
     assert user_profile.user.email == test_user.email
 
 
-async def test_update_current_user(
-    test_app: fastapi.FastAPI,
+async def test_fail_to_retrieve_current_user_by_invalid_id_not_found(
+    authorized_async_client: httpx.AsyncClient,
+) -> None:
+
+    response = await authorized_async_client.get(url="api/user?id=2")
+    assert response.status_code == fastapi.status.HTTP_404_NOT_FOUND
+    assert response.json() == {
+        "errors": ["Either the user with ID 2 is deleted, or you are not authorized; Check your authorization!"]
+    }
+
+
+async def test_update_current_user_username_and_email_successful(
     test_user: UserInDB,
     authorized_async_client: httpx.AsyncClient,
 ) -> None:
@@ -34,9 +43,7 @@ async def test_update_current_user(
         }
     }
 
-    response = await authorized_async_client.put(
-        test_app.url_path_for("users:update-current-user"), json=updated_user_data
-    )
+    response = await authorized_async_client.put(url="api/user/update?id=1", json=updated_user_data)
     assert response.status_code == fastapi.status.HTTP_200_OK
 
     updated_user = UserInResponse(**response.json()).dict()
@@ -45,14 +52,13 @@ async def test_update_current_user(
     assert "token" in updated_user["user"]
 
 
-async def test_user_update_password(
-    test_app: fastapi.FastAPI,
+async def test_user_update_password_successful(
     authorized_async_client: httpx.AsyncClient,
     test_pool: asyncpg_pool.Pool,
 ) -> None:
 
     response = await authorized_async_client.put(
-        test_app.url_path_for("users:update-current-user"),
+        url="api/user/update?id=1",
         json={"user": {"password": "new_password"}},
     )
     assert response.status_code == fastapi.status.HTTP_200_OK
@@ -65,34 +71,7 @@ async def test_user_update_password(
     assert user_in_db.check_password("new_password")
 
 
-async def test_fail_update_current_user_by_taken_username(
-    test_app: fastapi.FastAPI,
-    authorized_async_client: httpx.AsyncClient,
-    test_user: httpx.AsyncClient,
-    test_pool: asyncpg_pool.Pool,
-) -> None:
-    other_user = {
-        "username": "available_username",
-        "email": "available.email@test.com",
-        "password": "password",
-    }
-
-    other_user.update({"username": test_user.username})
-
-    async with test_pool.acquire() as conn:
-        users_repo = UsersRepository(conn)
-        await users_repo.create_user(**other_user)
-
-    response = await authorized_async_client.put(
-        test_app.url_path_for("users:update-current-user"),
-        json={"user": other_user},
-    )
-
-    assert response.status_code == fastapi.status.HTTP_400_BAD_REQUEST
-
-
 async def test_delete_user_successfully_return_http202(
-    test_app: fastapi.FastAPI,
     authorized_async_client: httpx.AsyncClient,
     test_user: httpx.AsyncClient,
     test_pool: asyncpg_pool.Pool,
@@ -102,6 +81,7 @@ async def test_delete_user_successfully_return_http202(
         current_user = UsersRepository(conn)
         await current_user.get_user_by_email(email=test_user.email)
 
-    response = await authorized_async_client.delete(test_app.url_path_for("users:delete-current-user"))
+    response = await authorized_async_client.delete(url="api/user/delete?id=1")
 
     assert response.status_code == fastapi.status.HTTP_202_ACCEPTED
+    assert response.json() == {"msg": "User with ID 1 is successfully deleted!"}
