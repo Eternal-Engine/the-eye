@@ -1,16 +1,24 @@
+# type: ignore
+from typing import List
+
 import fastapi
 
 from app.api.dependencies.database import get_repository
-from app.api.exceptions.http_exc_400 import http400_exc_bad_request
+from app.api.exceptions.http_exc_400 import (
+    http400_exc_bad_email_request,
+    http400_exc_bad_username_request,
+    http400_exc_credentials_bad_request,
+)
 from app.core.config import get_settings
-from app.core.settings.app import AppSettings
 from app.db.errors import EntityDoesNotExist
 from app.db.repositories.users import UsersRepository
 from app.models.schemas.users import UserInCreate, UserInLogin, UserInResponse, UserWithToken
 from app.services.authentication import authenticate_user, check_email_is_taken, check_username_is_taken
 from app.services.jwt import generate_access_token
 
-router = fastapi.APIRouter(prefix="/authentication", tags=["Authentication"])
+router = fastapi.APIRouter(prefix="/users", tags=["authentication"])
+
+settings = get_settings()
 
 
 @router.post(
@@ -22,14 +30,13 @@ router = fastapi.APIRouter(prefix="/authentication", tags=["Authentication"])
 async def signup(
     user_create: UserInCreate = fastapi.Body(..., embed=True, alias="user"),
     users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
-    settings: AppSettings = fastapi.Depends(get_settings),
 ) -> UserInResponse:
 
     if await check_username_is_taken(users_repo, user_create.username):
-        raise http400_exc_bad_request()
+        return await http400_exc_bad_username_request(username=user_create.username)
 
     if await check_email_is_taken(users_repo, user_create.email):
-        raise http400_exc_bad_request()
+        return await http400_exc_bad_email_request(email=user_create.email)
 
     user = await users_repo.create_user(**user_create.dict())
     token = generate_access_token(
@@ -55,8 +62,7 @@ async def signup(
 async def signin(
     user_login: UserInLogin = fastapi.Body(..., embed=True, alias="user"),
     users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
-    settings: AppSettings = fastapi.Depends(get_settings),
-) -> UserInResponse:
+) -> UserInResponse:  # type: ignore
 
     try:
         user_in_db = await authenticate_user(
@@ -65,11 +71,36 @@ async def signin(
             password=user_login.password,
         )
         if not user_in_db:
-            raise http400_exc_bad_request()
+            return await http400_exc_credentials_bad_request()
 
-    except EntityDoesNotExist as login_error:
-        raise http400_exc_bad_request() from login_error
+    except EntityDoesNotExist as credentials_error:
+        raise await http400_exc_credentials_bad_request() from credentials_error
 
     token = generate_access_token(user=user_in_db, secret_key=settings.secret_key)
 
     return UserInResponse(user=UserWithToken(username=user_in_db.username, email=user_in_db.email, token=token))
+
+
+@router.get(path="", name="users:get-all-users", response_model=List[UserInResponse])
+async def retrieve_all_users(
+    users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
+) -> List[UserInResponse]:
+
+    users_in_db = await users_repo.get_users()
+    users_with_token = []
+
+    for user in users_in_db:
+        token = generate_access_token(
+            user,
+            settings.secret_key,
+        )
+        user = UserInResponse(
+            user=UserWithToken(
+                username=user.username,
+                email=user.email,
+                token=token,
+            ),
+        )
+        users_with_token.append(user)
+
+    return users_with_token

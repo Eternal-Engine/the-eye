@@ -41,7 +41,7 @@ async def test_failed_signup_from_taken_email(
 
     user_signup_data = {
         "user": {
-            "username": "usertest",
+            "username": "availableusertest",
             "email": test_user.email,
             "password": "password-test",
         }
@@ -50,6 +50,29 @@ async def test_failed_signup_from_taken_email(
     response = await async_client.post(test_app.url_path_for("auth:signup"), json=user_signup_data)
 
     assert response.status_code == fastapi.status.HTTP_400_BAD_REQUEST
+    assert response.json() == {
+        "errors": ["The email user.test@test.com is taken! Be creative and choose another one!"]
+    }
+
+
+async def test_failed_signup_from_taken_username(
+    test_app: fastapi.FastAPI,
+    async_client: httpx.AsyncClient,
+    test_user: UserInDB,
+) -> None:
+
+    user_signup_data = {
+        "user": {
+            "username": test_user.username,
+            "email": "available.testuser@test.com",
+            "password": "password-test",
+        }
+    }
+
+    response = await async_client.post(test_app.url_path_for("auth:signup"), json=user_signup_data)
+
+    assert response.status_code == fastapi.status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"errors": ["The username usertest is taken! Be creative and choose another one!"]}
 
 
 async def test_signin_successful(
@@ -74,3 +97,4 @@ async def test_failed_singin_by_unmatched_password(
     response = await async_client.post(test_app.url_path_for("auth:signin"), json=user_signin_data)
 
     assert response.status_code == fastapi.status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"errors": ["Login failed! Re-check heck your email and password!"]}
