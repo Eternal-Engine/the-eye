@@ -105,22 +105,11 @@ class UsersRepository(BaseRepository):
 
         raise EntityDoesNotExist("User with that ID does not exist!")
 
-    async def delete_user(self, *, id: int = None, username: str = None, email: str = None) -> Any:
+    async def delete_user(self, *, id: int) -> Any:
 
-        if id:
-            user_in_db = await self.get_user_by_id(id=id)
+        try:
+            return await queries.delete_user_by_id(self.connection, id=id)
 
-        elif not id and not username:
+        except EntityDoesNotExist as value_error:
 
-            user_in_db = await self.get_user_by_email(email=email)
-
-        else:
-            user_in_db = await self.get_user_by_username(username=username)
-
-        if user_in_db:
-            async with self.connection.transaction():
-                await queries.delete_user_by_id(self.connection, id=user_in_db.id_)
-
-            return "User is successfully deleted from database!"
-
-        raise EntityDoesNotExist(f"User with username {id} does not exist!")
+            raise ValueError(f"User with id {id} does not exist!") from value_error

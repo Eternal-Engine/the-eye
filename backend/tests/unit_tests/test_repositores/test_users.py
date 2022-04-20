@@ -146,32 +146,8 @@ async def test_update_user(test_pool: asyncpg_pool.Pool, test_user: UserInDB) ->
 
 async def test_delete_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
 
-    current_user = test_user
-
     async with test_pool.acquire() as conn:
-        deleted_user = await UsersRepository(conn).delete_user(id=current_user.id)
+        deleted_user = await UsersRepository(conn).delete_user(id=test_user.id)
 
-    assert deleted_user != current_user
-    assert deleted_user == "User is successfully deleted from database!"
-
-
-async def test_delete_user_by_username(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
-
-    current_user = test_user
-
-    async with test_pool.acquire() as conn:
-        deleted_user = await UsersRepository(conn).delete_user(username=current_user.username)
-
-    assert deleted_user != current_user
-    assert deleted_user == "User is successfully deleted from database!"
-
-
-async def test_delete_user_by_email(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
-
-    current_user = test_user
-
-    async with test_pool.acquire() as conn:
-        deleted_user = await UsersRepository(conn).delete_user(email=current_user.email)
-
-    assert deleted_user != current_user
-    assert deleted_user == "User is successfully deleted from database!"
+    assert deleted_user != test_user
+    assert deleted_user is None

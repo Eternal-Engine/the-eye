@@ -75,13 +75,19 @@ RETURNING
     updated_at;
 
 
--- name: delete-user-by-id
+-- name: delete-user-by-id<!
 DELETE
 FROM users
 WHERE id = :id;
 
 
--- name: delete-user-by-username
+-- name: delete-user-by-username<!
 DELETE
 FROM users
 WHERE username = :username;
+
+
+-- name: delete-user-by-email<!
+DELETE
+FROM users
+WHERE email = :email;
