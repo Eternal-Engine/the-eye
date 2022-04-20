@@ -31,7 +31,7 @@ async def signup(
     if await check_email_is_taken(users_repo, user_create.email):
         raise http400_exc_bad_request()
 
-    user = await users_repo.create_new_user(**user_create.dict())
+    user = await users_repo.create_user(**user_create.dict())
     token = generate_access_token(
         user=user,
         secret_key=settings.secret_key,
