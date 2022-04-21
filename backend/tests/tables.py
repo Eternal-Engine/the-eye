@@ -5,6 +5,9 @@ create_db_tables = """
         email VARCHAR(50),
         salt VARCHAR,
         hashed_password VARCHAR,
+        is_publisher BOOL,
+        is_verified BOOL,
+        is_active BOOL,
         created_at TIMESTAMP,
         updated_at TIMESTAMP);
 """
