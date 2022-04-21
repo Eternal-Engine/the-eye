@@ -9,10 +9,9 @@ def test_user_domain_model_construction():
     expected_attributes = {
         "username": "johndoe",
         "email": "john.doe@test.com",
-        # "is_premium_account": False,
-        # "is_publisher": False,
-        # "is_verified": False,
-        # "is_active": True,
+        "is_publisher": False,
+        "is_verified": False,
+        "is_active": True,
     }
     domain_base_model = IWBaseModel
     domain_user = User(username="johndoe", email="john.doe@test.com")
@@ -28,10 +27,9 @@ def test_user_model_for_storing_data_in_database_construction():
         "email": "john.doe@test.com",
         "salt": "",
         "hashed_password": "",
-        # "is_premium_account": False,
-        # "is_publisher": False,
-        # "is_verified": False,
-        # "is_active": True,
+        "is_publisher": False,
+        "is_verified": False,
+        "is_active": True,
         "created_at": None,
         "id_": 1,
         "updated_at": None,

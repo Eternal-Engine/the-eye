@@ -6,12 +6,21 @@ from app.models.domain.users import UserInDB
 from app.models.schemas.users import UserInResponse, UserWithToken
 
 
-async def test_create_user(test_pool: asyncpg_pool.Pool) -> None:
+async def test_create_user_citizen_journalist_with_default_create_parameter(test_pool: asyncpg_pool.Pool) -> None:
 
-    expected_data = {"user": {"username": "johndoe", "email": "johndoe@test.com", "token": "fake-token"}}
+    expected_data = {
+        "user": {
+            "username": "johndoe",
+            "email": "johndoe@test.com",
+            "is_publisher": False,
+            "is_verified": False,
+            "is_active": True,
+            "token": "fake-token",
+        }
+    }
 
     async with test_pool.acquire() as conn:
-        user = await UsersRepository(conn).create_user(
+        users_repo = await UsersRepository(conn).create_user(
             username="johndoe",
             email="johndoe@test.com",
             password="password-test",
@@ -19,12 +28,49 @@ async def test_create_user(test_pool: asyncpg_pool.Pool) -> None:
 
     new_user = UserInResponse(
         user=UserWithToken(
-            username=user.username,
-            email=user.email,
+            username=users_repo.username,
+            email=users_repo.email,
+            is_publisher=users_repo.is_publisher,
+            is_verified=users_repo.is_verified,
+            is_active=users_repo.is_active,
             token="fake-token",
         ),
     )
-    print("USER CREATED HERE")
+
+    assert new_user.dict() == expected_data
+
+
+async def test_create_user_publisher(test_pool: asyncpg_pool.Pool) -> None:
+
+    expected_data = {
+        "user": {
+            "username": "johndoe",
+            "email": "johndoe@test.com",
+            "is_publisher": True,
+            "is_verified": False,
+            "is_active": True,
+            "token": "fake-token",
+        }
+    }
+
+    async with test_pool.acquire() as conn:
+        users_repo = await UsersRepository(conn).create_user(
+            username="johndoe",
+            email="johndoe@test.com",
+            password="password-test",
+            is_publisher=True,
+        )
+
+    new_user = UserInResponse(
+        user=UserWithToken(
+            username=users_repo.username,
+            email=users_repo.email,
+            is_publisher=users_repo.is_publisher,
+            is_verified=users_repo.is_verified,
+            is_active=users_repo.is_active,
+            token="fake-token",
+        ),
+    )
 
     assert new_user.dict() == expected_data
 
@@ -34,15 +80,19 @@ async def test_read_all_users(test_pool: asyncpg_pool.Pool) -> None:
         "id_": 1,
         "username": "johndoe",
         "email": "johndoe@test.com",
+        "is_publisher": False,
+        "is_verified": False,
+        "is_active": True,
         "created_at": None,
         "updated_at": None,
     }
 
     async with test_pool.acquire() as conn:
-        user = await UsersRepository(conn).create_user(
+        users_repo = await UsersRepository(conn).create_user(
             username="johndoe",
             email="johndoe@test.com",
             password="password-test",
+            is_publisher=False,
         )
 
     async with test_pool.acquire() as conn:
@@ -50,7 +100,7 @@ async def test_read_all_users(test_pool: asyncpg_pool.Pool) -> None:
 
     for user_in_db in all_users_in_db:
         assert user_in_db.dict(exclude={"salt", "hashed_password"}) == expected_data
-        assert user_in_db.dict(exclude={"salt", "hashed_password"}) == user.dict(
+        assert user_in_db.dict(exclude={"salt", "hashed_password"}) == users_repo.dict(
             exclude={"id", "salt", "hashed_password"}
         )
 
@@ -61,6 +111,9 @@ async def test_read_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserInDB
         "id_": 1,
         "username": "usertest",
         "email": "user.test@test.com",
+        "is_publisher": False,
+        "is_verified": False,
+        "is_active": True,
     }
 
     async with test_pool.acquire() as conn:
@@ -84,6 +137,9 @@ async def test_read_user_by_username(test_pool: asyncpg_pool.Pool, test_user: Us
         "id_": 1,
         "username": "usertest",
         "email": "user.test@test.com",
+        "is_publisher": False,
+        "is_verified": False,
+        "is_active": True,
     }
 
     async with test_pool.acquire() as conn:
@@ -107,6 +163,9 @@ async def test_read_user_by_email(test_pool: asyncpg_pool.Pool, test_user: UserI
         "id_": 1,
         "username": "usertest",
         "email": "user.test@test.com",
+        "is_publisher": False,
+        "is_verified": False,
+        "is_active": True,
     }
 
     async with test_pool.acquire() as conn:
@@ -130,6 +189,9 @@ async def test_update_user(test_pool: asyncpg_pool.Pool, test_user: UserInDB) ->
         "id_": 1,
         "username": "updated-testuser",
         "email": "updated-test.user@test.com",
+        "is_publisher": False,
+        "is_verified": False,
+        "is_active": True,
     }
     current_user = test_user
 
