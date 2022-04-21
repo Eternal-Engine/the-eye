@@ -1,6 +1,3 @@
-# type: ignore
-from typing import List
-
 import fastapi
 
 from app.api.dependencies.database import get_repository
@@ -16,7 +13,7 @@ from app.models.schemas.users import UserInCreate, UserInLogin, UserInResponse, 
 from app.services.authentication import authenticate_user, check_email_is_taken, check_username_is_taken
 from app.services.jwt import generate_access_token
 
-router = fastapi.APIRouter(prefix="/users", tags=["authentication"])
+router = fastapi.APIRouter(prefix="/auth", tags=["authentication"])
 
 settings = get_settings()
 
@@ -48,6 +45,7 @@ async def signup(
         user=UserWithToken(
             username=user.username,
             email=user.email,
+            is_publisher=user.is_publisher,
             token=token,
         ),
     )
@@ -78,29 +76,13 @@ async def signin(
 
     token = generate_access_token(user=user_in_db, secret_key=settings.secret_key)
 
-    return UserInResponse(user=UserWithToken(username=user_in_db.username, email=user_in_db.email, token=token))
-
-
-@router.get(path="", name="users:get-all-users", response_model=List[UserInResponse])
-async def retrieve_all_users(
-    users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
-) -> List[UserInResponse]:
-
-    users_in_db = await users_repo.get_users()
-    users_with_token = []
-
-    for user in users_in_db:
-        token = generate_access_token(
-            user,
-            settings.secret_key,
+    return UserInResponse(
+        user=UserWithToken(
+            username=user_in_db.username,
+            email=user_in_db.email,
+            is_publisher=user_in_db.is_publisher,
+            is_verified=user_in_db.is_verified,
+            is_active=user_in_db.is_active,
+            token=token,
         )
-        user = UserInResponse(
-            user=UserWithToken(
-                username=user.username,
-                email=user.email,
-                token=token,
-            ),
-        )
-        users_with_token.append(user)
-
-    return users_with_token
+    )

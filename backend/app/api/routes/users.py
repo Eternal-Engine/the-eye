@@ -1,4 +1,6 @@
 # type: ignore
+from typing import List
+
 import fastapi
 
 from app.api.dependencies.authorization import retrieve_current_user_auth
@@ -12,12 +14,40 @@ from app.models.schemas.users import UserInResponse, UserInUpdate, UserWithToken
 from app.services.authentication import check_email_is_taken, check_username_is_taken
 from app.services.jwt import generate_access_token
 
-router = fastapi.APIRouter(prefix="/user", tags=["users"])
+router = fastapi.APIRouter(prefix="/users", tags=["users"])
 settings = get_settings()
 
 
+@router.get(path="", name="users:get-all-users", response_model=List[UserInResponse])
+async def retrieve_all_users(
+    users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
+) -> List[UserInResponse]:
+
+    users_in_db = await users_repo.get_users()
+    users_with_token = []
+
+    for user in users_in_db:
+        token = generate_access_token(
+            user,
+            settings.secret_key,
+        )
+        user = UserInResponse(
+            user=UserWithToken(
+                username=user.username,
+                email=user.email,
+                is_publisher=user.is_publisher,
+                is_verified=user.is_verified,
+                is_active=user.is_active,
+                token=token,
+            ),
+        )
+        users_with_token.append(user)
+
+    return users_with_token
+
+
 @router.get(
-    path="",
+    path="/user/{id}",
     name="users:get-current-user",
     response_model=UserInResponse,
     status_code=fastapi.status.HTTP_200_OK,
@@ -40,13 +70,16 @@ async def retrieve_current_user(
         user=UserWithToken(
             username=user.username,
             email=user.email,
+            is_publisher=user.is_publisher,
+            is_verified=user.is_verified,
+            is_active=user.is_active,
             token=token,
         ),
     )
 
 
 @router.put(
-    path="/update",
+    path="/user/{id}",
     name="users:update-current-user",
     response_model=UserInResponse,
     status_code=fastapi.status.HTTP_200_OK,
@@ -79,13 +112,16 @@ async def update_current_user(
         user=UserWithToken(
             username=user.username,
             email=user.email,
+            is_publisher=user.is_publisher,
+            is_verified=user.is_verified,
+            is_active=user.is_active,
             token=token,
         ),
     )
 
 
 @router.delete(
-    path="/delete",
+    path="/user/{id}",
     name="users:delete-current-user",
     status_code=fastapi.status.HTTP_202_ACCEPTED,
 )
