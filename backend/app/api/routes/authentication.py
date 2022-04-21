@@ -1,3 +1,4 @@
+# type: ignore
 import fastapi
 
 from app.api.dependencies.database import get_repository
