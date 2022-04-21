@@ -1,6 +1,6 @@
 -- name: create-new-user<!
-INSERT INTO users (username, email, salt, hashed_password)
-VALUES (:username, :email, :salt, :hashed_password)
+INSERT INTO users (username, email, salt, hashed_password, is_publisher, is_verified, is_active)
+VALUES (:username, :email, :salt, :hashed_password, :is_publisher, :is_verified, :is_active)
 RETURNING
     id, created_at, updated_at;
 
@@ -8,7 +8,10 @@ RETURNING
 -- name: read-users
 SELECT id,
        username,
-       email
+       email,
+       is_publisher,
+       is_verified,
+       is_active
 FROM users;
 
 
@@ -18,6 +21,9 @@ SELECT id,
        email,
        salt,
        hashed_password,
+       is_publisher,
+       is_verified,
+       is_active,
        created_at,
        updated_at
 FROM users
@@ -31,6 +37,9 @@ SELECT id,
        email,
        salt,
        hashed_password,
+       is_publisher,
+       is_verified,
+       is_active,
        created_at,
        updated_at
 FROM users
@@ -44,6 +53,9 @@ SELECT id,
        email,
        salt,
        hashed_password,
+       is_publisher,
+       is_verified,
+       is_active,
        created_at,
        updated_at
 FROM users
@@ -57,7 +69,8 @@ UPDATE
 SET username        = :new_username,
     email           = :new_email,
     salt            = :new_salt,
-    hashed_password = :new_password
+    hashed_password = :new_password,
+    is_publisher    = :new_is_publisher
 WHERE id = :id
 RETURNING
     updated_at;
@@ -69,7 +82,8 @@ UPDATE
 SET username        = :new_username,
     email           = :new_email,
     salt            = :new_salt,
-    hashed_password = :new_password
+    hashed_password = :new_password,
+    is_publisher    = :new_is_publisher
 WHERE username = :username
 RETURNING
     updated_at;

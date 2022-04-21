@@ -14,9 +14,14 @@ class UsersRepository(BaseRepository):
         username: str,
         email: str,
         password: str,
+        is_publisher: bool = False,
+        is_verified: bool = False,
+        is_active: bool = True,
     ) -> UserInDB:
 
-        db_user = UserInDB(username=username, email=email)
+        db_user = UserInDB(
+            username=username, email=email, is_publisher=is_publisher, is_verified=is_verified, is_active=is_active
+        )
         db_user.change_password(new_password=password)
 
         async with self.connection.transaction():
@@ -27,6 +32,9 @@ class UsersRepository(BaseRepository):
                 email=db_user.email,
                 salt=db_user.salt,
                 hashed_password=db_user.hashed_password,
+                is_publisher=db_user.is_publisher,
+                is_verified=db_user.is_verified,
+                is_active=db_user.is_active,
             )
 
         return db_user.copy(update=dict(user_row))
@@ -79,6 +87,7 @@ class UsersRepository(BaseRepository):
         username: Optional[str] = None,
         email: Optional[str] = None,
         password: Optional[str] = None,
+        is_publisher: Optional[bool] = None,
     ) -> UserInDB:
 
         user_in_db = await self.get_user_by_id(id=user.id_)
@@ -86,6 +95,7 @@ class UsersRepository(BaseRepository):
         if user_in_db:
             user_in_db.username = username or user_in_db.username
             user_in_db.email = email or user_in_db.email
+            user_in_db.is_publisher = is_publisher or user_in_db.is_publisher
 
             if password:
                 user_in_db.change_password(password)
@@ -99,6 +109,7 @@ class UsersRepository(BaseRepository):
                     new_email=user_in_db.email,
                     new_salt=user_in_db.salt,
                     new_password=user_in_db.hashed_password,
+                    new_is_publisher=user_in_db.is_publisher,
                 )
 
             return user_in_db

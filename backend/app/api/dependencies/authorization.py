@@ -7,13 +7,13 @@ import fastapi
 from app.api.dependencies.database import get_repository
 from app.api.exceptions.http_exc_403 import http403_exc_forbidden
 from app.core.config import get_settings
-from app.core.settings.app import AppSettings
 from app.db.errors import EntityDoesNotExist
 from app.db.repositories.users import UsersRepository
 from app.models.domain.header import IWAPIKeyHeader
 from app.models.domain.users import User
 from app.services.jwt import retrieve_email_from_token
 
+settings = get_settings()
 HEADER_KEY = decouple.config("HEADER_KEY", cast=str)
 
 
@@ -27,7 +27,6 @@ def _get_auth_header_retriever(*, required: bool = True) -> Callable:
 
 def _retrieve_auth_header(
     api_key: str = fastapi.Security(IWAPIKeyHeader(name=HEADER_KEY)),
-    settings: AppSettings = fastapi.Depends(get_settings),
 ) -> str:
 
     try:
@@ -48,10 +47,9 @@ def _retrieve_optional_auth_header(
     authentication: Optional[str] = fastapi.Security(
         IWAPIKeyHeader(name=HEADER_KEY, auto_error=False),
     ),
-    settings: AppSettings = fastapi.Depends(get_settings),
 ) -> str:
     if authentication:
-        return _retrieve_auth_header(authentication, settings)
+        return _retrieve_auth_header(authentication)
 
     return ""
 
@@ -59,7 +57,6 @@ def _retrieve_optional_auth_header(
 async def _retrieve_current_user(
     users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
     token: str = fastapi.Depends(_get_auth_header_retriever()),
-    settings: AppSettings = fastapi.Depends(get_settings),
 ) -> User:
 
     try:
@@ -79,10 +76,9 @@ async def _retrieve_current_user(
 async def _retrieve_optional_current_user(
     users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
     token: str = fastapi.Depends(_get_auth_header_retriever(required=False)),
-    settings: AppSettings = fastapi.Depends(get_settings),
 ) -> Optional[User]:
 
     if token:
-        return await _retrieve_current_user(users_repo, token, settings)
+        return await _retrieve_current_user(users_repo, token)
 
     return None

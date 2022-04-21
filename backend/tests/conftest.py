@@ -9,11 +9,11 @@ from asyncpg import pool as asyncpg_pool
 
 from app.core.config import get_settings
 from app.core.settings.base import EnvTypes
-from app.db.queries.database import create_db_tables, drop_db_tables
 from app.db.repositories.users import UsersRepository
 from app.models.domain.users import UserInDB
 from app.services.jwt import generate_access_token
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
+from tests.tables import create_db_tables, drop_db_tables
 
 # Set up the "app_env" to use the TEST environment settings
 test_settings = get_settings(app_env=EnvTypes.TEST)
@@ -76,7 +76,10 @@ def authorization_prefix() -> str:
 async def test_user(test_pool: asyncpg_pool.Pool) -> UserInDB:
     async with test_pool.acquire() as conn:
         return await UsersRepository(conn).create_user(
-            username="usertest", email="user.test@test.com", password="password-test",
+            username="usertest",
+            email="user.test@test.com",
+            password="password-test",
+            is_publisher=False,
         )
 
 

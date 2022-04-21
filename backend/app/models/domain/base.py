@@ -20,6 +20,7 @@ class IWBaseModel(pydantic.BaseModel):
     """
 
     class Config(pydantic.BaseConfig):
+        validate_assignment = True
         allow_population_by_field_name = True
         json_encoders = {datetime.datetime: convert_datetime_into_string}
         alias_generator = convert_field_to_camel_case
