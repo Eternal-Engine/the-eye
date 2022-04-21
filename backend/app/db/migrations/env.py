@@ -1,16 +1,17 @@
 from logging.config import fileConfig
 
-from alembic import context
-from sqlalchemy import engine_from_config, pool
+import alembic
+from sqlalchemy import engine_from_config as sqlalchemy_engine_from_config, pool as sqlalchemy_pool
 
 from app.core.config import get_settings
+from app.core.settings.base import EnvTypes
 
-SETTINGS = get_settings()
+SETTINGS = get_settings(app_env=EnvTypes.DEV)
 DATABASE_URL = SETTINGS.database_url
 
 
 # Alembic Config object, which gives access to `alembic.ini`
-config = context.config
+config = alembic.context.config
 
 # Interpret the config file for Python logging.
 if config.config_file_name is not None:
@@ -18,7 +19,7 @@ if config.config_file_name is not None:
 
 target_metadata = None
 
-config.set_main_option("sqlalchemy.url", str(DATABASE_URL))
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -39,15 +40,15 @@ def run_migrations_offline():
 
     """
     url = config.get_main_option("sqlalchemy.url")
-    context.configure(
+    alembic.context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
 
-    with context.begin_transaction():
-        context.run_migrations()
+    with alembic.context.begin_transaction():
+        alembic.context.run_migrations()
 
 
 def run_migrations_online():
@@ -57,20 +58,20 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
+    connectable = sqlalchemy_engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+        poolclass=sqlalchemy_pool.NullPool,
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        alembic.context.configure(connection=connection, target_metadata=target_metadata)
 
-        with context.begin_transaction():
-            context.run_migrations()
+        with alembic.context.begin_transaction():
+            alembic.context.run_migrations()
 
 
-if context.is_offline_mode():
+if alembic.context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
