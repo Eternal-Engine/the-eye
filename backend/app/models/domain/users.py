@@ -8,6 +8,9 @@ class User(IWBaseModel):
 
     username: str
     email: str
+    is_publisher: bool = False
+    is_verified: bool = False
+    is_active: bool = True
 
 
 class UserInDB(IDModelMixin, DateTimeModelMixin, User):

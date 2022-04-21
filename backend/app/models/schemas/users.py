@@ -13,12 +13,14 @@ class UserInLogin(IWBaseSchema):  # type: ignore
 
 class UserInCreate(UserInLogin):
     username: str
+    is_publisher: bool = False
 
 
 class UserInUpdate(pydantic.BaseModel):
     username: Optional[str] = None
     email: Optional[pydantic.EmailStr] = None
     password: Optional[str] = None
+    is_publisher: Optional[bool] = False
 
 
 class UserWithToken(User):  # type: ignore
