@@ -4,7 +4,7 @@ from typing import List
 import fastapi
 
 from app.api.dependencies.authorization import retrieve_current_user_auth
-from app.api.dependencies.database import get_repository
+from app.api.dependencies.repository import get_repository
 from app.api.exceptions.http_exc_400 import http400_exc_bad_email_request, http400_exc_bad_username_request
 from app.api.exceptions.http_exc_404 import http404_exc_id_not_found
 from app.core.config import get_settings

@@ -1,7 +1,7 @@
 # type: ignore
 import fastapi
 
-from app.api.dependencies.database import get_repository
+from app.api.dependencies.repository import get_repository
 from app.api.exceptions.http_exc_400 import (
     http400_exc_bad_email_request,
     http400_exc_bad_username_request,
