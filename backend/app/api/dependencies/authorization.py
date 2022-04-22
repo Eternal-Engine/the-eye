@@ -4,7 +4,7 @@ from typing import Callable, Optional
 import decouple
 import fastapi
 
-from app.api.dependencies.database import get_repository
+from app.api.dependencies.repository import get_repository
 from app.api.exceptions.http_exc_403 import http403_exc_forbidden
 from app.core.config import get_settings
 from app.db.errors import EntityDoesNotExist
