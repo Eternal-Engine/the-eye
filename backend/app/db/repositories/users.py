@@ -26,7 +26,7 @@ class UsersRepository(BaseRepository):
 
         async with self.connection.transaction():
 
-            user_row = await queries.create_new_user(
+            new_user = await queries.create_new_user(
                 self.connection,
                 username=db_user.username,
                 email=db_user.email,
@@ -37,46 +37,46 @@ class UsersRepository(BaseRepository):
                 is_active=db_user.is_active,
             )
 
-        return db_user.copy(update=dict(user_row))
+        return db_user.copy(update=dict(new_user))
 
     async def get_users(self) -> List[UserInDB]:
         async with self.connection.transaction():
-            user_rows = await queries.read_users(self.connection)
-            list_of_all_user_rows = []
+            db_users = await queries.read_users(self.connection)
+            db_users_list = []
 
-            for user_row in user_rows:
+            for db_user in db_users:
 
-                list_of_all_user_rows.append(UserInDB(**user_row))
+                db_users_list.append(UserInDB(**db_user))
 
-            return list_of_all_user_rows
+            return db_users_list
 
     async def get_user_by_id(self, *, id: int) -> UserInDB:
 
-        user_row = await queries.read_user_by_id(self.connection, id=id)
+        db_user = await queries.read_user_by_id(self.connection, id=id)
 
-        if user_row:
+        if db_user:
 
-            return UserInDB(**user_row)
+            return UserInDB(**db_user)
 
         raise EntityDoesNotExist(f"User with id {id} does not exist!")
 
     async def get_user_by_username(self, *, username: str) -> UserInDB:
 
-        user_row = await queries.read_user_by_username(self.connection, username=username)
+        db_user = await queries.read_user_by_username(self.connection, username=username)
 
-        if user_row:
+        if db_user:
 
-            return UserInDB(**user_row)
+            return UserInDB(**db_user)
 
         raise EntityDoesNotExist(f"User with username {username} does not exist!")
 
     async def get_user_by_email(self, *, email: str) -> UserInDB:
 
-        user_row = await queries.read_user_by_email(self.connection, email=email)
+        db_user = await queries.read_user_by_email(self.connection, email=email)
 
-        if user_row:
+        if db_user:
 
-            return UserInDB(**user_row)
+            return UserInDB(**db_user)
 
         raise EntityDoesNotExist(f"User with email {email} does not exist!")
 
@@ -90,29 +90,29 @@ class UsersRepository(BaseRepository):
         is_publisher: Optional[bool] = None,
     ) -> UserInDB:
 
-        user_in_db = await self.get_user_by_id(id=user.id_)
+        db_user = await self.get_user_by_id(id=user.id_)
 
-        if user_in_db:
-            user_in_db.username = username or user_in_db.username
-            user_in_db.email = email or user_in_db.email
-            user_in_db.is_publisher = is_publisher or user_in_db.is_publisher
+        if db_user:
+            db_user.username = username or db_user.username
+            db_user.email = email or db_user.email
+            db_user.is_publisher = is_publisher or db_user.is_publisher
 
             if password:
-                user_in_db.change_password(password)
+                db_user.change_password(password)
 
             async with self.connection.transaction():
-                user_in_db.updated_at = await queries.update_user_by_id(
+                db_user.updated_at = await queries.update_user_by_id(
                     self.connection,
                     id=user.id_,
                     username=user.username,
-                    new_username=user_in_db.username,
-                    new_email=user_in_db.email,
-                    new_salt=user_in_db.salt,
-                    new_password=user_in_db.hashed_password,
-                    new_is_publisher=user_in_db.is_publisher,
+                    new_username=db_user.username,
+                    new_email=db_user.email,
+                    new_salt=db_user.salt,
+                    new_password=db_user.hashed_password,
+                    new_is_publisher=db_user.is_publisher,
                 )
 
-            return user_in_db
+            return db_user
 
         raise EntityDoesNotExist("User with that ID does not exist!")
 
