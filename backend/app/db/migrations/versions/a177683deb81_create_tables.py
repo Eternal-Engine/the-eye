@@ -54,10 +54,10 @@ def create_users_table() -> None:
     op.create_table(
         "users",
         sa.Column("id", sa.BigInteger, primary_key=True),
-        sa.Column("username", sa.Text, index=True, nullable=False, unique=True),
-        sa.Column("email", sa.Text, index=True, nullable=False, unique=True),
-        sa.Column("salt", sa.Text, nullable=False),
-        sa.Column("hashed_password", sa.Text),
+        sa.Column("username", sa.VARCHAR, index=True, nullable=False, unique=True),
+        sa.Column("email", sa.VARCHAR, index=True, nullable=False, unique=True),
+        sa.Column("salt", sa.VARCHAR, nullable=False),
+        sa.Column("hashed_password", sa.VARCHAR),
         sa.Column("is_publisher", sa.Boolean, default=False),
         sa.Column("is_verified", sa.Boolean, default=False),
         sa.Column("is_active", sa.Boolean, default=True),
@@ -74,15 +74,37 @@ def create_users_table() -> None:
     )
 
 
+def create_journalists_table() -> None:
+    op.create_table(
+        "journalists",
+        sa.Column("id", sa.BigInteger, primary_key=True),
+        sa.Column("first_name", sa.VARCHAR, nullable=True),
+        sa.Column("last_name", sa.VARCHAR, nullable=True),
+        sa.Column("bio", sa.VARCHAR, nullable=False),
+        sa.Column("profile_picture", sa.VARCHAR, nullable=True),
+        sa.Column("user_id", sa.BigInteger, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        *timestamps(),
+    )
+    op.execute(
+        """
+        CREATE TRIGGER update_journalist_modtime
+            BEFORE UPDATE
+            ON journalists
+            FOR EACH ROW
+        EXECUTE PROCEDURE update_updated_at_column();
+        """
+    )
+
+
 def create_articles_table() -> None:
     op.create_table(
         "articles",
-        sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column("slug", sa.Text, unique=True, nullable=False, index=True),
+        sa.Column("id", sa.BigInteger, primary_key=True),
+        sa.Column("slug", sa.VARCHAR, unique=True, nullable=False, index=True),
         sa.Column("headline", sa.VARCHAR, nullable=False),
         sa.Column("description", sa.VARCHAR, nullable=True),
-        sa.Column("body", sa.Text, nullable=False),
-        sa.Column("author_id", sa.Integer, sa.ForeignKey("users.id", ondelete="SET NULL")),
+        sa.Column("body", sa.VARCHAR, nullable=False),
+        sa.Column("author_id", sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=True),
         *timestamps(),
     )
     op.execute(
@@ -99,12 +121,12 @@ def create_articles_table() -> None:
 def create_images_table() -> None:
     op.create_table(
         "images",
-        sa.Column("id", sa.Integer, primary_key=True),
+        sa.Column("id", sa.BigInteger, primary_key=True),
         sa.Column("slug", sa.VARCHAR, unique=True, nullable=False, index=True),
-        sa.Column("path", sa.Text, nullable=False),
+        sa.Column("path", sa.VARCHAR, nullable=False),
         sa.Column("title", sa.VARCHAR, nullable=True),
-        sa.Column("alt", sa.Text, nullable=False),
-        sa.Column("article_id", sa.Integer, sa.ForeignKey("articles.id", ondelete="SET NULL")),
+        sa.Column("alt", sa.VARCHAR, nullable=False),
+        sa.Column("article_id", sa.BigInteger, sa.ForeignKey("articles.id", ondelete="SET NULL")),
         *timestamps(),
     )
     op.execute(
@@ -121,12 +143,12 @@ def create_images_table() -> None:
 def create_videos_table() -> None:
     op.create_table(
         "videos",
-        sa.Column("id", sa.Integer, primary_key=True),
+        sa.Column("id", sa.BigInteger, primary_key=True),
         sa.Column("slug", sa.VARCHAR, unique=True, nullable=False, index=True),
         sa.Column("path", sa.Text, nullable=False),
         sa.Column("title", sa.VARCHAR, nullable=True),
-        sa.Column("alt", sa.Text, nullable=False),
-        sa.Column("article_id", sa.Integer, sa.ForeignKey("articles.id", ondelete="SET NULL")),
+        sa.Column("alt", sa.VARCHAR, nullable=False),
+        sa.Column("article_id", sa.BigInteger, sa.ForeignKey("articles.id", ondelete="SET NULL")),
         *timestamps(),
     )
     op.execute(
@@ -143,6 +165,7 @@ def create_videos_table() -> None:
 def upgrade() -> None:
     create_updated_at_trigger()
     create_users_table()
+    create_journalists_table()
     create_articles_table()
     create_images_table()
     create_videos_table()
