@@ -1,11 +1,11 @@
 from typing import Optional
 
-from app.models.domain.users import User
+from app.models.domain.base import IWBaseModel
 from app.models.mixins.date_time import DateTimeModelMixin
 from app.models.mixins.identifier import IDModelMixin
 
 
-class Journalist(User):
+class Journalist(IWBaseModel):
 
     first_name: str = ""
     last_name: str = ""

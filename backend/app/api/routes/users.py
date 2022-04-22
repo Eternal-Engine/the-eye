@@ -54,25 +54,25 @@ async def retrieve_all_users(
 )
 async def retrieve_current_user(
     id: int,
-    user: User = fastapi.Depends(retrieve_current_user_auth()),
+    current_user: User = fastapi.Depends(retrieve_current_user_auth()),
 ) -> UserInResponse:
 
-    if id != user.id_:
+    if id != current_user.id_:
 
         return await http404_exc_id_not_found(id=id)
 
     token = generate_access_token(
-        user,
+        current_user,
         settings.secret_key,
     )
 
     return UserInResponse(
         user=UserWithToken(
-            username=user.username,
-            email=user.email,
-            is_publisher=user.is_publisher,
-            is_verified=user.is_verified,
-            is_active=user.is_active,
+            username=current_user.username,
+            email=current_user.email,
+            is_publisher=current_user.is_publisher,
+            is_verified=current_user.is_verified,
+            is_active=current_user.is_active,
             token=token,
         ),
     )
@@ -101,20 +101,20 @@ async def update_current_user(
         if await check_email_is_taken(users_repo, user_update.email):
             return await http400_exc_bad_email_request(email=user_update.email)
 
-    user = await users_repo.update_user(user=current_user, **user_update.dict())
+    updated_user = await users_repo.update_user(user=current_user, **user_update.dict())
 
     token = generate_access_token(
-        user,
+        updated_user,
         settings.secret_key,
     )
 
     return UserInResponse(
         user=UserWithToken(
-            username=user.username,
-            email=user.email,
-            is_publisher=user.is_publisher,
-            is_verified=user.is_verified,
-            is_active=user.is_active,
+            username=updated_user.username,
+            email=updated_user.email,
+            is_publisher=updated_user.is_publisher,
+            is_verified=updated_user.is_verified,
+            is_active=updated_user.is_active,
             token=token,
         ),
     )
