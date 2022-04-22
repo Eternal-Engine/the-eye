@@ -62,7 +62,7 @@ class JournalistsRepository(BaseRepository):
 
     async def get_journalist_by_id(self, *, id: int) -> JournalistInDB:
 
-        db_journalist = await queries.read_journalist_by_id(self.connection, id=id)
+        db_journalist = await queries.read_journalist_by_user_id(self.connection, user_id=id)
         print(db_journalist)
         if db_journalist:
 

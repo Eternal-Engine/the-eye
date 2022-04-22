@@ -26,7 +26,7 @@ async def retrieve_journalist_profile_by_username(
     response_model=JournalistInResponse,
     status_code=fastapi.status.HTTP_200_OK,
 )
-async def update_journalist_profile_by_id(
+async def update_journalist_profile_by_username(
     username: str,
     journalist_update: JournalistInUpdate = fastapi.Body(..., embed=True, alias="journalist"),
     current_user: User = fastapi.Depends(retrieve_current_user_auth()),
@@ -34,11 +34,11 @@ async def update_journalist_profile_by_id(
     journalists_repo: JournalistsRepository = fastapi.Depends(get_repository(JournalistsRepository)),
 ) -> JournalistInResponse:  # type: ignore
 
-    if username != current_user.username:
+    if current_journalist.user_id != current_user.id_:
         return await http404_exc_username_not_found(username=username)  # type: ignore
 
     updated_journalist = await journalists_repo.update_journalist(
-        journalist=current_journalist, **journalist_update.dict(exclude={"username", "email"})
+        journalist=current_journalist, **journalist_update.dict()
     )
 
     return JournalistInResponse(
