@@ -10,7 +10,14 @@ class Journalist(IWBaseModel):
     first_name: str = ""
     last_name: str = ""
     profile_picture: Optional[str]
+    banner: Optional[str]
     bio: str = ""
+    address: str = ""
+    postal_code: str = ""
+    state: str = ""
+    country: str = ""
+    office_phone_number: str = ""
+    mobile_phone_number: str = ""
 
     user_id: int
     # wallet_addresses: List[WalletAddress] = []
