@@ -6,6 +6,7 @@ from asyncpg import pool as asyncpg_pool
 from app.db.repositories.users import UsersRepository
 from app.models.domain.users import UserInDB
 from app.models.schemas.users import UserInResponse
+from app.resources.http_exc_details import http_404_details
 
 
 async def test_get_all_users_successful(
@@ -65,8 +66,8 @@ async def test_retrieve_current_user_successful(
     response = await authorized_async_client.get(url="api/users/user/1")
     assert response.status_code == fastapi.status.HTTP_200_OK
 
-    user_profile = UserInResponse(**response.json())
-    assert user_profile.user.email == test_user.email
+    db_user = UserInResponse(**response.json())
+    assert db_user.user.email == test_user.email
 
 
 async def test_fail_to_retrieve_current_user_by_invalid_id_not_found(
@@ -75,9 +76,7 @@ async def test_fail_to_retrieve_current_user_by_invalid_id_not_found(
 
     response = await authorized_async_client.get(url="api/users/user/2")
     assert response.status_code == fastapi.status.HTTP_404_NOT_FOUND
-    assert response.json() == {
-        "errors": ["Either the user with ID 2 is deleted, or you are not authorized; Check your authorization!"]
-    }
+    assert response.json() == {"errors": [http_404_details(id=2)]}
 
 
 async def test_update_current_user_username_and_email_successful(
