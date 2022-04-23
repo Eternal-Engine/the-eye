@@ -37,7 +37,7 @@ async def update_journalist_profile_by_username(
     if current_journalist.user_id != current_user.id_:
         raise await http404_exc_username_not_found(username=username)  # type: ignore
 
-    updated_journalist = await journalists_repo.update_journalist(
+    updated_journalist = await journalists_repo.update_journalist_profile(
         journalist=current_journalist, **journalist_update.dict()
     )
 
@@ -47,6 +47,12 @@ async def update_journalist_profile_by_username(
             last_name=updated_journalist.last_name,
             profile_picture=updated_journalist.profile_picture,
             bio=updated_journalist.bio,
+            address=updated_journalist.address,
+            postal_code=updated_journalist.postal_code,
+            state=updated_journalist.state,
+            country=updated_journalist.country,
+            office_phone_number=updated_journalist.office_phone_number,
+            mobile_phone_number=updated_journalist.mobile_phone_number,
             user_id=updated_journalist.user_id,
         )
     )

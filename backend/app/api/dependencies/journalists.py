@@ -18,7 +18,7 @@ async def get_journalist(
 ) -> Journalist:
 
     try:
-        return await profiles_repo.get_journalist_profile_by_username(
+        return await profiles_repo.create_journalist_profile_from_getting_user_by_username(
             username=username,
             journalist_profile=user,
         )
