@@ -23,5 +23,5 @@ async def get_journalist(
             journalist_profile=user,
         )
 
-    except EntityDoesNotExist:
-        return http404_exc_username_not_found(username=username)
+    except EntityDoesNotExist as value_error:
+        raise await http404_exc_username_not_found(username=username) from value_error

@@ -64,13 +64,13 @@ async def _retrieve_current_user(
 
     except ValueError as value_error:
 
-        raise http403_exc_forbidden() from value_error
+        raise await http403_exc_forbidden() from value_error
 
     try:
         return await users_repo.get_user_by_email(email=email)
     except EntityDoesNotExist as value_error:
 
-        raise http403_exc_forbidden() from value_error
+        raise await http403_exc_forbidden() from value_error
 
 
 async def _retrieve_optional_current_user(
