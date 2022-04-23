@@ -5,6 +5,22 @@ RETURNING
     id, created_at, updated_at;
 
 
+-- name: read-publishers
+SELECT  id,
+        name,
+        profile_picture,
+        banner,
+        bio,
+        address,
+        postal_code,
+        state,
+        country,
+        office_phone_number,
+        mobile_phone_number,
+        user_id
+FROM publishers;
+
+
 -- name: read-publisher-by-user-id^
 SELECT  id,
         name,
@@ -27,7 +43,7 @@ LIMIT 1;
 
 -- name: update-publisher-by-id<!
 UPDATE
-    journalists
+    publishers
 SET name                = :new_name,
     profile_picture     = :new_profile_picture,
     banner              = :new_banner,
