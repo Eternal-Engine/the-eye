@@ -1,5 +1,5 @@
 # type: ignore
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from asyncpg import connection as asyncpg_conn
 
@@ -18,7 +18,7 @@ class JournalistsRepository(BaseRepository):
         super().__init__(conn)
         self._users_repo = UsersRepository(conn)
 
-    async def create_journalist_profile_from_getting_user_by_username(
+    async def create_journalist_by_username(
         self,
         *,
         username: str,
@@ -33,17 +33,16 @@ class JournalistsRepository(BaseRepository):
         country: str = "",
         office_phone_number: str = "",
         mobile_phone_number: str = "",
-        journalist_profile: Optional[JournalistProfile],
     ) -> JournalistProfile:
 
         db_user = await self._users_repo.get_user_by_username(username=username)
 
         try:
-            journalist_profile = await self.get_journalist_by_id(id=db_user.id_)
+            db_journalist = await self.get_journalist_by_user_id(id=db_user.id_)
 
         except EntityDoesNotExist:
 
-            journalist_profile = JournalistInDB(
+            db_journalist = JournalistInDB(
                 first_name=first_name,
                 last_name=last_name,
                 profile_picture=profile_picture,
@@ -62,23 +61,34 @@ class JournalistsRepository(BaseRepository):
 
                 await queries.create_new_journalist(
                     self.connection,
-                    first_name=journalist_profile.first_name,
-                    last_name=journalist_profile.last_name,
-                    profile_picture=journalist_profile.profile_picture,
-                    banner=journalist_profile.banner,
-                    bio=journalist_profile.bio,
-                    address=journalist_profile.address,
-                    postal_code=journalist_profile.postal_code,
-                    state=journalist_profile.state,
-                    country=journalist_profile.country,
-                    office_phone_number=journalist_profile.office_phone_number,
-                    mobile_phone_number=journalist_profile.mobile_phone_number,
-                    user_id=journalist_profile.user_id,
+                    first_name=db_journalist.first_name,
+                    last_name=db_journalist.last_name,
+                    profile_picture=db_journalist.profile_picture,
+                    banner=db_journalist.banner,
+                    bio=db_journalist.bio,
+                    address=db_journalist.address,
+                    postal_code=db_journalist.postal_code,
+                    state=db_journalist.state,
+                    country=db_journalist.country,
+                    office_phone_number=db_journalist.office_phone_number,
+                    mobile_phone_number=db_journalist.mobile_phone_number,
+                    user_id=db_journalist.user_id,
                 )
 
-        return journalist_profile
+        return db_journalist
 
-    async def get_journalist_by_id(self, *, id: int) -> JournalistInDB:
+    async def get_journalists(self) -> List[JournalistInDB]:
+        async with self.connection.transaction():
+            db_journalists = await queries.read_journalists(self.connection)
+            db_journalists_list = []
+
+            for db_journalist in db_journalists:
+
+                db_journalists_list.append(JournalistInDB(**db_journalist))
+
+            return db_journalists_list
+
+    async def get_journalist_by_user_id(self, *, id: int) -> JournalistInDB:
 
         db_journalist = await queries.read_journalist_by_user_id(self.connection, user_id=id)
 
@@ -86,12 +96,12 @@ class JournalistsRepository(BaseRepository):
 
             return JournalistInDB(**db_journalist)
 
-        raise EntityDoesNotExist(f"User with id {id} does not exist!")
+        raise EntityDoesNotExist(f"Journalist with id {id} doesn't exist!")
 
-    async def update_journalist_profile(
+    async def update_journalist_by_user_id(
         self,
         *,
-        journalist: Journalist,
+        user_id: int,
         first_name: Optional[str] = None,
         last_name: Optional[str] = None,
         profile_picture: Optional[str] = None,
@@ -105,7 +115,7 @@ class JournalistsRepository(BaseRepository):
         mobile_phone_number: Optional[str] = None,
     ) -> JournalistInDB:
 
-        db_journalist = await self.get_journalist_by_id(id=journalist.user_id)
+        db_journalist = await self.get_journalist_by_user_id(id=user_id)
 
         if db_journalist:
             db_journalist.first_name = first_name or db_journalist.first_name
@@ -123,7 +133,7 @@ class JournalistsRepository(BaseRepository):
             async with self.connection.transaction():
                 db_journalist.updated_at = await queries.update_journalist_by_id(
                     self.connection,
-                    id=journalist.user_id,
+                    id=user_id,
                     new_first_name=db_journalist.first_name,
                     new_last_name=db_journalist.last_name,
                     new_profile_picture=db_journalist.profile_picture,
@@ -139,4 +149,4 @@ class JournalistsRepository(BaseRepository):
 
             return db_journalist
 
-        raise EntityDoesNotExist("User with that ID does not exist!")
+        raise EntityDoesNotExist("Journalist with that ID does not exist!")

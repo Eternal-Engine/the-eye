@@ -5,6 +5,23 @@ RETURNING
     id, created_at, updated_at;
 
 
+-- name: read-journalists
+SELECT  id,
+        first_name,
+        last_name,
+        profile_picture,
+        banner,
+        bio,
+        address,
+        postal_code,
+        state,
+        country,
+        office_phone_number,
+        mobile_phone_number,
+        user_id
+FROM journalists;
+
+
 -- name: read-journalist-by-user-id^
 SELECT  id,
         first_name,
