@@ -1,7 +1,7 @@
 # type: ignore
 import fastapi
 
-from app.api.dependencies.database import get_repository
+from app.api.dependencies.repository import get_repository
 from app.api.exceptions.http_exc_400 import (
     http400_exc_bad_email_request,
     http400_exc_bad_username_request,
@@ -31,10 +31,10 @@ async def signup(
 ) -> UserInResponse:
 
     if await check_username_is_taken(users_repo, user_create.username):
-        return await http400_exc_bad_username_request(username=user_create.username)
+        raise await http400_exc_bad_username_request(username=user_create.username)
 
     if await check_email_is_taken(users_repo, user_create.email):
-        return await http400_exc_bad_email_request(email=user_create.email)
+        raise await http400_exc_bad_email_request(email=user_create.email)
 
     user = await users_repo.create_user(**user_create.dict())
     token = generate_access_token(
@@ -70,7 +70,7 @@ async def signin(
             password=user_login.password,
         )
         if not user_in_db:
-            return await http400_exc_credentials_bad_request()
+            raise await http400_exc_credentials_bad_request()
 
     except EntityDoesNotExist as credentials_error:
         raise await http400_exc_credentials_bad_request() from credentials_error

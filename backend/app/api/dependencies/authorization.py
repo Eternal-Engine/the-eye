@@ -4,7 +4,7 @@ from typing import Callable, Optional
 import decouple
 import fastapi
 
-from app.api.dependencies.database import get_repository
+from app.api.dependencies.repository import get_repository
 from app.api.exceptions.http_exc_403 import http403_exc_forbidden
 from app.core.config import get_settings
 from app.db.errors import EntityDoesNotExist
@@ -64,13 +64,13 @@ async def _retrieve_current_user(
 
     except ValueError as value_error:
 
-        raise http403_exc_forbidden() from value_error
+        raise await http403_exc_forbidden() from value_error
 
     try:
         return await users_repo.get_user_by_email(email=email)
     except EntityDoesNotExist as value_error:
 
-        raise http403_exc_forbidden() from value_error
+        raise await http403_exc_forbidden() from value_error
 
 
 async def _retrieve_optional_current_user(
