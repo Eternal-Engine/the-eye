@@ -31,24 +31,29 @@ class JournalistsRepository(BaseRepository):
 
         db_user = await self._users_repo.get_user_by_username(username=username)
 
-        db_journalist = JournalistInDB(
-            first_name=first_name,
-            last_name=last_name,
-            profile_picture=profile_picture,
-            bio=bio,
-            user_id=db_user.id_,
-        )
+        try:
+            db_journalist = await self.get_journalist_by_id(id=db_user.id_)
 
-        async with self.connection.transaction():
+        except EntityDoesNotExist:
 
-            await queries.create_new_journalist(
-                self.connection,
-                first_name=db_journalist.first_name,
-                last_name=db_journalist.last_name,
-                profile_picture=db_journalist.profile_picture,
-                bio=db_journalist.bio,
-                user_id=db_journalist.user_id,
+            db_journalist = JournalistInDB(
+                first_name=first_name,
+                last_name=last_name,
+                profile_picture=profile_picture,
+                bio=bio,
+                user_id=db_user.id_,
             )
+
+            async with self.connection.transaction():
+
+                await queries.create_new_journalist(
+                    self.connection,
+                    first_name=db_journalist.first_name,
+                    last_name=db_journalist.last_name,
+                    profile_picture=db_journalist.profile_picture,
+                    bio=db_journalist.bio,
+                    user_id=db_journalist.user_id,
+                )
 
         journalist_profile = Journalist(
             first_name=db_journalist.first_name,
