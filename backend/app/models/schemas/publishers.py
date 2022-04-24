@@ -2,13 +2,12 @@ from typing import Optional
 
 import pydantic
 
-from app.models.domain.journalists import Journalist
+from app.models.domain.publishers import Publisher
 from app.models.schemas.base import IWBaseSchema  # type: ignore
 
 
-class JournalistInCreate(IWBaseSchema):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+class PublisherInCreate(IWBaseSchema):
+    name: Optional[str] = None
     profile_picture: Optional[str] = None
     banner: Optional[str] = None
     bio: Optional[str] = None
@@ -20,10 +19,9 @@ class JournalistInCreate(IWBaseSchema):
     mobile_phone_number: Optional[str] = None
 
 
-class JournalistInUpdate(pydantic.BaseModel):
+class PublisherInUpdate(pydantic.BaseModel):
 
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    name: Optional[str] = None
     profile_picture: Optional[str] = None
     banner: Optional[str] = None
     bio: Optional[str] = None
@@ -35,5 +33,5 @@ class JournalistInUpdate(pydantic.BaseModel):
     mobile_phone_number: Optional[str] = None
 
 
-class JournalistInResponse(IWBaseSchema):  # type: ignore
-    journalist: Journalist
+class PublisherInResponse(IWBaseSchema):  # type: ignore
+    publisher: Publisher

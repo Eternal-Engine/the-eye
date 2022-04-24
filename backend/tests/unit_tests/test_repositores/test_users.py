@@ -6,7 +6,7 @@ from app.models.domain.users import UserInDB
 from app.models.schemas.users import UserInResponse, UserWithToken
 
 
-async def test_create_user_citizen_journalist_with_default_create_parameter(test_pool: asyncpg_pool.Pool) -> None:
+async def test_create_user_journalist_with_default_create_parameter(test_pool: asyncpg_pool.Pool) -> None:
 
     expected_data = {
         "user": {

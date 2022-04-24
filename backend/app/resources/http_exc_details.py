@@ -7,7 +7,7 @@ def http_400_details(username: str = None, email: str = None) -> str:
     return "Login failed! Re-check heck your email and password!"
 
 
-HTTP_300_DETAILS = "Unable to validate credentials; Check the JWT token or login credentials!"
+HTTP_403_DETAILS = "Unable to validate credentials; Check the JWT token or login credentials!"
 
 
 def http_404_details(id: int = None, username: str = None) -> str:

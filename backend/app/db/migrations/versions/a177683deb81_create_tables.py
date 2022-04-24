@@ -80,8 +80,15 @@ def create_journalists_table() -> None:
         sa.Column("id", sa.BigInteger, primary_key=True),
         sa.Column("first_name", sa.VARCHAR, nullable=True),
         sa.Column("last_name", sa.VARCHAR, nullable=True),
-        sa.Column("bio", sa.VARCHAR, nullable=False),
+        sa.Column("bio", sa.VARCHAR, nullable=True),
         sa.Column("profile_picture", sa.VARCHAR, nullable=True),
+        sa.Column("banner", sa.VARCHAR, nullable=True),
+        sa.Column("address", sa.VARCHAR, nullable=True),
+        sa.Column("postal_code", sa.VARCHAR, nullable=True),
+        sa.Column("state", sa.VARCHAR, nullable=True),
+        sa.Column("country", sa.VARCHAR, nullable=True),
+        sa.Column("office_phone_number", sa.VARCHAR, nullable=True),
+        sa.Column("mobile_phone_number", sa.VARCHAR, nullable=True),
         sa.Column("user_id", sa.BigInteger, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
         *timestamps(),
     )
@@ -90,6 +97,34 @@ def create_journalists_table() -> None:
         CREATE TRIGGER update_journalist_modtime
             BEFORE UPDATE
             ON journalists
+            FOR EACH ROW
+        EXECUTE PROCEDURE update_updated_at_column();
+        """
+    )
+
+
+def create_publishers_table() -> None:
+    op.create_table(
+        "publishers",
+        sa.Column("id", sa.BigInteger, primary_key=True),
+        sa.Column("name", sa.VARCHAR, nullable=True),
+        sa.Column("bio", sa.VARCHAR, nullable=True),
+        sa.Column("profile_picture", sa.VARCHAR, nullable=True),
+        sa.Column("banner", sa.VARCHAR, nullable=True),
+        sa.Column("address", sa.VARCHAR, nullable=True),
+        sa.Column("postal_code", sa.VARCHAR, nullable=True),
+        sa.Column("state", sa.VARCHAR, nullable=True),
+        sa.Column("country", sa.VARCHAR, nullable=True),
+        sa.Column("office_phone_number", sa.VARCHAR, nullable=True),
+        sa.Column("mobile_phone_number", sa.VARCHAR, nullable=True),
+        sa.Column("user_id", sa.BigInteger, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        *timestamps(),
+    )
+    op.execute(
+        """
+        CREATE TRIGGER update_publisher_modtime
+            BEFORE UPDATE
+            ON publishers
             FOR EACH ROW
         EXECUTE PROCEDURE update_updated_at_column();
         """
@@ -166,6 +201,7 @@ def upgrade() -> None:
     create_updated_at_trigger()
     create_users_table()
     create_journalists_table()
+    create_publishers_table()
     create_articles_table()
     create_images_table()
     create_videos_table()
@@ -175,5 +211,7 @@ def downgrade() -> None:
     op.drop_table("videos")
     op.drop_table("images")
     op.drop_table("articles")
+    op.drop_table("publishers")
+    op.drop_table("journalists")
     op.drop_table("users")
     op.execute("DROP FUNCTION update_updated_at_column")

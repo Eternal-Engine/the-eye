@@ -18,18 +18,18 @@ router = fastapi.APIRouter(prefix="/users", tags=["users"])
 settings = get_settings()
 
 
-@router.get(path="", name="users:get-all-users", response_model=List[UserInResponse])
+@router.get(path="", name="users:retrieve-all-users", response_model=List[UserInResponse])
 async def retrieve_all_users(
     users_repo: UsersRepository = fastapi.Depends(get_repository(UsersRepository)),
 ) -> List[UserInResponse]:
 
-    users_in_db = await users_repo.get_users()
-    users_with_token = []
+    db_users = await users_repo.get_users()
+    db_users_list = []
 
-    for user in users_in_db:
+    for user in db_users:
         token = generate_access_token(
-            user,
-            settings.secret_key,
+            user=user,
+            secret_key=settings.secret_key,
         )
         user = UserInResponse(
             user=UserWithToken(
@@ -41,14 +41,14 @@ async def retrieve_all_users(
                 token=token,
             ),
         )
-        users_with_token.append(user)
+        db_users_list.append(user)
 
-    return users_with_token
+    return db_users_list
 
 
 @router.get(
     path="/user/{id}",
-    name="users:get-current-user",
+    name="users:retrieve-current-user",
     response_model=UserInResponse,
     status_code=fastapi.status.HTTP_200_OK,
 )
@@ -62,8 +62,8 @@ async def retrieve_current_user(
         return await http404_exc_id_not_found(id=id)
 
     token = generate_access_token(
-        current_user,
-        settings.secret_key,
+        user=current_user,
+        secret_key=settings.secret_key,
     )
 
     return UserInResponse(
@@ -104,8 +104,8 @@ async def update_current_user(
     updated_user = await users_repo.update_user(user=current_user, **user_update.dict())
 
     token = generate_access_token(
-        updated_user,
-        settings.secret_key,
+        user=updated_user,
+        secret_key=settings.secret_key,
     )
 
     return UserInResponse(

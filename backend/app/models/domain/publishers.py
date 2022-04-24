@@ -5,10 +5,9 @@ from app.models.mixins.date_time import DateTimeModelMixin
 from app.models.mixins.identifier import IDModelMixin
 
 
-class Journalist(IWBaseModel):
+class Publisher(IWBaseModel):
 
-    first_name: str = ""
-    last_name: str = ""
+    name: str = ""
     profile_picture: Optional[str]
     banner: Optional[str]
     bio: str = ""
@@ -25,5 +24,5 @@ class Journalist(IWBaseModel):
     # articles: List[Article] = []
 
 
-class JournalistInDB(IDModelMixin, DateTimeModelMixin, Journalist):
+class PublisherInDB(IDModelMixin, DateTimeModelMixin, Publisher):
     pass
