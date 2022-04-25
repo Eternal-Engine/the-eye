@@ -41,7 +41,7 @@ repos:
         args:
         - --ignore=E1,E23,E501,W503
 -   repo: https://github.com/PyCQA/pylint
-    rev: v2.13.5
+    rev: v2.13.7
     hooks:
     -   id: pylint
         args:
