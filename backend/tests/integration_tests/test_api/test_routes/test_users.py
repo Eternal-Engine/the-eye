@@ -74,9 +74,10 @@ async def test_fail_to_retrieve_current_user_by_invalid_id_not_found(
     authorized_async_client: httpx.AsyncClient,
 ) -> None:
 
+    exc_msg = http_404_details(id=2)
     response = await authorized_async_client.get(url="api/users/user/2")
     assert response.status_code == fastapi.status.HTTP_404_NOT_FOUND
-    assert response.json() == {"errors": [http_404_details(id=2)]}
+    assert response.json() == {"errors": [exc_msg]}
 
 
 async def test_update_current_user_username_and_email_successful(
