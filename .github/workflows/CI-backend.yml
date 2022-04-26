@@ -12,140 +12,8 @@ on:
       - 'fix/**'
 
 jobs:
-  build:
-    name: 'Build 🏗'
-    strategy:
-      matrix:
-        os: 
-          - macos-latest
-          - ubuntu-latest
-        python-version:
-          - "3.10"
-        poetry-version:
-          - "1.2.0b1"
-        cache-path:
-          - ~/Library/Caches/pypoetry
-          - ~/.cache/pypoetry
-        exclude:
-          - os: ubuntu-latest
-            cache-path: ~/Library/Caches/pypoetry
-          - os: macos-latest
-            cache-path: ~/.cache/pypoetry
-    defaults:
-      run:
-        working-directory: backend/
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Check repository
-        uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-      - name: Set up Poetry package manager
-        uses: abatilo/actions-poetry@v2.1.3
-        with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: Display Poetry version
-        run: |
-          poetry --version
-      - name: Cache Poetry dependencies
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3.0.1
-        with:
-          path: |
-            ${{ matrix.cache-path }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-      - name: Install dependencies
-        run: |
-          poetry install --no-dev
-
-  code-quality:
-    name: 'Code-Quality 💎'
-    needs: build
-    strategy:
-      matrix:
-        os: 
-          - macos-latest
-          - ubuntu-latest
-        python-version:
-          - "3.10"
-        poetry-version:
-          - "1.2.0b1"
-        cache-path:
-          - ~/Library/Caches/pypoetry
-          - ~/.cache/pypoetry
-        exclude:
-          - os: ubuntu-latest
-            cache-path: ~/Library/Caches/pypoetry
-          - os: macos-latest
-            cache-path: ~/.cache/pypoetry
-    defaults:
-      run:
-        working-directory: backend/
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Check repository
-        uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-      - name: Set up Poetry package manager
-        uses: abatilo/actions-poetry@v2.1.3
-        with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: Display Poetry version
-        run: |
-          poetry --version
-      - name: Upload cached Poetry dependencies
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3.0.1
-        with:
-          path: |
-            ${{ matrix.cache-path }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
-      - name: Install linter dependencies
-        run: |
-          poetry add "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
-      - name: Lint with Black
-        uses: psf/black@stable
-        with:
-          options: "--exclude=tests/"
-          src: "./backend/app/"
-      - name: Lint with Isort
-        run: |
-          poetry run isort . --check-only --profile black
-      - name: Lint with PyLint
-        run: |
-          poetry run pylint app/
-      - name: Lint with Flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Lint with MyPy
-        run: |
-          poetry run mypy . --pretty
-
-  # test:
-  #   name: 'Test 🔬'
-  #   needs: build
-  #   environment: test
+  # build:
+  #   name: 'Build 🏗'
   #   strategy:
   #     matrix:
   #       os: 
@@ -166,11 +34,62 @@ jobs:
   #   defaults:
   #     run:
   #       working-directory: backend/
-  #   env:
-  #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  #     SECRET_KEY: ${{ secrets.SECRET_KEY }}
-  #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   #   runs-on: ${{ matrix.os }}
+
+  #   steps:
+  #     - name: Check repository
+  #       uses: actions/checkout@v3
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v3
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #     - name: Display Python version
+  #       run: python -c "import sys; print(sys.version)"
+  #     - name: Set up Poetry package manager
+  #       uses: abatilo/actions-poetry@v2.1.3
+  #       with:
+  #         poetry-version: ${{ matrix.poetry-version }}
+  #     - name: Display Poetry version
+  #       run: |
+  #         poetry --version
+  #     - name: Cache Poetry dependencies
+  #       id: cached-poetry-dependencies
+  #       uses: actions/cache@v3.0.1
+  #       with:
+  #         path: |
+  #           ${{ matrix.cache-path }}
+  #         key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-poetry-
+  #     - name: Install dependencies
+  #       run: |
+  #         poetry install --no-dev
+
+  # code-quality:
+  #   name: 'Code-Quality 💎'
+  #   needs: build
+  #   strategy:
+  #     matrix:
+  #       os: 
+  #         - macos-latest
+  #         - ubuntu-latest
+  #       python-version:
+  #         - "3.10"
+  #       poetry-version:
+  #         - "1.2.0b1"
+  #       cache-path:
+  #         - ~/Library/Caches/pypoetry
+  #         - ~/.cache/pypoetry
+  #       exclude:
+  #         - os: ubuntu-latest
+  #           cache-path: ~/Library/Caches/pypoetry
+  #         - os: macos-latest
+  #           cache-path: ~/.cache/pypoetry
+  #   defaults:
+  #     run:
+  #       working-directory: backend/
+  #   runs-on: ${{ matrix.os }}
+
   #   steps:
   #     - name: Check repository
   #       uses: actions/checkout@v3
@@ -199,15 +118,118 @@ jobs:
   #     - name: Install dependencies
   #       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
   #       run: poetry install --no-interaction --no-root
-  #     - name: Install test dependencies
+  #     - name: Install linter dependencies
   #       run: |
-  #         poetry add pytest pytest-asyncio pytest-cov pytest-xdist
-  #     - name: Test with Pytest-Cov
-  #       run: |
-  #         poetry run pytest --cov --cov-report xml .
-  #     - name: Upload test report to Codecov
-  #       uses: codecov/codecov-action@v2.1.0
+  #         poetry add "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
+  #     - name: Lint with Black
+  #       uses: psf/black@stable
   #       with:
-  #         token: ${{ secrets.CODECOV_TOKEN }}
-  #         directory: backend/
-  #         flags: backend
+  #         options: "--exclude=tests/"
+  #         src: "./backend/app/"
+  #     - name: Lint with Isort
+  #       run: |
+  #         poetry run isort . --check-only --profile black
+  #     - name: Lint with PyLint
+  #       run: |
+  #         poetry run pylint app/
+  #     - name: Lint with Flake8
+  #       run: |
+  #         # stop the build if there are Python syntax errors or undefined names
+  #         poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+  #         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+  #         poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+  #     - name: Lint with MyPy
+  #       run: |
+  #         poetry run mypy . --pretty
+
+  test:
+    name: 'Test 🔬'
+    needs: build
+    environment: development
+    strategy:
+      matrix:
+        os: 
+          - macos-latest
+          - ubuntu-latest
+        python-version:
+          - "3.10"
+        poetry-version:
+          - "1.2.0b1"
+        cache-path:
+          - ~/Library/Caches/pypoetry
+          - ~/.cache/pypoetry
+        exclude:
+          - os: ubuntu-latest
+            cache-path: ~/Library/Caches/pypoetry
+          - os: macos-latest
+            cache-path: ~/.cache/pypoetry
+    services:
+      postgres:
+        image: postgres:14.2-alpine
+        env:
+          POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DEV_POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DEV_DATABASE_URL }}
+        ports:
+          - localhost:5432
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    defaults:
+      run:
+        working-directory: backend/
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.DEV_SECRET_KEY }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
+      ALGORITHM_LAYER_1: ${{ secrets.ALGORITHM_LAYER_1 }}
+      ALGORITHM_LAYER_2: ${{ secrets.ALGORITHM_LAYER_2 }}
+      HEADER_KEY: ${{ secrets.HEADER_KEY }}
+      JWT_SUBJECT: ${{ secrets.JWT_SUBJECT }}
+      JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
+      SECRET_KEY_LAYER_1: ${{ secrets.SECRET_KEY_LAYER_1 }}
+      SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
+      MIN: ${{ secrets.MIN }}
+      HOUR: ${{ secrets.HOUR }}
+      DAY: ${{ secrets.DAY }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check repository
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+      - name: Set up Poetry package manager
+        uses: abatilo/actions-poetry@v2.1.3
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Display Poetry version
+        run: |
+          poetry --version
+      - name: Upload cached Poetry dependencies
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3.0.1
+        with:
+          path: |
+            ${{ matrix.cache-path }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+      - name: Install test dependencies
+        run: |
+          poetry add pytest pytest-asyncio pytest-cov pytest-xdist
+      - name: Test with Pytest-Cov
+        run: |
+          poetry run pytest --cov --cov-report xml .
+      - name: Upload test report to Codecov
+        uses: codecov/codecov-action@v2.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: backend/
+          flags: backend
