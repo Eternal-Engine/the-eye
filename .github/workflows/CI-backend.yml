@@ -164,15 +164,18 @@ jobs:
             cache-path: ~/.cache/pypoetry
     services:
       postgres:
-        image: postgres:14.2-alpine
+        image: postgres:latest
         env:
           POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DEV_POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.DEV_DATABASE_URL }}
         ports:
-          - localhost:5432
           - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: backend/
@@ -223,6 +226,9 @@ jobs:
       - name: Install test dependencies
         run: |
           poetry add pytest pytest-asyncio pytest-cov pytest-xdist
+      - name: Create database tables
+        run: |
+          poetry run alembic upgrade heads
       - name: Test with Pytest-Cov
         run: |
           poetry run pytest --cov --cov-report xml .
