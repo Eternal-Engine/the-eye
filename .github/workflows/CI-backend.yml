@@ -144,7 +144,6 @@ jobs:
 
   test:
     name: 'Test 🔬'
-    needs: build
     environment: development
     strategy:
       matrix:
