@@ -16,10 +16,13 @@ async def retrieve_current_publisher_auth(
     publishers_repo: PublishersRepository = fastapi.Depends(get_repository(PublishersRepository)),
 ) -> Publisher:
 
-    try:
-        db_publisher = await publishers_repo.get_publisher_by_user_id(id=current_user.id_)
+    if username == current_user.username:
+        try:
+            db_publisher = await publishers_repo.get_publisher_by_user_id(id=current_user.id_)
 
-        return PublisherInResponse(publisher=Publisher(**db_publisher.dict()))
+            return PublisherInResponse(publisher=Publisher(**db_publisher.dict()))
 
-    except EntityDoesNotExist as value_error:
-        raise await http404_exc_username_not_found(username=username) from value_error
+        except EntityDoesNotExist as value_error:
+            raise await http404_exc_username_not_found(username=username) from value_error
+
+    raise await http404_exc_username_not_found(username=username)

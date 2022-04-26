@@ -16,10 +16,13 @@ async def retrieve_current_journalist_auth(
     journalists_repo: JournalistsRepository = fastapi.Depends(get_repository(JournalistsRepository)),
 ) -> Journalist:
 
-    try:
-        db_journalist = await journalists_repo.get_journalist_by_user_id(id=current_user.id_)
+    if username == current_user.username:
+        try:
+            db_journalist = await journalists_repo.get_journalist_by_user_id(id=current_user.id_)
 
-        return JournalistInResponse(journalist=Journalist(**db_journalist.dict()))
+            return JournalistInResponse(journalist=Journalist(**db_journalist.dict()))
 
-    except EntityDoesNotExist as value_error:
-        raise await http404_exc_username_not_found(username=username) from value_error
+        except EntityDoesNotExist as value_error:
+            raise await http404_exc_username_not_found(username=username) from value_error
+
+    raise await http404_exc_username_not_found(username=username)
