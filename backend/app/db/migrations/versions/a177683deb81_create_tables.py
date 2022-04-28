@@ -140,6 +140,7 @@ def create_articles_table() -> None:
         sa.Column("description", sa.VARCHAR, nullable=True),
         sa.Column("body", sa.VARCHAR, nullable=False),
         sa.Column("author_id", sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=True),
+        sa.Column("is_drafted", sa.BOOLEAN, default=False),
         *timestamps(),
     )
     op.execute(
