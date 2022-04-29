@@ -1,9 +1,5 @@
 # type: ignore
-from sys import prefix
 from typing import Any, List, Optional
-
-from pyparsing import WordStart
-
 from app.db.errors import EntityDoesNotExist
 from app.db.queries.queries import queries
 from app.db.repositories.base import BaseRepository
