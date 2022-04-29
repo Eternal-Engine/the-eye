@@ -5,6 +5,7 @@ from app.db.repositories.users import UsersRepository
 async def check_username_is_taken(users_repo: UsersRepository, username: str) -> bool:
     try:
         await users_repo.get_user_by_username(username=username)
+
     except EntityDoesNotExist:
         return False
 
@@ -14,6 +15,7 @@ async def check_username_is_taken(users_repo: UsersRepository, username: str) ->
 async def check_email_is_taken(users_repo: UsersRepository, email: str) -> bool:
     try:
         await users_repo.get_user_by_email(email=email)
+
     except EntityDoesNotExist:
         return False
 
@@ -24,9 +26,12 @@ async def authenticate_user(users_repo: UsersRepository, email: str, password: s
 
     try:
         user_in_db = await users_repo.get_user_by_email(email=email)
+
     except EntityDoesNotExist:
         return False
+
     else:
         if not user_in_db.check_password(password=password):
             return False
+
     return user_in_db

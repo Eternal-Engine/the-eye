@@ -45,7 +45,6 @@ class UsersRepository(BaseRepository):
             db_users_list = []
 
             for db_user in db_users:
-
                 db_users_list.append(UserInDB(**db_user))
 
             return db_users_list
@@ -55,7 +54,6 @@ class UsersRepository(BaseRepository):
         db_user = await queries.read_user_by_id(self.connection, id=id)
 
         if db_user:
-
             return UserInDB(**db_user)
 
         raise EntityDoesNotExist(f"User with id {id} does not exist!")
@@ -65,7 +63,6 @@ class UsersRepository(BaseRepository):
         db_user = await queries.read_user_by_username(self.connection, username=username)
 
         if db_user:
-
             return UserInDB(**db_user)
 
         raise EntityDoesNotExist(f"User with username {username} does not exist!")
@@ -75,7 +72,6 @@ class UsersRepository(BaseRepository):
         db_user = await queries.read_user_by_email(self.connection, email=email)
 
         if db_user:
-
             return UserInDB(**db_user)
 
         raise EntityDoesNotExist(f"User with email {email} does not exist!")
@@ -122,5 +118,4 @@ class UsersRepository(BaseRepository):
             return await queries.delete_user_by_id(self.connection, id=id)
 
         except EntityDoesNotExist as value_error:
-
             raise ValueError(f"User with id {id} does not exist!") from value_error

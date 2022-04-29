@@ -80,7 +80,6 @@ class PublishersRepository(BaseRepository):
             db_publishers_list = []
 
             for db_publisher in db_publishers:
-
                 db_publishers_list.append(PublisherInDB(**db_publisher))
 
             return db_publishers_list
@@ -90,7 +89,6 @@ class PublishersRepository(BaseRepository):
         db_publisher = await queries.read_publisher_by_user_id(self.connection, user_id=id)
 
         if db_publisher:
-
             return PublisherInDB(**db_publisher)
 
         raise EntityDoesNotExist(f"Publisher with id {id} doesn't exist!")
