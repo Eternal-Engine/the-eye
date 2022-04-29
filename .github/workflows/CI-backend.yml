@@ -63,7 +63,7 @@ jobs:
             ${{ runner.os }}-poetry-
       - name: Install dependencies
         run: |
-          poetry install --no-interaction
+          poetry install --no-dev --no-interaction 
 
   code-quality:
     name: 'Code-Quality 💎'
@@ -105,7 +105,7 @@ jobs:
       - name: Display Poetry version
         run: |
           poetry --version
-      - name: Upload cached Poetry dependencies
+      - name: Download cached Poetry dependencies
         id: cached-poetry-dependencies
         uses: actions/cache@v3.0.1
         with:
@@ -114,9 +114,12 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
-      - name: Install dependencies
+      - name: Ensure Poetry was cached
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
+      - name: Install Dependencies for Linting
+        run: |
+          poetry add "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
       - name: Lint with Black
         uses: psf/black@stable
         with:
@@ -178,7 +181,7 @@ jobs:
       - name: Display Poetry version
         run: |
           poetry --version
-      - name: Upload cached Poetry dependencies
+      - name: Download cached Poetry dependencies
         id: cached-poetry-dependencies
         uses: actions/cache@v3.0.1
         with:
@@ -187,9 +190,12 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
-      - name: Install dependencies
+      - name: Ensure Poetry was cached
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
+      - name: Install Dependencies for Testing
+        run: |
+          poetry add pytest pytest-asyncio pytest-cov pytest-xdist
       - name: Create database tables
         run: |
           poetry run alembic upgrade heads
