@@ -4,6 +4,7 @@ import httpx
 
 from app.models.domain.publishers import Publisher
 from app.models.domain.users import UserInDB
+from app.resources.http_exc_details import http_404_details
 
 
 async def test_get_all_publishers_successful(
@@ -33,10 +34,13 @@ async def test_get_all_publishers_successful(
     ]
 
 
-async def test_fail_to_retrieve_current_publisher_because_not_authorized(
-    async_client: httpx.AsyncClient,
-    test_user_publisher_2: UserInDB,
+async def test_fail_to_retrieve_current_publisher_with_invalid_username(
+    authorized_async_client: httpx.AsyncClient,
+    test_user: UserInDB,
 ) -> None:
 
-    response = await async_client.get(url=f"api/publishers/publisher/{test_user_publisher_2.username}")
-    assert response.status_code == fastapi.status.HTTP_403_FORBIDDEN
+    exc_msg = http_404_details(username=f"invalid{test_user.username}")
+
+    response = await authorized_async_client.get(url=f"api/publishers/invalid{test_user.username}")
+    assert response.status_code == fastapi.status.HTTP_404_NOT_FOUND
+    assert response.json() == {"errors": [exc_msg]}

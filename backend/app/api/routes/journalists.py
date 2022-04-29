@@ -1,3 +1,4 @@
+# type: ignore
 from typing import List
 
 import fastapi
@@ -83,7 +84,7 @@ async def retrieve_all_journalists(
 
 
 @router.get(
-    path="/journalist/{username}",
+    path="/{username}",
     response_model=JournalistInResponse,
     name="journalists:retrieve-current-journalist",
     status_code=fastapi.status.HTTP_200_OK,
@@ -96,7 +97,7 @@ async def retrieve_current_journalist(
 
 
 @router.put(
-    path="/journalist/{username}",
+    path="/{username}",
     name="journalists:update-current-journalist",
     response_model=JournalistInResponse,
     status_code=fastapi.status.HTTP_200_OK,

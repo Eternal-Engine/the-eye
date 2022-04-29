@@ -1,5 +1,3 @@
-import decouple
-
 from app.core.settings.app import AppSettings
 
 
@@ -9,9 +7,8 @@ class AppStagingSettings(AppSettings):
     """
 
     title: str = "iWitness - Backend Test Environment Settings"
-    debug: bool = decouple.config("TEST_DEBUG", cast=bool)
-    database_url: str = decouple.config("TEST_DATABASE_URL", cast=str)
-    secret_key: str = decouple.config("TEST_SECRET_KEY", cast=str)
+    database_url: str = "postgresql://postgres:postgres@localhost:5432/iW_test"
+    debug: bool = True
 
     class Config(AppSettings.Config):
         pass

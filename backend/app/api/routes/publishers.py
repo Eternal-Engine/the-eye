@@ -1,3 +1,4 @@
+# type: ignore
 from typing import List
 
 import fastapi
@@ -81,7 +82,7 @@ async def retrieve_all_publishers(
 
 
 @router.get(
-    path="/publisher/{username}",
+    path="/{username}",
     response_model=PublisherInResponse,
     name="publishers:retrieve-current-publisher",
     status_code=fastapi.status.HTTP_200_OK,
@@ -94,7 +95,7 @@ async def retrieve_current_publisher(
 
 
 @router.put(
-    path="/publisher/{username}",
+    path="/{username}",
     name="publishers:update-current-publisher",
     response_model=PublisherInResponse,
     status_code=fastapi.status.HTTP_200_OK,

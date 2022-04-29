@@ -12,8 +12,8 @@ from app.core.settings.base import EnvTypes
 from app.db.repositories.journalists import JournalistsRepository
 from app.db.repositories.publishers import PublishersRepository
 from app.db.repositories.users import UsersRepository
-from app.models.domain.journalists import Journalist
-from app.models.domain.publishers import Publisher
+from app.models.domain.journalists import JournalistInDB
+from app.models.domain.publishers import PublisherInDB
 from app.models.domain.users import UserInDB
 from app.services.jwt import generate_access_token
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
@@ -123,7 +123,7 @@ async def test_user_publisher_2(test_pool: asyncpg_pool.Pool) -> UserInDB:
 @pytest.fixture(name="test_journalist")
 async def test_journalist(
     test_user: UserInDB,
-    test_pool: asyncpg_pool.Pool) -> Journalist:
+    test_pool: asyncpg_pool.Pool) -> JournalistInDB:
     async with test_pool.acquire() as conn:
         return await JournalistsRepository(conn).create_journalist_by_username(
             username=test_user.username,
@@ -144,7 +144,7 @@ async def test_journalist(
 @pytest.fixture(name="test_publisher")
 async def test_publisher(
     test_user_publisher: UserInDB,
-    test_pool: asyncpg_pool.Pool) -> Publisher:
+    test_pool: asyncpg_pool.Pool) -> PublisherInDB:
     async with test_pool.acquire() as conn:
         return await PublishersRepository(conn).create_publisher_by_username(
             username=test_user_publisher.username,

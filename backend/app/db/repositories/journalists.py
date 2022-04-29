@@ -83,7 +83,6 @@ class JournalistsRepository(BaseRepository):
             db_journalists_list = []
 
             for db_journalist in db_journalists:
-
                 db_journalists_list.append(JournalistInDB(**db_journalist))
 
             return db_journalists_list
@@ -93,7 +92,6 @@ class JournalistsRepository(BaseRepository):
         db_journalist = await queries.read_journalist_by_user_id(self.connection, user_id=id)
 
         if db_journalist:
-
             return JournalistInDB(**db_journalist)
 
         raise EntityDoesNotExist(f"Journalist with id {id} doesn't exist!")

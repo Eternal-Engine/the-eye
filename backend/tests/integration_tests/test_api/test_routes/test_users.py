@@ -63,7 +63,7 @@ async def test_retrieve_current_user_successful(
     test_user: UserInDB,
 ) -> None:
 
-    response = await authorized_async_client.get(url="api/users/user/1")
+    response = await authorized_async_client.get(url="api/users/1")
     assert response.status_code == fastapi.status.HTTP_200_OK
 
     db_user = UserInResponse(**response.json())
@@ -74,9 +74,10 @@ async def test_fail_to_retrieve_current_user_by_invalid_id_not_found(
     authorized_async_client: httpx.AsyncClient,
 ) -> None:
 
-    response = await authorized_async_client.get(url="api/users/user/2")
+    exc_msg = http_404_details(id=2)
+    response = await authorized_async_client.get(url="api/users/2")
     assert response.status_code == fastapi.status.HTTP_404_NOT_FOUND
-    assert response.json() == {"errors": [http_404_details(id=2)]}
+    assert response.json() == {"errors": [exc_msg]}
 
 
 async def test_update_current_user_username_and_email_successful(
@@ -91,7 +92,7 @@ async def test_update_current_user_username_and_email_successful(
         }
     }
 
-    response = await authorized_async_client.put(url="api/users/user/1", json=updated_user_data)
+    response = await authorized_async_client.put(url="api/users/1", json=updated_user_data)
     assert response.status_code == fastapi.status.HTTP_200_OK
 
     updated_user = UserInResponse(**response.json()).dict()
@@ -106,7 +107,7 @@ async def test_user_update_password_successful(
 ) -> None:
 
     response = await authorized_async_client.put(
-        url="api/users/user/1",
+        url="api/users/1",
         json={"user": {"password": "new_password"}},
     )
     assert response.status_code == fastapi.status.HTTP_200_OK
@@ -129,7 +130,7 @@ async def test_delete_user_successfully_return_http202(
         current_user = UsersRepository(conn)
         await current_user.get_user_by_email(email=test_user.email)
 
-    response = await authorized_async_client.delete(url="api/users/user/1")
+    response = await authorized_async_client.delete(url="api/users/1")
 
     assert response.status_code == fastapi.status.HTTP_202_ACCEPTED
     assert response.json() == {"msg": "User with ID 1 is successfully deleted!"}

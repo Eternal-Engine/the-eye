@@ -10,9 +10,9 @@ class TestAppSettings(unittest.TestCase):
     def setUp(self) -> None:
         self.app_base_settings = AppBaseSettings()
         self.app_settings = AppSettings()
+        self.app_settings.debug = False
 
     def test_create_app_settings(self) -> None:
-
         self.assertTrue(
             issubclass(
                 type(self.app_settings),
