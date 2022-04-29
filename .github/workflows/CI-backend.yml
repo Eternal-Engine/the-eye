@@ -164,17 +164,17 @@ jobs:
     defaults:
       run:
         working-directory: backend/
-    # Service containers to run with `container-job`
     services:
-      # Label used to access the service container
       postgres:
-        # Docker Hub image
-        image: postgres
-        # Provide the password for postgres
+        image: postgres:13
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        # Set health checks to wait until postgres has started
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER : ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT : ${{ secrets.POSTGRES_PORT }}
+        ports:
+        - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
