@@ -196,12 +196,9 @@ jobs:
       - name: Install Dependencies for Testing
         run: |
           poetry add pytest pytest-asyncio pytest-cov pytest-xdist
-      - name: Create database tables
-        run: |
-          poetry run alembic upgrade heads
       - name: Test with Pytest-Cov
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
           SECRET_KEY: ${{ secrets.DEV_SECRET_KEY }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}

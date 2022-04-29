@@ -1,3 +1,4 @@
+# type: ignore
 import fastapi
 
 from app.api.dependencies.authorization import retrieve_current_user_auth
