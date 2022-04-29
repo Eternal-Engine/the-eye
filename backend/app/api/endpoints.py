@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 
+from app.api.routes.articles import router as articles_router
 from app.api.routes.authentication import router as auth_router
 from app.api.routes.journalists import router as journalists_router
 from app.api.routes.publishers import router as publishers_router
 from app.api.routes.users import router as users_router
-from app.api.routes.articles import router as articles_router
 
 router = APIRouter()
 

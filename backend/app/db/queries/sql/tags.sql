@@ -14,4 +14,3 @@ SELECT  id,
         hashtag
 FROM tags
 WHERE hashtag = :hashtag
-

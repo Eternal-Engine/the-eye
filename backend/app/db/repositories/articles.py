@@ -1,10 +1,12 @@
 from re import I
+from typing import Any, List, Optional
+
 from asyncpg import connection as asyncpg_conn
+
 from app.db.errors import EntityDoesNotExist
 from app.db.queries.queries import queries
 from app.db.repositories.base import BaseRepository
 from app.db.repositories.journalists import JournalistsRepository
-from typing import Optional, List, Any
 from app.models.domain.articles import Article, ArticleInDB
 from app.models.domain.journalists import Journalist
 
@@ -22,12 +24,11 @@ class ArticlesRepository(BaseRepository):
         description: str = "",
         body: str = "",
         author: Journalist,
-        #images: Optional [List[Image]] = None,
+        # images: Optional [List[Image]] = None,
         # videos: Optional [List[Video] = None,
-        #audios: Optional [List[Audio]] = None,
-        #tags: Optional[Tag] = None,
-        is_drafted: bool = False
-
+        # audios: Optional [List[Audio]] = None,
+        # tags: Optional[Tag] = None,
+        is_drafted: bool = False,
     ) -> ArticleInDB:
 
         db_journalist = await self._journalists_repo.get_journalist_by_user_id(id=journalist_id)
@@ -35,8 +36,7 @@ class ArticlesRepository(BaseRepository):
             headline=headline, description=description, body=body, author_id=db_journalist.id_, is_drafted=is_drafted
         )
         print(db_article.id_)
-        db_article.generate_slug(
-            headline=headline, journalist_id=journalist_id, article_id=db_article.id_)
+        db_article.generate_slug(headline=headline, journalist_id=journalist_id, article_id=db_article.id_)
         async with self.connection.transaction():
 
             new_article = await queries.create_new_article(
@@ -46,7 +46,7 @@ class ArticlesRepository(BaseRepository):
                 description=db_article.description,
                 body=db_article.body,
                 is_drafted=db_article.is_drafted,
-                author_id=db_journalist.id_
+                author_id=db_journalist.id_,
             )
         return db_article.copy(update=dict(new_article))
 
@@ -78,10 +78,10 @@ class ArticlesRepository(BaseRepository):
         headline: Optional[str] = None,
         description: Optional[str] = None,
         body: Optional[str] = None,
-        #images: Optional [List[Image]] = None
+        # images: Optional [List[Image]] = None
         # videos: Optional [List[Video] = None
-        #audios: Optional [List[Audio]] = None
-        #tags: Optional[List[Tag]] = None,
+        # audios: Optional [List[Audio]] = None
+        # tags: Optional[List[Tag]] = None,
     ) -> ArticleInDB:
 
         db_article = await self.get_article_by_id(id=article.id_)
@@ -97,7 +97,7 @@ class ArticlesRepository(BaseRepository):
                     id=article.id_,
                     new_headline=db_article.headline,
                     new_description=db_article.description,
-                    new_body=db_article.body
+                    new_body=db_article.body,
                 )
 
             return db_article
@@ -111,5 +111,4 @@ class ArticlesRepository(BaseRepository):
 
         except EntityDoesNotExist as value_error:
 
-            raise ValueError(
-                f"Article with id {id} does not exist!") from value_error
+            raise ValueError(f"Article with id {id} does not exist!") from value_error

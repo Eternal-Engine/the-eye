@@ -3,7 +3,7 @@ WITH author_subquery AS (
 SELECT id, username
 FROM users
 WHERE username = :author_username
-) 
+)
 INSERT INTO articles (headline, slug, description, body, is_drafted, author_id)
 VALUES (:headline, :slug, :description, :body, :is_drafted, (SELECT id FROM author_subquery))
 RETURNING
@@ -12,7 +12,7 @@ RETURNING
     slug,
     description,
     body,
-    is_drafted, 
+    is_drafted,
     (SELECT username FROM author_subquery) as author_username,
     created_at,
     updated_at;
@@ -76,4 +76,3 @@ RETURNING
 DELETE
 FROM articles
 WHERE id = :id;
-

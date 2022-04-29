@@ -1,10 +1,10 @@
 # type: ignore
 from typing import Any, List, Optional
+
 from app.db.errors import EntityDoesNotExist
 from app.db.queries.queries import queries
 from app.db.repositories.base import BaseRepository
 from app.models.schemas.tags import Tag, TagInDB
-
 
 Class TagsRepository(BaseRepository)
     async def create(self, *, word):
@@ -28,4 +28,4 @@ Class TagsRepository(BaseRepository)
 
                 db_tags_list.append(Tag(**db_tag))
 
-        return db_tags_list 
+        return db_tags_list
