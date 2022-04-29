@@ -66,6 +66,7 @@ jobs:
 
   code-quality:
     name: 'Code-Quality 💎'
+    needs: build
     strategy:
       matrix:
         os:
@@ -141,6 +142,7 @@ jobs:
 
   test:
     name: 'Test 🔬'
+    needs: build
     environment: development
     strategy:
       matrix:
