@@ -121,7 +121,7 @@ async def update_current_user(
 
 
 @router.delete(
-    path="",
+    path="/{id}",
     name="users:delete-current-user",
     status_code=fastapi.status.HTTP_202_ACCEPTED,
 )

@@ -62,7 +62,7 @@ async def test_retrieve_current_journalist_successful(
     test_user: UserInDB,
 ) -> None:
 
-    response = await authorized_async_client.get(url=f"api/journalists/journalist/{test_user.username}")
+    response = await authorized_async_client.get(url=f"api/journalists/{test_user.username}")
     assert response.status_code == fastapi.status.HTTP_200_OK
     assert response.json() == {
         "journalist": {
@@ -90,7 +90,7 @@ async def test_fail_to_retrieve_current_journalist_with_invalid_username(
 
     exc_msg = http_404_details(username=f"invalid{test_user.username}")
 
-    response = await authorized_async_client.get(url=f"api/journalists/journalist/invalid{test_user.username}")
+    response = await authorized_async_client.get(url=f"api/journalists/invalid{test_user.username}")
     assert response.status_code == fastapi.status.HTTP_404_NOT_FOUND
     assert response.json() != test_journalist.dict()
     assert response.json() == {"errors": [exc_msg]}
@@ -115,7 +115,7 @@ async def test_update_current_journalist_successful(
     }
 
     response = await authorized_async_client.put(
-        url=f"api/journalists/journalist/{test_user.username}", json=updated_journalist_data
+        url=f"api/journalists/{test_user.username}", json=updated_journalist_data
     )
     assert response.status_code == fastapi.status.HTTP_200_OK
     assert response.json() == {

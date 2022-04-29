@@ -41,6 +41,6 @@ async def test_fail_to_retrieve_current_publisher_with_invalid_username(
 
     exc_msg = http_404_details(username=f"invalid{test_user.username}")
 
-    response = await authorized_async_client.get(url=f"api/publishers/publisher/invalid{test_user.username}")
+    response = await authorized_async_client.get(url=f"api/publishers/invalid{test_user.username}")
     assert response.status_code == fastapi.status.HTTP_404_NOT_FOUND
     assert response.json() == {"errors": [exc_msg]}
