@@ -198,8 +198,8 @@ jobs:
           poetry add pytest pytest-asyncio pytest-cov pytest-xdist
       - name: Test with Pytest-Cov
         env:
-          DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
-          SECRET_KEY: ${{ secrets.DEV_SECRET_KEY }}
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          SECRET_KEY: ${{ secrets.PROD_SECRET_KEY }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
           ALGORITHM_LAYER_1: ${{ secrets.ALGORITHM_LAYER_1 }}
