@@ -47,7 +47,7 @@ async def retrieve_all_users(
 
 
 @router.get(
-    path="/user/{id}",
+    path="/{id}",
     name="users:retrieve-current-user",
     response_model=UserInResponse,
     status_code=fastapi.status.HTTP_200_OK,
@@ -79,7 +79,7 @@ async def retrieve_current_user(
 
 
 @router.put(
-    path="/user/{id}",
+    path="/{id}",
     name="users:update-current-user",
     response_model=UserInResponse,
     status_code=fastapi.status.HTTP_200_OK,
@@ -121,7 +121,7 @@ async def update_current_user(
 
 
 @router.delete(
-    path="/user/{id}",
+    path="",
     name="users:delete-current-user",
     status_code=fastapi.status.HTTP_202_ACCEPTED,
 )
