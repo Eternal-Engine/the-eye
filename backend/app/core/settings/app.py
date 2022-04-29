@@ -15,7 +15,7 @@ class AppSettings(AppBaseSettings):
     title: str = "iWitness - Backend Production Environment Settings"
     description: str = "A backend application powered by FastAPI, AsyncPG, and PostgresQL."
     version: str = "0.0.0"
-    debug: bool = decouple.config("PROD_DEBUG", cast=bool)
+    debug: bool = decouple.config("PROD_DEBUG", cast=bool, default=True)
 
     database_url: str = decouple.config("PROD_DATABASE_URL", cast=str)
     secret_key: str = decouple.config("PROD_SECRET_KEY", cast=str)

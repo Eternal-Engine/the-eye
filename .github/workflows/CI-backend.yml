@@ -63,11 +63,10 @@ jobs:
             ${{ runner.os }}-poetry-
       - name: Install dependencies
         run: |
-          poetry install --no-dev
+          poetry install --no-interaction
 
   code-quality:
     name: 'Code-Quality 💎'
-    needs: build
     strategy:
       matrix:
         os: 
@@ -118,9 +117,6 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
-      - name: Install linter dependencies
-        run: |
-          poetry add "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
       - name: Lint with Black
         uses: psf/black@stable
         with:
@@ -194,9 +190,6 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
-      - name: Install test dependencies
-        run: |
-          poetry add pytest pytest-asyncio pytest-cov pytest-xdist
       - name: Create database tables
         run: |
           poetry run alembic upgrade heads
