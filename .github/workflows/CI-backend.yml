@@ -167,11 +167,11 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER : ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-          POSTGRES_PORT : ${{ secrets.POSTGRES_PORT }}
+          POSTGRES_DB: ${{ secrets.PG_DB }}
+          POSTGRES_USER : ${{ secrets.PG_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.PG_HOST }}
+          POSTGRES_PORT : ${{ secrets.PG_PORT }}
         ports:
         - 5432:5432
         options: >-
@@ -213,7 +213,7 @@ jobs:
           poetry add pytest pytest-asyncio pytest-cov pytest-xdist
       - name: Test with Pytest-Cov
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_TEST_URL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
