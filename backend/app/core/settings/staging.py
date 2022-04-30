@@ -9,7 +9,10 @@ class AppStagingSettings(AppSettings):
     """
 
     title: str = "iWitness - Backend Test Environment Settings"
-    database_url: str = decouple.config("DATABASE_TEST_URL", cast=str)
+    database_url: str = decouple.config(
+        "DATABASE_TEST_URL",
+        cast=str,
+    )
     debug: bool = True
 
     class Config(AppSettings.Config):
