@@ -45,7 +45,6 @@ jobs:
           cache: 'pip'
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
-      - name: Cache Poetry dependencies
       - name: Install depenencies
         run:  |
           python -m pip install --upgrade pip
@@ -177,7 +176,6 @@ jobs:
           cache: 'pip'
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
-      - name: Cache Poetry dependencies
       - name: Install depenencies
         run:  |
           python -m pip install --upgrade pip
