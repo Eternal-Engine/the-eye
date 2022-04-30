@@ -5,6 +5,7 @@ import loguru
 from app.core.config import get_settings
 from app.core.settings.app import AppSettings
 from app.core.settings.base import EnvTypes
+from app.db.queries.tables import create_db_tables
 
 
 async def initialize_db_connection(
@@ -21,6 +22,9 @@ async def initialize_db_connection(
         min_size=settings.min_connection_count,
         max_size=settings.max_connection_count,
     )
+
+    async with app.state.pool.acquire() as conn:
+        await conn.execute(create_db_tables)
 
     loguru.logger.info("Connection established...")
 
