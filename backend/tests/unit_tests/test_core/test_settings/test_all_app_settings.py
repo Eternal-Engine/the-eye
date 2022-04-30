@@ -16,6 +16,8 @@ class TestProdDevStagingSettings(unittest.TestCase):
         self.app_dev_settings = AppDevSettings()
         self.app_test_settings = AppStagingSettings()
         self.app_prod_settings.debug = False
+        self.app_dev_settings.debug = True
+        self.app_test_settings.debug = True
         self.expected = {
             "app_env": EnvTypes.PROD,
             "title": "iWitness - Backend Production Environment Settings",

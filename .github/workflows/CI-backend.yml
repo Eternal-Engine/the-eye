@@ -42,27 +42,13 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
-      - name: Set up Poetry package manager
-        uses: abatilo/actions-poetry@v2.1.3
-        with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: Display Poetry version
-        run: |
-          poetry --version
-      - name: Cache Poetry dependencies
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3.0.1
-        with:
-          path: |
-            ${{ matrix.cache-path }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-      - name: Install dependencies
-        run: |
-          poetry install --no-dev --no-interaction 
+      - name: Install depenencies
+        run:  |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
   code-quality:
     name: 'Code-Quality 💎'
@@ -167,11 +153,11 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER : ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-          POSTGRES_PORT : ${{ secrets.POSTGRES_PORT }}
+          POSTGRES_DB: ${{ secrets.PG_DB }}
+          POSTGRES_USER : ${{ secrets.PG_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.PG_HOST }}
+          POSTGRES_PORT : ${{ secrets.PG_PORT }}
         ports:
         - 5432:5432
         options: >-
@@ -187,33 +173,20 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
-      - name: Set up Poetry package manager
-        uses: abatilo/actions-poetry@v2.1.3
-        with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: Display Poetry version
-        run: |
-          poetry --version
-      - name: Download cached Poetry dependencies
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3.0.1
-        with:
-          path: |
-            ${{ matrix.cache-path }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-      - name: Ensure Poetry was cached
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+      - name: Install depenencies
+        run:  |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Install Dependencies for Testing
         run: |
-          poetry add pytest pytest-asyncio pytest-cov pytest-xdist
+          pip install pytest pytest-asyncio pytest-cov pytest-xdist
       - name: Test with Pytest-Cov
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_DEV_URL }}
+          DATABASE_TEST_URL: ${{ secrets.DATABASE_TEST_URL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
@@ -228,7 +201,7 @@ jobs:
           HOUR: ${{ secrets.HOUR }}
           DAY: ${{ secrets.DAY }}
         run: |
-          poetry run pytest --cov --cov-report xml .
+          pytest --cov --cov-report xml .
       - name: Upload test report to Codecov
         uses: codecov/codecov-action@v2.1.0
         with:

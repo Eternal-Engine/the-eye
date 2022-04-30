@@ -9,6 +9,7 @@ from asyncpg import pool as asyncpg_pool
 
 from app.core.config import get_settings
 from app.core.settings.base import EnvTypes
+from app.db.queries.tables import create_db_tables, drop_db_tables
 from app.db.repositories.journalists import JournalistsRepository
 from app.db.repositories.publishers import PublishersRepository
 from app.db.repositories.users import UsersRepository
@@ -17,7 +18,6 @@ from app.models.domain.publishers import PublisherInDB
 from app.models.domain.users import UserInDB
 from app.services.jwt import generate_access_token
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
-from tests.tables import create_db_tables, drop_db_tables
 
 # Set up the "app_env" to use the TEST environment settings
 test_settings = get_settings(app_env=EnvTypes.TEST)
