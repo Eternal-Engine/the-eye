@@ -185,6 +185,7 @@ jobs:
           pip install pytest pytest-asyncio pytest-cov pytest-xdist
       - name: Test with Pytest-Cov
         env:
+          DATABASE_URL: ${{ secrets.DATABASE_DEV_URL }}
           DATABASE_TEST_URL: ${{ secrets.DATABASE_TEST_URL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
