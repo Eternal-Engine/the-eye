@@ -1,6 +1,6 @@
 from app.models.mixins.date_time import DateTimeModelMixin
 from app.models.mixins.identifier import IDModelMixin
-from app.models.schemas.base import IWBaseSchema
+from app.models.schemas.base import IWBaseSchema  # type: ignore
 
 
 class Tag(IWBaseSchema):

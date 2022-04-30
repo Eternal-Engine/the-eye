@@ -3,7 +3,7 @@ from typing import List, Optional
 import pydantic
 
 from app.models.domain.articles import Article, ArticleInDB
-from app.models.schemas.base import IWBaseSchema
+from app.models.schemas.base import IWBaseSchema  # type: ignore
 from app.models.schemas.tags import Tag
 
 

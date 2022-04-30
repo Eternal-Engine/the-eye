@@ -1,4 +1,3 @@
-from re import I
 from typing import Any, List, Optional
 
 from asyncpg import connection as asyncpg_conn
@@ -48,7 +47,7 @@ class ArticlesRepository(BaseRepository):
                 is_drafted=db_article.is_drafted,
                 author_id=db_journalist.id_,
             )
-        return db_article.copy(update=dict(new_article))
+        return db_article.copy(update=dict(new_article))  # type: ignore
 
     async def get_articles(self) -> List[ArticleInDB]:
         async with self.connection.transaction():

@@ -3,10 +3,7 @@ from typing import List
 import fastapi
 
 from app.api.dependencies.authorization import retrieve_current_user_auth
-from app.api.dependencies.journalists import retrieve_current_journalist_auth
 from app.api.dependencies.repository import get_repository
-from app.api.exceptions.http_exc_403 import http403_exc_forbidden
-from app.api.exceptions.http_exc_404 import http404_exc_username_not_found
 from app.db.repositories.articles import ArticlesRepository
 from app.models.domain.articles import ArticleInDB
 from app.models.domain.users import User

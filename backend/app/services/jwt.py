@@ -15,7 +15,7 @@ def generate_jwt_token(
     jwt_data: Dict[str, str],
     secret_key: str = SECURITY_SETTINGS.SECRET_KEY_JWT,
     expires_delta: datetime.timedelta | None = None,
-    ) -> Any:
+) -> Any:
 
     to_encode = jwt_data.copy()
 
@@ -33,7 +33,7 @@ def generate_jwt_token(
 def generate_access_token(
     user: User,
     secret_key: str = SECURITY_SETTINGS.SECRET_KEY_JWT
-    ) -> Any:
+) -> Any:
 
     return generate_jwt_token(
         jwt_data=JWTUser(email=user.email).dict(),
