@@ -1,76 +1,40 @@
-#########################################
-############### BUILDER #################
-#########################################
+# pull official base image
+FROM python:3.10.1-slim-buster
 
-# Pull official base image as builder
-FROM python:3.10.1-slim-buster as builder
-
-# Install dependencies
-RUN apt-get update \
-  && apt-get -y install gcc postgresql \
-  && apt-get clean
-
-# Define work directory
-WORKDIR /usr/src/app
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Install dependencies
-RUN pip install --upgrade pip
-COPY ./requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
-
-# Lint Backend code
-COPY . /usr/src/app/
-RUN pip install black==22.3.0 flake8==4.0.1 isort==5.10.1
-RUN flake8 .
-RUN black --exclude=migrations .
-RUN isort .
-
-#########################################
-################# FINAL #################
-#########################################
-
-# Pull official base image as the final image
-FROM python:3.10.1-slim-buster as final
-
-# Create directory for the app user
+# create directory for the app user
 RUN mkdir -p /home/app
 
-# Create the main user
+# create the app user
 RUN addgroup --system app && adduser --system --group app
 
-# Create organized directories
+# create the appropriate directories
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/backend
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
-# Set environment variables
+# set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Install dependencies
+# install system dependencies
 RUN apt-get update \
   && apt-get -y install netcat gcc postgresql \
   && apt-get clean
 
-# Install python dependencies
-COPY --from=builder /usr/src/app/wheels /wheels
-COPY --from=builder /usr/src/app/requirements.txt .
+# install python dependencies
 RUN pip install --upgrade pip
-RUN pip install --no-cache /wheels/*
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
 
-# Add app
+# add app
 COPY . .
 
-# Chown all the files to the app user
+# chown all the files to the app user
 RUN chown -R app:app $APP_HOME
 
-# Change to the app user
+# change to the app user
 USER app
 
-# Execute commands for container deployment
+# run gunicorn
 CMD gunicorn --bind 0.0.0.0:$PORT app.main:app -k uvicorn.workers.UvicornWorker
