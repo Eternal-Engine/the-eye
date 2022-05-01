@@ -163,8 +163,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table("videos")
-    op.drop_table("images")
     op.drop_table("articles")
     op.drop_table("publishers")
     op.drop_table("journalists")

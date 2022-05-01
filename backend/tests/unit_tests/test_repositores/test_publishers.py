@@ -50,6 +50,8 @@ async def test_create_publisher_with_default_create_parameter(
 
     assert new_publisher.dict() == expected_data
 
+    await test_pool.close()
+
 
 async def test_read_all_publishers(
     test_user_publisher: UserInDB, test_user_publisher_2: UserInDB, test_pool: asyncpg_pool.Pool
@@ -122,6 +124,8 @@ async def test_read_all_publishers(
     db_publishers[0].dict(exclude={"created_at", "updated_at"}) == expected_data[0]
     db_publishers[1].dict(exclude={"created_at", "updated_at"}) == expected_data[1]
 
+    await test_pool.close()
+
 
 async def test_read_publisher_by_user_id(test_user_publisher: UserInDB, test_pool: asyncpg_pool.Pool) -> None:
 
@@ -160,6 +164,8 @@ async def test_read_publisher_by_user_id(test_user_publisher: UserInDB, test_poo
 
     assert db_publisher.dict(exclude={"created_at", "updated_at"}) == expected_data
 
+    await test_pool.close()
+
 
 async def test_update_publisher_by_username(test_pool: asyncpg_pool.Pool, test_user_publisher: UserInDB) -> None:
 
@@ -197,3 +203,5 @@ async def test_update_publisher_by_username(test_pool: asyncpg_pool.Pool, test_u
         )
 
     assert updated_publisher.dict(exclude={"created_at", "updated_at"}) == expected_data
+
+    await test_pool.close()

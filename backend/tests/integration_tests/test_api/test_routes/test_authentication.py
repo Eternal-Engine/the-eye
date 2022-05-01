@@ -19,7 +19,7 @@ async def test_signup_successful(
         }
     }
 
-    response = await async_client.post(test_app.url_path_for("auth:signup"), json=user_signup_data)
+    response = await async_client.post("/api/auth/signup", json=user_signup_data)
 
     assert response.status_code == fastapi.status.HTTP_201_CREATED
 
@@ -47,7 +47,7 @@ async def test_failed_signup_from_taken_email(
         }
     }
 
-    response = await async_client.post(test_app.url_path_for("auth:signup"), json=user_signup_data)
+    response = await async_client.post("/api/auth/signup", json=user_signup_data)
 
     assert response.status_code == fastapi.status.HTTP_400_BAD_REQUEST
     assert response.json() == {
@@ -69,7 +69,7 @@ async def test_failed_signup_from_taken_username(
         }
     }
 
-    response = await async_client.post(test_app.url_path_for("auth:signup"), json=user_signup_data)
+    response = await async_client.post("/api/auth/signup", json=user_signup_data)
 
     assert response.status_code == fastapi.status.HTTP_400_BAD_REQUEST
     assert response.json() == {"errors": ["The username usertest is taken! Be creative and choose another one!"]}
@@ -81,7 +81,7 @@ async def test_signin_successful(
 
     user_signin_data = {"user": {"email": test_user.email, "password": "password-test"}}
 
-    response = await async_client.post(test_app.url_path_for("auth:signin"), json=user_signin_data)
+    response = await async_client.post("/api/auth/signin", json=user_signin_data)
 
     assert response.status_code == fastapi.status.HTTP_200_OK
 
@@ -94,7 +94,7 @@ async def test_failed_singin_by_unmatched_password(
 
     user_signin_data = {"user": {"email": test_user.email, "password": "wrong-password"}}
 
-    response = await async_client.post(test_app.url_path_for("auth:signin"), json=user_signin_data)
+    response = await async_client.post("/api/auth/signin", json=user_signin_data)
 
     assert response.status_code == fastapi.status.HTTP_400_BAD_REQUEST
     assert response.json() == {"errors": ["Login failed! Re-check heck your email and password!"]}
