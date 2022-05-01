@@ -158,6 +158,10 @@ jobs:
       - name: Install Dependencies for Testing
         run: |
           pip install pytest pytest-asyncio pytest-cov pytest-xdist
+      - name: Manually migrate the database
+        run: |
+          alembic downgrade base
+          alembic upgrade head
       - name: Test with Pytest-Cov
         env:
           DATABASE_URL: ${{ secrets.DATABASE_DEV_URL }}
