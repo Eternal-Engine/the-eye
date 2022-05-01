@@ -1,53 +1,41 @@
-# Pull official base image
-
+# pull official base image
 FROM python:3.10.1-slim-buster
 
-# Create directory for the app user
-
+# create directory for the app user
 RUN mkdir -p /home/app
 
-# Create the app user
-
+# create the app user
 RUN addgroup --system app && adduser --system --group app
 
-# Create the appropriate directories
-
+# create the appropriate directories
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/backend
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
-# Set environment variables
-
+# set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV VIRTUAL_ENV=/opt/venv
 
-# Run virtual env
-
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Install system dependencies
+# install system dependencies
 RUN apt-get update \
   && apt-get -y install netcat gcc postgresql \
   && apt-get clean
 
-# Install python dependencies
-
+# install python dependencies
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
-# Add app
 
+# add app
 COPY . .
 
-# Chown all the files to the app user
+# chown all the files to the app user
 RUN chown -R app:app $APP_HOME
 
-# Change to the app user
+# change to the app user
 USER app
 
-# Execute commands for container deployment
+# run gunicorn
 CMD gunicorn --bind 0.0.0.0:$PORT app.main:app -k uvicorn.workers.UvicornWorker

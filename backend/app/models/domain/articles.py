@@ -1,6 +1,6 @@
-import slugify
+import slugify  # type: ignore
 
-from app.models.domain.base import IWBaseModel
+from app.models.domain.base import IWBaseModel  # type: ignore
 from app.models.domain.journalists import Journalist
 from app.models.mixins.date_time import DateTimeModelMixin
 from app.models.mixins.identifier import IDModelMixin

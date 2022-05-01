@@ -74,6 +74,8 @@ async def test_create_user_publisher(test_pool: asyncpg_pool.Pool) -> None:
 
     assert new_user.dict() == expected_data
 
+    await test_pool.close()
+
 
 async def test_read_all_users(test_pool: asyncpg_pool.Pool) -> None:
     expected_data = {
@@ -104,6 +106,8 @@ async def test_read_all_users(test_pool: asyncpg_pool.Pool) -> None:
             exclude={"id", "salt", "hashed_password"}
         )
 
+    await test_pool.close()
+
 
 async def test_read_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
 
@@ -120,6 +124,8 @@ async def test_read_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserInDB
         user_in_db = await UsersRepository(conn).get_user_by_id(id=test_user.id)
 
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
+
+    await test_pool.close()
 
 
 async def test_read_user_by_invalid_id_raise_exception(test_pool: asyncpg_pool.Pool) -> None:
@@ -147,6 +153,8 @@ async def test_read_user_by_username(test_pool: asyncpg_pool.Pool, test_user: Us
 
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
+    await test_pool.close()
+
 
 async def test_read_user_by_invalid_username_raise_exception(test_pool: asyncpg_pool.Pool) -> None:
 
@@ -172,6 +180,8 @@ async def test_read_user_by_email(test_pool: asyncpg_pool.Pool, test_user: UserI
         user_in_db = await UsersRepository(conn).get_user_by_email(email=test_user.email)
 
     assert user_in_db.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
+
+    await test_pool.close()
 
 
 async def test_read_user_by_invalid_email_raise_exception(test_pool: asyncpg_pool.Pool) -> None:
@@ -205,6 +215,8 @@ async def test_update_user(test_pool: asyncpg_pool.Pool, test_user: UserInDB) ->
 
     assert updated_user.dict(exclude={"salt", "hashed_password", "created_at", "updated_at"}) == expected_data
 
+    await test_pool.close()
+
 
 async def test_delete_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
 
@@ -213,3 +225,5 @@ async def test_delete_user_by_id(test_pool: asyncpg_pool.Pool, test_user: UserIn
 
     assert deleted_user != test_user
     assert deleted_user is None
+
+    await test_pool.close()

@@ -45,10 +45,23 @@ create_db_tables = """
         FOREIGN KEY ("user_id") REFERENCES users("id"),
         created_at TIMESTAMP,
         updated_at TIMESTAMP);
+
+    CREATE TABLE IF NOT EXISTS articles(
+        id SERIAL PRIMARY KEY NOT NULL,
+        headline VARCHAR NOT NULL,
+        slug VARCHAR,
+        description VARCHAR,
+        body VARCHAR,
+        is_drafted BOOL,
+        author_id INTEGER,
+        FOREIGN KEY ("author_id") REFERENCES journalists("id"),
+        created_at TIMESTAMP,
+        updated_at TIMESTAMP);
 """
 
 drop_db_tables = """
-    DROP TABLE IF EXISTS journalists;
+    DROP TABLE IF EXISTS articles;
+    DROP TABLE IF EXISTS journalists CASCADE;
     DROP TABLE IF EXISTS publishers;
     DROP TABLE IF EXISTS users CASCADE;
 """

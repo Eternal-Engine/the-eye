@@ -1,5 +1,8 @@
 name: 'CI - Backend 🧬'
 
+env:
+  IMAGE: docker.pkg.github.com/$(echo $GITHUB_REPOSITORY | tr '[A-Z]' '[a-z]')/backend
+
 on:
   workflow_dispatch:
   push:
@@ -20,16 +23,6 @@ jobs:
           - ubuntu-latest
         python-version:
           - "3.10"
-        poetry-version:
-          - "1.2.0b1"
-        cache-path:
-          - ~/Library/Caches/pypoetry
-          - ~/.cache/pypoetry
-        exclude:
-          - os: ubuntu-latest
-            cache-path: ~/Library/Caches/pypoetry
-          - os: macos-latest
-            cache-path: ~/.cache/pypoetry
     defaults:
       run:
         working-directory: backend/
@@ -59,16 +52,6 @@ jobs:
           - ubuntu-latest
         python-version:
           - "3.10"
-        poetry-version:
-          - "1.2.0b1"
-        cache-path:
-          - ~/Library/Caches/pypoetry
-          - ~/.cache/pypoetry
-        exclude:
-          - os: ubuntu-latest
-            cache-path: ~/Library/Caches/pypoetry
-          - os: macos-latest
-            cache-path: ~/.cache/pypoetry
     defaults:
       run:
         working-directory: backend/
@@ -81,30 +64,16 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
-      - name: Set up Poetry package manager
-        uses: abatilo/actions-poetry@v2.1.3
-        with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: Display Poetry version
-        run: |
-          poetry --version
-      - name: Download cached Poetry dependencies
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3.0.1
-        with:
-          path: |
-            ${{ matrix.cache-path }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-      - name: Ensure Poetry was cached
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+      - name: Install dev depenencies
+        run:  |
+          python -m pip install --upgrade pip
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Install Dependencies for Linting
         run: |
-          poetry add "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
+          pip install "black>=22.1.0" "flake8>=3.9.2" "isort>=5.10.1" "mypy>=0.941" "pycodestyle>=2.7.0" "pylint>=2.12.2" "pyproject-flake8>=0.0.1a2"
       - name: Lint with Black
         uses: psf/black@stable
         with:
@@ -112,19 +81,19 @@ jobs:
           src: "./backend/app/"
       - name: Lint with Isort
         run: |
-          poetry run isort . --check-only --profile black
+          isort . --check-only --profile black
       - name: Lint with PyLint
         run: |
-          poetry run pylint app/
+          pylint app/
       - name: Lint with Flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Lint with MyPy
         run: |
-          poetry run mypy . --pretty
+          mypy . --pretty
 
   test:
     name: 'Test 🔬'
@@ -136,28 +105,16 @@ jobs:
           - ubuntu-latest
         python-version:
           - "3.10"
-        poetry-version:
-          - "1.2.0b1"
-        cache-path:
-          - ~/Library/Caches/pypoetry
-          - ~/.cache/pypoetry
-        exclude:
-          - os: ubuntu-latest
-            cache-path: ~/Library/Caches/pypoetry
-          - os: macos-latest
-            cache-path: ~/.cache/pypoetry
     defaults:
       run:
         working-directory: backend/
     services:
       postgres:
-        image: postgres:13
+        image: postgres:14.2-alpine
         env:
           POSTGRES_DB: ${{ secrets.PG_DB }}
           POSTGRES_USER : ${{ secrets.PG_USER }}
           POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
-          POSTGRES_HOST: ${{ secrets.PG_HOST }}
-          POSTGRES_PORT : ${{ secrets.PG_PORT }}
         ports:
         - 5432:5432
         options: >-
@@ -165,6 +122,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_DEV_URL }}
+      DATABASE_TEST_URL: ${{ secrets.DATABASE_TEST_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
+      ALGORITHM_LAYER_1: ${{ secrets.ALGORITHM_LAYER_1 }}
+      ALGORITHM_LAYER_2: ${{ secrets.ALGORITHM_LAYER_2 }}
+      HEADER_KEY: ${{ secrets.HEADER_KEY }}
+      JWT_SUBJECT: ${{ secrets.JWT_SUBJECT }}
+      JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
+      SECRET_KEY_LAYER_1: ${{ secrets.SECRET_KEY_LAYER_1 }}
+      SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
+      MIN: ${{ secrets.MIN }}
+      HOUR: ${{ secrets.HOUR }}
+      DAY: ${{ secrets.DAY }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check repository
@@ -183,23 +156,11 @@ jobs:
       - name: Install Dependencies for Testing
         run: |
           pip install pytest pytest-asyncio pytest-cov pytest-xdist
+      - name: Manually migrate the database
+        run: |
+          alembic downgrade base
+          alembic upgrade head
       - name: Test with Pytest-Cov
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_DEV_URL }}
-          DATABASE_TEST_URL: ${{ secrets.DATABASE_TEST_URL }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-          ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
-          ALGORITHM_LAYER_1: ${{ secrets.ALGORITHM_LAYER_1 }}
-          ALGORITHM_LAYER_2: ${{ secrets.ALGORITHM_LAYER_2 }}
-          HEADER_KEY: ${{ secrets.HEADER_KEY }}
-          JWT_SUBJECT: ${{ secrets.JWT_SUBJECT }}
-          JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
-          SECRET_KEY_LAYER_1: ${{ secrets.SECRET_KEY_LAYER_1 }}
-          SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
-          MIN: ${{ secrets.MIN }}
-          HOUR: ${{ secrets.HOUR }}
-          DAY: ${{ secrets.DAY }}
         run: |
           pytest --cov --cov-report xml .
       - name: Upload test report to Codecov
@@ -208,3 +169,28 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: backend/
           flags: backend
+
+  docker-build:
+    name: 'Build Docker Image 🐳'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Log in to GitHub Packages
+        run: echo ${GITHUB_TOKEN} | docker login -u ${GITHUB_ACTOR} --password-stdin docker.pkg.github.com
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull image
+        run: |
+          docker pull ${{ env.IMAGE }}:latest || true
+      - name: Build image
+        run: |
+          docker build \
+            --cache-from ${{ env.IMAGE }}:latest \
+            --tag ${{ env.IMAGE }}:latest \
+            --file ./backend/Dockerfile.prod \
+            "./backend"
+      - name: Push image
+        run: |
+          docker push ${{ env.IMAGE }}:latest

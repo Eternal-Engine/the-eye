@@ -14,6 +14,7 @@ async def test_username_is_taken(test_pool: asyncpg_pool.Pool, test_user: UserIn
         )
 
     assert is_username_taken is True
+    await test_pool.close()
 
 
 async def test_email_is_taken(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
@@ -23,3 +24,4 @@ async def test_email_is_taken(test_pool: asyncpg_pool.Pool, test_user: UserInDB)
         is_email_taken = await check_email_is_taken(users_repo=UsersRepository(conn), email=test_user.email)
 
     assert is_email_taken is True
+    await test_pool.close()

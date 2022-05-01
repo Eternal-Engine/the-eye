@@ -139,8 +139,8 @@ def create_articles_table() -> None:
         sa.Column("headline", sa.VARCHAR, nullable=False),
         sa.Column("description", sa.VARCHAR, nullable=True),
         sa.Column("body", sa.VARCHAR, nullable=False),
-        sa.Column("author_id", sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=True),
         sa.Column("is_drafted", sa.BOOLEAN, default=False),
+        sa.Column("author_id", sa.Integer, sa.ForeignKey("journalists.id", ondelete="CASCADE"), nullable=True),
         *timestamps(),
     )
     op.execute(
@@ -154,63 +154,15 @@ def create_articles_table() -> None:
     )
 
 
-def create_images_table() -> None:
-    op.create_table(
-        "images",
-        sa.Column("id", sa.BigInteger, primary_key=True),
-        sa.Column("slug", sa.VARCHAR, unique=True, nullable=False, index=True),
-        sa.Column("path", sa.VARCHAR, nullable=False),
-        sa.Column("title", sa.VARCHAR, nullable=True),
-        sa.Column("alt", sa.VARCHAR, nullable=False),
-        sa.Column("article_id", sa.BigInteger, sa.ForeignKey("articles.id", ondelete="SET NULL")),
-        *timestamps(),
-    )
-    op.execute(
-        """
-        CREATE TRIGGER update_image_modtime
-            BEFORE UPDATE
-            ON images
-            FOR EACH ROW
-        EXECUTE PROCEDURE update_updated_at_column();
-        """
-    )
-
-
-def create_videos_table() -> None:
-    op.create_table(
-        "videos",
-        sa.Column("id", sa.BigInteger, primary_key=True),
-        sa.Column("slug", sa.VARCHAR, unique=True, nullable=False, index=True),
-        sa.Column("path", sa.Text, nullable=False),
-        sa.Column("title", sa.VARCHAR, nullable=True),
-        sa.Column("alt", sa.VARCHAR, nullable=False),
-        sa.Column("article_id", sa.BigInteger, sa.ForeignKey("articles.id", ondelete="SET NULL")),
-        *timestamps(),
-    )
-    op.execute(
-        """
-        CREATE TRIGGER update_video_modtime
-            BEFORE UPDATE
-            ON videos
-            FOR EACH ROW
-        EXECUTE PROCEDURE update_updated_at_column();
-        """
-    )
-
-
 def upgrade() -> None:
     create_updated_at_trigger()
     create_users_table()
     create_journalists_table()
     create_publishers_table()
     create_articles_table()
-    create_images_table()
-    create_videos_table()
 
 
 def downgrade() -> None:
-    op.drop_table("videos")
-    op.drop_table("images")
     op.drop_table("articles")
     op.drop_table("publishers")
     op.drop_table("journalists")

@@ -52,6 +52,7 @@ async def test_create_journalist_with_default_create_parameter(
     )
 
     assert new_journalist.dict() == expected_data
+    await test_pool.close()
 
 
 async def test_read_all_journalists(
@@ -129,6 +130,8 @@ async def test_read_all_journalists(
     db_journalists[0].dict(exclude={"created_at", "updated_at"}) == expected_data[0]
     db_journalists[1].dict(exclude={"created_at", "updated_at"}) == expected_data[1]
 
+    await test_pool.close()
+
 
 async def test_read_journalist_by_user_id(test_user: UserInDB, test_pool: asyncpg_pool.Pool) -> None:
 
@@ -168,6 +171,8 @@ async def test_read_journalist_by_user_id(test_user: UserInDB, test_pool: asyncp
         db_journalist = await JournalistsRepository(conn).get_journalist_by_user_id(id=test_user.id)
 
     assert db_journalist.dict(exclude={"created_at", "updated_at"}) == expected_data
+
+    await test_pool.close()
 
 
 async def test_update_journalist_by_username(test_pool: asyncpg_pool.Pool, test_user: UserInDB) -> None:
@@ -212,3 +217,5 @@ async def test_update_journalist_by_username(test_pool: asyncpg_pool.Pool, test_
         )
 
     assert updated_journalist.dict(exclude={"created_at", "updated_at"}) == expected_data
+
+    await test_pool.close()
