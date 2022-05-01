@@ -81,16 +81,15 @@ jobs:
             -d \
             --name backend \
             -e PORT=8765 \
-            -e ENVIRONMENT=dev \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -e DATABASE_TEST_URL=${{ secrets.DATABASE_TEST_URL }} \
             -p 5003:8765 \
             ${{ env.IMAGE }}-final:latest
       - name: Pytest
-        run: docker exec fastapi-tdd python -m pytest .
+        run: docker exec backend python -m pytest .
       - name: Flake8
-        run: docker exec fastapi-tdd python -m flake8 .
+        run: docker exec backend python -m flake8 .
       - name: Black
-        run: docker exec fastapi-tdd python -m black . --check
+        run: docker exec backend python -m black . --check
       - name: isort
-        run: docker exec fastapi-tdd python -m isort . --check-only
+        run: docker exec backend python -m isort . --check-only
