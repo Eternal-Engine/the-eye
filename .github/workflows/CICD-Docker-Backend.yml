@@ -29,12 +29,13 @@ jobs:
             --target builder \
             --cache-from ${{ env.IMAGE }}-builder:latest \
             --tag ${{ env.IMAGE }}-builder:latest \
-            --file backend/Dockerfile \
+            --file backend/Dockerfile.prod \
             ./backend
           docker build \
+            --target final \
             --cache-from ${{ env.IMAGE }}-final:latest \
             --tag ${{ env.IMAGE }}-final:latest \
-            --file backend/Dockerfile \
+            --file backend/Dockerfile.prod \
             ./backend
       - name: Push images
         run: |
@@ -87,12 +88,13 @@ jobs:
             --target builder \
             --cache-from ${{ env.IMAGE }}-builder:latest \
             --tag ${{ env.IMAGE }}-builder:latest \
-            --file backend/Dockerfile \
+            --file backend/Dockerfile.prod \
             ./backend
           docker build \
+            --target final \
             --cache-from ${{ env.IMAGE }}-final:latest \
             --tag ${{ env.IMAGE }}-final:latest \
-            --file backend/Dockerfile \
+            --file backend/Dockerfile.prod \
             ./backend
       - name: Run container
         run: |
