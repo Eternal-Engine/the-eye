@@ -60,8 +60,8 @@ create_db_tables = """
 """
 
 drop_db_tables = """
-    DROP TABLE IF EXISTS journalists;
+    DROP TABLE IF EXISTS articles;
+    DROP TABLE IF EXISTS journalists CASCADE;
     DROP TABLE IF EXISTS publishers;
-    DROP TABLE IF EXISTS articles CASCADE;
     DROP TABLE IF EXISTS users CASCADE;
 """
