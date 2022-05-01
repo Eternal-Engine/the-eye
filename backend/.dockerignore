@@ -16,5 +16,3 @@ coverage.xml
 scripts
 postman
 ./postgres-data
-Dockerfile
-Dockerfile.prod

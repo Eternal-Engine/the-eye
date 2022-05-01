@@ -1,38 +1,76 @@
-# pull official base image
-FROM python:3.10.1-slim-buster
+#########################################
+############### BUILDER #################
+#########################################
 
-# set working directory
+# Pull official base image as builder
+FROM python:3.10.1-slim-buster as builder
+
+# Install dependencies
+RUN apt-get update \
+  && apt-get -y install gcc postgresql \
+  && apt-get clean
+
+# Define work directory
 WORKDIR /usr/src/app
 
-# set environment variables
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV VIRTUAL_ENV=/opt/venv
 
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+# Install dependencies
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
 
-EXPOSE 8000
+# Lint Backend code
+COPY . /usr/src/app/
+RUN pip install black==22.3.0 flake8==4.0.1 isort==5.10.1
+RUN flake8 .
+RUN black --exclude=migrations .
+RUN isort .
 
-# install system dependencies
+#########################################
+################# FINAL #################
+#########################################
+
+# Pull official base image as the final image
+FROM python:3.10.1-slim-buster
+
+# Create directory for the app user
+RUN mkdir -p /home/app
+
+# Create the main user
+RUN addgroup --system app && adduser --system --group app
+
+# Create organized directories
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/backend
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Install dependencies
 RUN apt-get update \
   && apt-get -y install netcat gcc postgresql \
   && apt-get clean
 
-# install python dependencies
+# Install python dependencies
+COPY --from=builder /usr/src/app/wheels /wheels
+COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --upgrade pip
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache /wheels/*
 
-# add app
+# Add app
 COPY . .
 
-# add entrypoint.sh
-COPY ./entrypoint.sh .
-RUN chmod +x /usr/src/app/entrypoint.sh
+# Chown all the files to the app user
+RUN chown -R app:app $APP_HOME
 
-# run entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+# Change to the app user
+USER app
 
-CMD alembic upgrade head \
-  && uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+# Execute commands for container deployment
+CMD gunicorn --bind 0.0.0.0:$PORT app.main:app -k uvicorn.workers.UvicornWorker
