@@ -140,6 +140,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_DEV_URL }}
+      DATABASE_TEST_URL: ${{ secrets.DATABASE_TEST_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
+      ALGORITHM_LAYER_1: ${{ secrets.ALGORITHM_LAYER_1 }}
+      ALGORITHM_LAYER_2: ${{ secrets.ALGORITHM_LAYER_2 }}
+      HEADER_KEY: ${{ secrets.HEADER_KEY }}
+      JWT_SUBJECT: ${{ secrets.JWT_SUBJECT }}
+      JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
+      SECRET_KEY_LAYER_1: ${{ secrets.SECRET_KEY_LAYER_1 }}
+      SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
+      MIN: ${{ secrets.MIN }}
+      HOUR: ${{ secrets.HOUR }}
+      DAY: ${{ secrets.DAY }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check repository
@@ -163,22 +179,6 @@ jobs:
           alembic downgrade base
           alembic upgrade head
       - name: Test with Pytest-Cov
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_DEV_URL }}
-          DATABASE_TEST_URL: ${{ secrets.DATABASE_TEST_URL }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-          ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
-          ALGORITHM_LAYER_1: ${{ secrets.ALGORITHM_LAYER_1 }}
-          ALGORITHM_LAYER_2: ${{ secrets.ALGORITHM_LAYER_2 }}
-          HEADER_KEY: ${{ secrets.HEADER_KEY }}
-          JWT_SUBJECT: ${{ secrets.JWT_SUBJECT }}
-          JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
-          SECRET_KEY_LAYER_1: ${{ secrets.SECRET_KEY_LAYER_1 }}
-          SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
-          MIN: ${{ secrets.MIN }}
-          HOUR: ${{ secrets.HOUR }}
-          DAY: ${{ secrets.DAY }}
         run: |
           pytest --cov --cov-report xml .
       - name: Upload test report to Codecov
