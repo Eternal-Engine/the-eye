@@ -1,38 +1,41 @@
-# pull official base image
+# Pull official base image
 FROM python:3.10.1-slim-buster
 
-# set working directory
+# Set working directory
 WORKDIR /usr/src/app
 
-# set environment variables
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV VIRTUAL_ENV=/opt/venv
 
+# Start venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
+# Point the server port
 EXPOSE 8000
 
-# install system dependencies
+# Install system dependencies
 RUN apt-get update \
   && apt-get -y install netcat gcc postgresql \
   && apt-get clean
 
-# install python dependencies
+# Install python dependencies
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
-# add app
+# Add app
 COPY . .
 
-# add entrypoint.sh
+# Add entrypoint.sh
 COPY ./entrypoint.sh .
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-# run entrypoint.sh
+# Run entrypoint.sh
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
 
+# Execute alembic and start up the server
 CMD alembic upgrade head \
   && uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
