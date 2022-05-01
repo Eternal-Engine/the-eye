@@ -24,7 +24,9 @@ async def create_article_for_user_profile(
     articles_repo: ArticlesRepository = fastapi.Depends(get_repository(ArticlesRepository)),
 ) -> ArticleInResponse:  # type: ignore
 
-    new_article = await articles_repo.create_articles(journalist_id=current_user.id_, **article_create.dict())
+    new_article = await articles_repo.create_articles(
+        journalist_id=current_user.id_, **article_create.dict()  # type: ignore
+    )
 
     return ArticleInResponse(
         article=ArticleInDB(

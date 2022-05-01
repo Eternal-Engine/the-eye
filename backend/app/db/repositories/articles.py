@@ -83,7 +83,7 @@ class ArticlesRepository(BaseRepository):
         # tags: Optional[List[Tag]] = None,
     ) -> ArticleInDB:
 
-        db_article = await self.get_article_by_id(id=article.id_)
+        db_article = await self.get_article_by_id(id=article.id_)  # type: ignore
 
         if db_article:
             db_article.headline = headline or db_article.headline
@@ -93,7 +93,7 @@ class ArticlesRepository(BaseRepository):
             async with self.connection.transaction():
                 db_article.updated_at = await queries.update_article_by_id(
                     self.connection,
-                    id=article.id_,
+                    id=article.id_,  # type: ignore
                     new_headline=db_article.headline,
                     new_description=db_article.description,
                     new_body=db_article.body,

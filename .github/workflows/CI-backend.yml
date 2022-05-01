@@ -52,10 +52,6 @@ jobs:
           - ubuntu-latest
         python-version:
           - "3.10"
-        poetry-version:
-          - "1.2.0b1"
-        cache-path:
-          - ~/.cache/pypoetry
     defaults:
       run:
         working-directory: backend/
@@ -68,30 +64,16 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
-      - name: Set up Poetry package manager
-        uses: abatilo/actions-poetry@v2.1.3
-        with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: Display Poetry version
-        run: |
-          poetry --version
-      - name: Download cached Poetry dependencies
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3.0.1
-        with:
-          path: |
-            ${{ matrix.cache-path }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-      - name: Ensure Poetry was cached
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+      - name: Install depenencies
+        run:  |
+          python -m pip install --upgrade pip
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Install Dependencies for Linting
         run: |
-          poetry add "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
+          pip install "black=^22.1.0" "flake8=^3.9.2" "isort=^5.10.1" "mypy=^0.941" "pycodestyle=^2.7.0" "pylint=^2.12.2" "pyproject-flake8=0.0.1a2"
       - name: Lint with Black
         uses: psf/black@stable
         with:
@@ -99,19 +81,19 @@ jobs:
           src: "./backend/app/"
       - name: Lint with Isort
         run: |
-          poetry run isort . --check-only --profile black
+          isort . --check-only --profile black
       - name: Lint with PyLint
         run: |
-          poetry run pylint app/
+          pylint app/
       - name: Lint with Flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Lint with MyPy
         run: |
-          poetry run mypy . --pretty
+          mypy . --pretty
 
   test:
     name: 'Test 🔬'
@@ -189,7 +171,7 @@ jobs:
           flags: backend
 
   docker-build:
-    name: Build Docker Image
+    name: 'Build Docker Image 🐳'
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -212,43 +194,3 @@ jobs:
       - name: Push image
         run: |
           docker push ${{ env.IMAGE }}:latest
-
-  deploy:
-    name: Deploy to Heroku
-    environment: production
-    needs: docker-build
-    runs-on: ubuntu-latest
-    env:
-      HEROKU_APP_NAME: ${{ secrets.APP_NAME }}
-      HEROKU_REGISTRY_IMAGE: registry.heroku.com/${HEROKU_APP_NAME}/backend
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Log in to GitHub Packages
-        run: echo ${GITHUB_TOKEN} | docker login -u ${GITHUB_ACTOR} --password-stdin docker.pkg.github.com
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Pull the latest Docker image
-        run: |
-          docker pull ${{ env.IMAGE }}:latest || true
-      - name: Build production image
-        run: |
-          docker build \
-            --cache-from ${{ env.IMAGE }}:latest \
-            --tag ${{ env.HEROKU_REGISTRY_IMAGE }}:latest \
-            --file ./backend/Dockerfile.prod \
-            "./backend"
-      - name: Log in to the Heroku Container Registry
-        run: docker login -u _ -p ${HEROKU_AUTH_TOKEN} registry.heroku.com
-        env:
-          HEROKU_AUTH_TOKEN: ${{ secrets.HEROKU_AUTH_TOKEN }}
-      - name: Push to the registry
-        run: docker push ${{ env.HEROKU_REGISTRY_IMAGE }}
-      - name: Set environment variables
-        run: |
-          echo "HEROKU_REGISTRY_IMAGE=${{ env.HEROKU_REGISTRY_IMAGE }}" >> $GITHUB_ENV
-          echo "HEROKU_AUTH_TOKEN=${{ secrets.HEROKU_AUTH_TOKEN }}" >> $GITHUB_ENV
-      - name: Release into production
-        run: |
-          chmod +x ./release.sh
-          ./release.sh
