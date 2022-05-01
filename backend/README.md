@@ -4,6 +4,9 @@
     <a href="https://github.com/Eternal-Engine/the-eye/actions/workflows/CI-backend.yml">
         <img src="https://github.com/Eternal-Engine/the-eye/actions/workflows/CI-backend.yml/badge.svg"/>
     </a>
+    <a href="https://github.com/Eternal-Engine/the-eye/actions/workflows/CD-backend.yml">
+        <img src="https://github.com/Eternal-Engine/the-eye/actions/workflows/CD-backend.yml/badge.svg"/>
+    </a>
 </div>
 
 <div align=center>
