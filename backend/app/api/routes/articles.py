@@ -15,7 +15,7 @@ router = fastapi.APIRouter(prefix="/articles", tags=["articles"])
 @router.post(
     path="",
     response_model=ArticleInResponse,
-    name="journalists:create-article-for-user-profile",
+    name="articles:create-article",
     status_code=fastapi.status.HTTP_201_CREATED,
 )
 async def create_article_for_user_profile(
@@ -38,7 +38,7 @@ async def create_article_for_user_profile(
     )
 
 
-@router.get(path="", name="journalists:retrieve-all-journalists", response_model=List[ArticleInResponse])
+@router.get(path="", name="articles:retrieve-all-articles", response_model=List[ArticleInResponse])
 async def retrieve_all_articles(
     articles_repo: ArticlesRepository = fastapi.Depends(get_repository(ArticlesRepository)),
 ) -> List[ArticleInResponse]:

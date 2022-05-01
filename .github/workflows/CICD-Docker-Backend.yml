@@ -21,25 +21,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Pull images
         run: |
-          docker pull ${{ env.IMAGE }}-builder:latest || true
-          docker pull ${{ env.IMAGE }}-final:latest || true
+          docker pull ${{ env.IMAGE }}:latest || true
       - name: Build images
         run: |
           docker build \
             --target builder \
-            --cache-from ${{ env.IMAGE }}-builder:latest \
-            --tag ${{ env.IMAGE }}-builder:latest \
-            --file ./backend/Dockerfile.prod \
-            "./backend"
-          docker build \
-            --cache-from ${{ env.IMAGE }}-final:latest \
-            --tag ${{ env.IMAGE }}-final:latest \
+            --cache-from ${{ env.IMAGE }}:latest \
+            --tag ${{ env.IMAGE }}:latest \
             --file ./backend/Dockerfile.prod \
             "./backend"
       - name: Push images
         run: |
-          docker push ${{ env.IMAGE }}-builder:latest
-          docker push ${{ env.IMAGE }}-final:latest
+          docker push ${{ env.IMAGE }}:latest
 
   test:
     name: Test Docker Image
@@ -50,26 +43,19 @@ jobs:
       - name: Check repository
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: trunk
       - name: Log in to GitHub Packages
         run: echo ${GITHUB_TOKEN} | docker login -u ${GITHUB_ACTOR} --password-stdin docker.pkg.github.com
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Pull images
         run: |
-          docker pull ${{ env.IMAGE }}-builder:latest || true
-          docker pull ${{ env.IMAGE }}-final:latest || true
+          docker pull ${{ env.IMAGE }}:latest || true
       - name: Build images
         run: |
           docker build \
-            --target builder \
-            --cache-from ${{ env.IMAGE }}-builder:latest \
-            --tag ${{ env.IMAGE }}-builder:latest \
-            --file ./backend/Dockerfile.prod \
-            "./backend"
-          docker build \
-            --cache-from ${{ env.IMAGE }}-final:latest \
-            --tag ${{ env.IMAGE }}-final:latest \
+            --cache-from ${{ env.IMAGE }}:latest \
+            --tag ${{ env.IMAGE }:latest \
             --file ./backend/Dockerfile.prod \
             "./backend"
       - name: Run container
@@ -78,11 +64,10 @@ jobs:
             -d \
             --name backend \
             -e PORT=8765 \
-            -e ENVIRONMENT=dev \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -e DATABASE_TEST_URL=${{ secrets.DATABASE_TEST_URL }} \
             -p 5003:8765 \
-            ${{ env.IMAGE }}-final:latest
+            ${{ env.IMAGE }}:latest
       - name: Pytest
         run: docker exec backend python -m pytest .
       - name: Flake8
