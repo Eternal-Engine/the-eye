@@ -3,7 +3,7 @@ name: '🧬 Countinuous Everything'
 on: [push]
 
 env:
-  IMAGE: docker.pkg.github.com/$(echo $GITHUB_REPOSITORY | tr '[A-Z]' '[a-z]')/backend
+  IMAGE: docker.pkg.github.com/eternal-engine/the-eye/backend
 
 jobs:
 
