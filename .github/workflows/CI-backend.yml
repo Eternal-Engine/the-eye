@@ -133,8 +133,6 @@ jobs:
           POSTGRES_DB: ${{ secrets.PG_DB }}
           POSTGRES_USER : ${{ secrets.PG_USER }}
           POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
-          POSTGRES_HOST: ${{ secrets.PG_HOST }}
-          POSTGRES_PORT : ${{ secrets.PG_PORT }}
         ports:
         - 5432:5432
         options: >-
