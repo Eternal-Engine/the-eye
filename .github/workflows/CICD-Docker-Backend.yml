@@ -8,10 +8,7 @@ env:
 jobs:
 
   build:
-    name: Build Docker Image
-    defaults:
-      run:
-        working-directory: backend/
+    name: Build Docker Image/backend
     runs-on: ubuntu-latest
     steps:
       - name: Check repository
@@ -32,13 +29,13 @@ jobs:
             --target builder \
             --cache-from ${{ env.IMAGE }}-builder:latest \
             --tag ${{ env.IMAGE }}-builder:latest \
-            --file Dockerfile.prod \
-            "."
+            --file backend/Dockerfile.prod \
+            "./backend"
           docker build \
             --cache-from ${{ env.IMAGE }}-final:latest \
             --tag ${{ env.IMAGE }}-final:latest \
-            --file Dockerfile.prod \
-            "."
+            --file backend/Dockerfile.prod \
+            "./backend"
       - name: Push images
         run: |
           docker push ${{ env.IMAGE }}-builder:latest
@@ -90,13 +87,13 @@ jobs:
             --target builder \
             --cache-from ${{ env.IMAGE }}-builder:latest \
             --tag ${{ env.IMAGE }}-builder:latest \
-            --file Dockerfile.prod \
-            "."
+            --file backend/Dockerfile.prod \
+            ".backend/"
           docker build \
             --cache-from ${{ env.IMAGE }}-final:latest \
             --tag ${{ env.IMAGE }}-final:latest \
-            --file Dockerfile.prod \
-            "."
+            --file backend/Dockerfile.prod \
+            "./backend"
       - name: Run container
         run: |
           docker run \
