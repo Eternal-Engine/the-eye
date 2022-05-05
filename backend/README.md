@@ -204,6 +204,25 @@ The query is executed from the **"Repository"** by utilizing the **"AIOSQL"** li
 
 AsyncPG is the fastest database interface library for Python/IO. In this project, the connection between the application tier and the data tier is set up by AsyncPG through its `create_pool` feature. This feature  allows the back end server to open a connection for a specific period of time window needed for the data transactions and eliminates the need to use an external connection pooler. Please find the implementation in `backend/app/db/events.py`.
 
+# **Continuous Everything**
+
+The back end application is realying heavily on its CI/CD pipeline to integrate, deliver, and deploy. The implementation can be found in:
+
+- `.github/workflows/CI-backend.yml` for continuous integration pipeline;
+- `.github/workflows/CD-backend.yml` for continuous deployment pipeline;
+
+![iWitness-CICD](../docs/collaboration/assets/backend/iWitness-CICD-Diagram.jpg)
+
+Please follow the checkpoints on the diagram that begins with the **"Starting Poibnt"** on the bottom left corner on the diagram and then proceed with the number 1 visualized by a red circle with the number in the middle.
+
+## **Continuous Integration & Deliver**
+
+The CI starts with our loca machine and the initialized local repositories `trunk`, `feature/**`, and `fix/**`. After finishing every feature or fixing some code, we will always push and set up an origin (remote repository) for the branch we are working with: `feature/**` to `origin/feature/**` and `fix/**` to `origin/fix/**`. Before the pull request can be merged into the main remote branch (`origin/trunk`), the code undergoes the CI/CD pipeline set up with GitHub Actions. The code will need to pass 3 main jobs `build`, `test` (`development environment`), and `docker build image`. There is also `code-quality` job implemented to have the equal code standard from all back end developers. The CI ends with a building a `Docker Image` and send it to GitHub Packages. Only after a review from at least 1 team member, the code can be merged to `origin trunk`.
+
+## Continuous Deployment
+
+The continuous deployment pipeline is activated when a branch `release/*.*.*` is pushed to the remote repository. This also requires a `tag` to preserve the code created until that deployment. In the deployment pipeline, the latest `Docker Image` is downloaded to the GitHub Actions VM and push that image to Heroku Container Registry using the Heroku authentication token set up in GitHub `production` environment settings.
+
 # **Using The API**
 
 ## **JWT Token**
