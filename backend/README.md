@@ -172,6 +172,38 @@ Make sure you stay in `backend` directory and your `venv` is on.
             $ pylint .
             $ mypy .
 
+# **Software Architecure**
+
+## **N-Tier Architecture**
+
+*iWitness* web application is a **3 Tier Software Architecture** with 2 of the tiers belong to the backend aplication, namely the **"Application Tier"** that corresponds to the back end server and the **"Data Tier"** that corresponds to the database server and the data storage. The front end is built separately and it belongs to the **"Presentation Tier"**.
+
+![iWItness-Application](../docs/collaboration/assets/backend/iWitness-Application.jpg)
+
+## **MVC Pattern**
+
+The back end application is designed with a slighty modified MVC pattern. The conventional MVC is the pattern that separate:
+
+- **"Model"** in to manage data and business logic;
+- **"View"** to handle layout and display;
+- **"Controller"** to route commands to the model and view parts;
+
+In this back end application, I decided to do an experiment with some extra layers that separate the **"Model"** layer into:
+
+- **"Schema Model"** (`backend/app/models/schemas/**`): A model that allows custom data types to be defined or you can extend validation with methods on a model decorated with the validator decorator;
+- **"Domain Model"** (`backend/app/models/domain/**`): A conceptual model of the domain that incorporates both behavior and data;
+- **"Repository"** (`backend/app/db/repositories/**`): Classes or components that encapsulate the logic required to access data sources. Simply put, these classes contain the C.R.U.D. methods for each and every domain model.
+
+![Backend-MVC-PLus](../docs/collaboration/assets/backend/iWItness-MVC-Plus.jpg)
+
+## **SQL**
+
+The query is executed from the **"Repository"** by utilizing the **"AIOSQL"** library that convert a pure **SQL** syntax into python function. This implementation can be found in `backend/app/queries/queries.py`. All of the queries are stored in `backend/app/db/queries/sql/**`.
+
+## **AsyncPG**
+
+AsyncPG is the fastest database interface library for Python/IO. In this project, the connection between the application tier and the data tier is set up by AsyncPG through its `create_pool` feature. This feature  allows the back end server to open a connection for a specific period of time window needed for the data transactions and eliminates the need to use an external connection pooler. Please find the implementation in `backend/app/db/events.py`.
+
 # **Using The API**
 
 ## **JWT Token**
