@@ -12,28 +12,28 @@ ci:
 
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.2.0
+    rev: v5.0.0
     hooks:
     -   id: check-yaml
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
         files: ^backend/
 -   repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 24.10.0
     hooks:
     -   id: black
         language_version: python3.10
         args:
         - --config=backend/pyproject.toml
 -   repo: https://github.com/pycqa/isort
-    rev: 5.10.1
+    rev: 5.13.2
     hooks:
     -   id: isort
         name: isort (python)
         args:
         - --settings-path=backend/pyproject.toml
 -   repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+    rev: 7.1.1
     hooks:
     -   id: flake8
         entry: pflake8
@@ -41,18 +41,18 @@ repos:
         args:
         - --ignore=E1,E23,E501,W503
 -   repo: https://github.com/PyCQA/pylint
-    rev: v2.13.8
+    rev: v3.3.1
     hooks:
     -   id: pylint
         args:
         - --rcfile=backend/pyproject.toml
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v0.950"
+    rev: "v1.12.1"
     hooks:
     -   id: mypy
         args:
         - --config-file=backend/pyproject.toml
 -   repo: https://github.com/pre-commit-ci/pre-commit-ci-config
-    rev: v1.5.1
+    rev: v1.6.1
     hooks:
     -   id: check-pre-commit-ci-config
